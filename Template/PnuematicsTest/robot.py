@@ -9,7 +9,7 @@ import math
 class MyRobot(wpilib.TimedRobot):
     #declares the motors in existence
     def robotInit(self):
-        self.piston = wpilib.Solenoid(0)
+        self.piston = wpilib.DoubleSolenoid(0,1)
 
     def teleopInit(self):
         self.count = 0
@@ -20,18 +20,18 @@ class MyRobot(wpilib.TimedRobot):
         self.autonTimer = wpilib.Timer()
         self.autonTimer.start()
     def autonomousPeriodic(self):
-        state = False
+        state = wpilib.DoubleSolenoid.Value.kForward
         if self.autonTimer.get() < 5:
-            state = False
+            state = wpilib.DoubleSolenoid.Value.kReverse
         else:
-            state = True
+            state = wpilib.DoubleSolenoid.Value.kForward
         if self.autonTimer.get() > 10:
 
             self.autonTimer.reset()
 
 
         self.piston.set(state)
-
+        sd.putNumber("Piston",state)
     '''def teleopPeriodic(self):
 
         ticks = (self.left_encoder.getDistance())*255
