@@ -72,6 +72,7 @@ class MyRobot(CommandBasedRobot):
 
         self.drive = Drive.Drive(self)
         self.limelight = Limelight.Limelight(self)
+        self.pistons = HatchMech.HatchMech(self)
 
         self.timer = wpilib.Timer()
         self.timer.start()
