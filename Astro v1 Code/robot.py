@@ -66,7 +66,7 @@ class MyRobot(CommandBasedRobot):
         '''
         self.dashboard = True
         #self.setPeriod(0.025) #40 runs per second instead of 50
-        self.setPeriod(0.0333) #30 runs per second
+        #self.setPeriod(0.0333) #30 runs per second
 
         Command.getRobot = lambda x=0: self
 
