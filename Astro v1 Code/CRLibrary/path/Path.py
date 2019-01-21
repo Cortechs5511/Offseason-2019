@@ -1,11 +1,11 @@
-'''import wpilib
+import wpilib
 import math
 
 import pickle
 import os.path
-#import pathfinder as pf
+import pathfinder as pf
 
-#from CRLibrary.path import odometry as od
+from CRLibrary.path import odometry as od
 from CRLibrary.path import PathFinder
 from CRLibrary.path import Ramsetes
 
@@ -13,8 +13,8 @@ class Path():
 
     def __init__(self, DT, model, odometer, getDistances, follower="PathFinder"):
 
-        #self.PathFinder = PathFinder.PathFinder(DT, model, odometer, getDistances)
-        #self.Ramsetes = Ramsetes.Ramsetes(DT, model, odometer)
+        self.PathFinder = PathFinder.PathFinder(DT, model, odometer, getDistances)
+        self.Ramsetes = Ramsetes.Ramsetes(DT, model, odometer)
         self.setFollower(follower)
 
     def setFollower(self, follower):
@@ -39,4 +39,3 @@ class Path():
     def isFinished(self):
         if(self.follower=="PathFinder"): self.PathFinder.isFinished()
         elif(self.follower=="Ramsetes"): self.Ramsetes.isFinished()
-'''

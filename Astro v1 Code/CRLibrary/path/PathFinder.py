@@ -1,4 +1,4 @@
-'''import wpilib
+import wpilib
 import math
 
 import pickle
@@ -72,4 +72,3 @@ class PathFinder():
         else: return [0,0]
 
     def isFinished(self):  return self.leftFollower.isFinished()
-'''

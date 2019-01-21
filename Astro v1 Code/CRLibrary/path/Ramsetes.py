@@ -1,4 +1,4 @@
-'''import wpilib
+import wpilib
 import math
 
 import pickle
@@ -155,4 +155,3 @@ class Ramsetes():
     def sinc(self, theta): return (1 if theta==0 else math.sin(theta)/theta)
 
     def isFinished(self): return self.time>self.maxTime
-'''

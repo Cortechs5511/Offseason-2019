@@ -13,7 +13,7 @@ from commands.setSpeedDT import setSpeedDT
 from commands.DriveStraightTime import DriveStraightTime
 from commands.DriveStraightDistance import DriveStraightDistance
 from commands.DriveStraightCombined import DriveStraightCombined
-#from commands.DrivePath import DrivePath
+zzfrom commands.DrivePath import DrivePath
 from commands.TurnAngle import TurnAngle
 
 from commands.getLimelightData import getLimelightData
@@ -25,12 +25,12 @@ from commands import Sequences
 
 from commands import autonomous
 
-#from commands.autonomous import TestPath
+from commands.autonomous import TestPath
 from commands.autonomous import DriveStraight
 
 from subsystems import Drive, Limelight, HatchMech
 
-#from CRLibrary.path import odometry as od
+from CRLibrary.path import odometry as od
 
 #import pathfinder as pf
 
@@ -64,7 +64,7 @@ class MyRobot(CommandBasedRobot):
         This is a good place to set up your subsystems and anything else that
         you will need to access later.
         '''
-        self.dashboard = True
+
         #self.setPeriod(0.025) #40 runs per second instead of 50
         #self.setPeriod(0.0333) #30 runs per second
 
@@ -166,7 +166,7 @@ class MyRobot(CommandBasedRobot):
 
         '''Additional UpdateDashboard Functions'''
         #self.drive.UpdateDashboard()
-        self.limelight.UpdateDashboard()
+        #self.limelight.UpdateDashboard()
 
         SmartDashboard.putNumber("DT_DistanceAvg", self.drive.getAvgDistance())
 

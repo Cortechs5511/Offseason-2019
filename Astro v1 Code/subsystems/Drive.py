@@ -18,8 +18,8 @@ from sim import simComms
 
 from CRLibrary.physics import DCMotorTransmission as DCMotor
 from CRLibrary.physics import DifferentialDrive as dDrive
-#from CRLibrary.path import odometry as od
-#from CRLibrary.path import Path
+from CRLibrary.path import odometry as od
+from CRLibrary.path import Path
 from CRLibrary.util import units as units
 
 class Drive(Subsystem):
@@ -119,14 +119,14 @@ class Drive(Subsystem):
         self.angleController = angleController
         self.angleController.disable()
 
-        #self.od = od.Odometer()
+        self.od = od.Odometer()
 
         transmission = DCMotor.DCMotorTransmission(8.3, 2.22, 1.10) #8.02, 2.22, 1.10
         self.model = dDrive.DifferentialDrive(64, 10, 0, units.inchesToMeters(2.0), units.inchesToMeters(14), transmission, transmission)
         self.maxVel = self.maxSpeed*self.model.getMaxAbsVelocity(0, 0, 12)
         #print("Max Velocity: "+ str(self.maxVel))
 
-        #self.Path = Path.Path(self, self.model, self.od, self.getDistance)
+        self.Path = Path.Path(self, self.model, self.od, self.getDistance)
 
     def __getDistance__(self):
         return self.getAvgDistance()
@@ -156,10 +156,10 @@ class Drive(Subsystem):
             self.angleController.setSetpoint(angle)
             self.distController.enable()
             self.angleController.enable()
-        #elif(mode=="Path"):
-        #    self.distController.disable()
-        #    self.angleController.disable()
-        #    self.Path.initPath(name)
+        elif(mode=="Path"):
+            self.distController.disable()
+            self.angleController.disable()
+            self.Path.initPath(name)
         elif(mode=="DiffDrive"):
             self.distController.disable()
             self.angleController.disable()
@@ -178,9 +178,8 @@ class Drive(Subsystem):
         self.setMode("Combined",distance=distance,angle=angle)
 
     def setPath(self, name, follower):
-    #    self.Path.setFollower(follower)
-    #    self.setMode("Path", name=name)
-        pass
+        self.Path.setFollower(follower)
+        self.setMode("Path", name=name)
 
     def setDiffDrive(self):
         self.setMode("DiffDrive")
@@ -201,8 +200,8 @@ class Drive(Subsystem):
             [left,right] = [self.anglePID,-self.anglePID]
         elif(self.mode=="Combined"):
             [left,right] = [self.distPID+self.anglePID,self.distPID-self.anglePID]
-        #elif(self.mode=="Path"):
-        #    [left, right] = self. Path.followPath()
+        elif(self.mode=="Path"):
+            [left, right] = self. Path.followPath()
         elif(self.mode=="DiffDrive"):
             wheelVelocity = dDrive.WheelState(left*self.maxVel/self.model.wheelRadius(), right*self.maxVel/self.model.wheelRadius())
             wheelAcceleration = dDrive.WheelState(0, 0) #Add better math here later
@@ -226,7 +225,7 @@ class Drive(Subsystem):
 
     def updateOdometry(self, left, right):
         vel = self.getVelocity()
-        #self.od.update(vel[0],vel[1],self.getAngle())
+        self.od.update(vel[0],vel[1],self.getAngle())
         self.prevDist = self.getDistance()
 
     def getOutputCurrent(self):

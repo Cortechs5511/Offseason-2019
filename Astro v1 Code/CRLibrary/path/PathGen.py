@@ -1,9 +1,9 @@
-'''import wpilib
+import wpilib
 import math
 
 import pickle
 import os.path
-#import pathfinder as pf
+import pathfinder as pf
 
 from CRLibrary.physics import DifferentialDrive as ddrive
 from CRLibrary.path import odometry as od
@@ -56,4 +56,3 @@ def showPath(left,right,modifier):
             renderer.draw_pathfinder_trajectory(left, color='#0000ff', offset=(-1.5,0)) #half width in feet
             renderer.draw_pathfinder_trajectory(modifier.source, color='#00ff00', show_dt=1.0, dt_offset=0.0)
             renderer.draw_pathfinder_trajectory(right, color='#0000ff', offset=(1.5,0)) #half width in feet
-'''
