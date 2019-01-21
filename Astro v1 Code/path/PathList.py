@@ -1,9 +1,9 @@
-import wpilib
+'''import wpilib
 import math
 
 import pickle
 import os.path
-import pathfinder as pf
+#import pathfinder as pf
 
 from CRLibrary.physics import DifferentialDrive as ddrive
 from CRLibrary.path import odometry as od
@@ -26,3 +26,4 @@ def makeTraj(name):
             pf.Waypoint(10,0,0)
         ]
     return points
+'''

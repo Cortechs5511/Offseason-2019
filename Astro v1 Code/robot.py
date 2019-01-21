@@ -13,7 +13,7 @@ from commands.setSpeedDT import setSpeedDT
 from commands.DriveStraightTime import DriveStraightTime
 from commands.DriveStraightDistance import DriveStraightDistance
 from commands.DriveStraightCombined import DriveStraightCombined
-from commands.DrivePath import DrivePath
+#from commands.DrivePath import DrivePath
 from commands.TurnAngle import TurnAngle
 
 from commands.getLimelightData import getLimelightData
@@ -25,14 +25,14 @@ from commands import Sequences
 
 from commands import autonomous
 
-from commands.autonomous import TestPath
+#from commands.autonomous import TestPath
 from commands.autonomous import DriveStraight
 
-from subsystems import Drive, Limelight
+from subsystems import Drive, Limelight, HatchMech
 
-from CRLibrary.path import odometry as od
+#from CRLibrary.path import odometry as od
 
-import pathfinder as pf
+#import pathfinder as pf
 
 from ctre import WPI_TalonSRX as Talon
 from ctre import WPI_VictorSPX as Victor
