@@ -13,7 +13,7 @@ from commands.setSpeedDT import setSpeedDT
 from commands.DriveStraightTime import DriveStraightTime
 from commands.DriveStraightDistance import DriveStraightDistance
 from commands.DriveStraightCombined import DriveStraightCombined
-zzfrom commands.DrivePath import DrivePath
+from commands.DrivePath import DrivePath
 from commands.TurnAngle import TurnAngle
 
 from commands.getLimelightData import getLimelightData
