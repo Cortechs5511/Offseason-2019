@@ -19,6 +19,7 @@ class MyRobot(wpilib.TimedRobot):
         self.count = 0
         self.autonTimer = wpilib.Timer()
         self.autonTimer.start()
+
     def autonomousPeriodic(self):
         state = wpilib.DoubleSolenoid.Value.kForward
         if self.autonTimer.get() < 5:
