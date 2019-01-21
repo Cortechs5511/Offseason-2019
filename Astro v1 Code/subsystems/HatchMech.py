@@ -7,7 +7,7 @@ from wpilib import SmartDashboard as sd
 
 from sim import simComms
 
-class HatchMech(subsystem):
+class HatchMech(Subsystem):
 
     def __init__(self, Robot):
         self.piston = wpilib.DoubleSolenoid(0,1)

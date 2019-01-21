@@ -4,7 +4,7 @@ import wpilib
 from wpilib.command import Command
 from wpilib.command import TimedCommand
 
-from CRLibrary.path import PathFinder
+#from CRLibrary.path import PathFinder
 from CRLibrary.path import Ramsetes
 
 class DrivePath(TimedCommand):
