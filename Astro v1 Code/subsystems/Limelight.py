@@ -1,6 +1,6 @@
 import wpilib.buttons
 from wpilib.command.subsystem import Subsystem
-
+import math
 from wpilib import SmartDashboard
 from networktables import NetworkTables
 
@@ -40,7 +40,11 @@ class Limelight(Subsystem):
     def getTl(self): return self.tl
 
     def getDistance(self):
-        d = math.sqrt((self.abox)/(4*math.tan(0.471)*math.tan(0.3576)*self.ta))
+        if (4*math.tan(0.471)*math.tan(0.3576)*self.ta) == 0:
+            x = 1
+        else:
+            x = (4*math.tan(0.471)*math.tan(0.3576)*self.ta)
+        d = math.sqrt((self.abox)/x)
         return d
 
     def initDefaultCommand(self):
@@ -53,4 +57,5 @@ class Limelight(Subsystem):
         #SmartDashboard.putNumber("Limelight_tv", self.ta)
         #SmartDashboard.putNumber("Limelight_tv", self.ts)
         #SmartDashboard.putNumber("Limelight_tv", self.tl)
-        pass
+        #SmartDashboard.putNumber("Limelight_tv", self.tl)
+        SmartDashboard.putNumber("Distance",self.getDistance())

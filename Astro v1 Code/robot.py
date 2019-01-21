@@ -64,7 +64,7 @@ class MyRobot(CommandBasedRobot):
         This is a good place to set up your subsystems and anything else that
         you will need to access later.
         '''
-
+        self.dashboard = True
         #self.setPeriod(0.025) #40 runs per second instead of 50
         #self.setPeriod(0.0333) #30 runs per second
 
@@ -166,7 +166,7 @@ class MyRobot(CommandBasedRobot):
 
         '''Additional UpdateDashboard Functions'''
         #self.drive.UpdateDashboard()
-        #self.limelight.UpdateDashboard()
+        self.limelight.UpdateDashboard()
 
         SmartDashboard.putNumber("DT_DistanceAvg", self.drive.getAvgDistance())
 
