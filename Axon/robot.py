@@ -3,6 +3,7 @@ import wpilib
 import wpilib.drive
 from wpilib import SmartDashboard as sd
 import math
+import wpilib.buttons
 
 #class of robot
 class MyRobot(wpilib.TimedRobot):
@@ -16,6 +17,9 @@ class MyRobot(wpilib.TimedRobot):
         self.leftJoystick = wpilib.Joystick(0)
         self.rightJoystick = wpilib.Joystick(1)
         self.left_encoder = wpilib.Encoder(0,1)
+
+        self.Solenoid = wpilib.Solenoid(0)
+        self.Solenoid.set(True)
 
     def teleopInit(self):
         self.count = 0
@@ -32,6 +36,13 @@ class MyRobot(wpilib.TimedRobot):
     def teleopPeriodic(self):
         self.count+= 1
         sd.putNumber("Count",self.count)
+
+        self.trigger = self.leftJoystick.getButton(1)
+        if self.trigger == True:
+            self.Solenoid.set(True)
+        else:
+            self.Solenoid.set(False)
+
         '''
         ticks = (self.left_encoder.getDistance())*255
         sd.putNumber("Ticks",ticks)
