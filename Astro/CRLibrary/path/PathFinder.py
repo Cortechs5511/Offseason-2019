@@ -13,7 +13,7 @@ class PathFinder():
 
     def __init__(self, DT, model, odometer, getDistances):
 
-        '''Variables'''
+        #Variables
         self.DT = DT
         self.model = model
         self.getDistances = getDistances
@@ -22,13 +22,13 @@ class PathFinder():
         self.rightFollower = None
         self.PID = 0
 
-        '''Gains'''
+        #Gains
         kA = [0.000, 0.00, 0.00, 0.00] #angle
         #gains[4] = Voltage per Velocity (feet per second)
         self.gains = [0.005, 0, 0.35, 0.74/12, 0] #distance
         TolAngle = 3 #degrees
 
-        '''PID Controllers'''
+        #PID Controllers
         self.angleController = wpilib.PIDController(kA[0], kA[1], kA[2], kA[3], source=self.od.getAngle, output=self.setAngle)
         self.angleController.setInputRange(-180,  180) #degrees
         self.angleController.setOutputRange(-0.9, 0.9)

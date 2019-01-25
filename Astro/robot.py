@@ -28,11 +28,11 @@ from commands import autonomous
 from commands.autonomous import TestPath
 from commands.autonomous import DriveStraight
 
-from subsystems import Drive, Limelight
+from subsystems import Drive, Limelight, HatchMech
 
 from CRLibrary.path import odometry as od
 
-import pathfinder as pf
+#import pathfinder as pf
 
 from ctre import WPI_TalonSRX as Talon
 from ctre import WPI_VictorSPX as Victor
@@ -66,12 +66,13 @@ class MyRobot(CommandBasedRobot):
         '''
 
         #self.setPeriod(0.025) #40 runs per second instead of 50
-        self.setPeriod(0.0333) #30 runs per second
+        #self.setPeriod(0.0333) #30 runs per second
 
         Command.getRobot = lambda x=0: self
 
         self.drive = Drive.Drive(self)
         self.limelight = Limelight.Limelight(self)
+        self.hatchMech = HatchMech.HatchMech(self)
 
         self.timer = wpilib.Timer()
         self.timer.start()
@@ -100,6 +101,7 @@ class MyRobot(CommandBasedRobot):
 
         self.curr = 0
         self.print = 10
+        self.hatchMech.subsystemInit()
 
     def robotPeriodic(self):
         if(self.dashboard):
@@ -168,6 +170,10 @@ class MyRobot(CommandBasedRobot):
         #self.limelight.UpdateDashboard()
 
         SmartDashboard.putNumber("DT_DistanceAvg", self.drive.getAvgDistance())
+        self.hatchMech.updateDashboard()
+        
+    def disabledInit(self):
+        self.hatchMech.disable()
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)

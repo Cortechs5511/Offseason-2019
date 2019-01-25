@@ -4,7 +4,7 @@ import ctre
 from ctre import WPI_TalonSRX as Talon
 from ctre import WPI_VictorSPX as Victor
 
-from navx import AHRS as navx
+#from navx import AHRS as navx
 
 import wpilib
 from wpilib import SmartDashboard
@@ -35,7 +35,7 @@ class Drive(Subsystem):
 
     model = None
 
-    navxVal = 0
+    #navxVal = 0
     leftVal = 0
     rightVal = 0
 
@@ -87,7 +87,7 @@ class Drive(Subsystem):
         self.left = TalonLeft
         self.right = TalonRight
 
-        self.navx = navx.create_spi()
+        #self.navx = navx.create_spi()
 
         self.leftEncoder = wpilib.Encoder(0,1)
         self.leftEncoder.setDistancePerPulse(self.leftConv)
@@ -234,11 +234,12 @@ class Drive(Subsystem):
     def updateSensors(self):
         self.leftVal = self.leftEncoder.get()
         self.rightVal = self.rightEncoder.get()
-        self.navxVal = self.navx.getYaw()
+        #self.navxVal = self.navx.getYaw()
         #self.navxVal = 0
 
     def getAngle(self):
-        return self.navxVal
+        #return self.navxVal
+        return 0
 
     def getRaw(self):
         return [self.leftVal, self.rightVal]
@@ -271,8 +272,8 @@ class Drive(Subsystem):
         simComms.resetEncoders()
 
     def zeroNavx(self):
-        self.navx.zeroYaw()
-        #pass
+        #self.navx.zeroYaw()
+        pass
 
     def zero(self):
         self.zeroEncoders()

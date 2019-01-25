@@ -3,7 +3,7 @@ import math
 
 import pickle
 import os.path
-import pathfinder as pf
+#import pathfinder as pf
 
 from CRLibrary.physics import DifferentialDrive as ddrive
 from CRLibrary.util import units
@@ -15,7 +15,7 @@ class Ramsetes():
 
     def __init__(self, drivetrain, model, odometer):
 
-        '''Variables'''
+        #Variables
         self.DT = drivetrain
         self.model = model
         self.od = odometer
@@ -29,7 +29,7 @@ class Ramsetes():
         self.DT = None
         self.finished = False
 
-        '''Gains'''
+        #Gains
         kV = [0.01, 0.0, 0.0, 0.0] #velocity
         kA = [0.000, 0.0, 0.0, 0.0] #angle
 
@@ -39,7 +39,7 @@ class Ramsetes():
         TolVel = 0.2
         TolAngle = 1
 
-        '''PID Controllers'''
+        #PID Controllers
         self.MaxV = PathGen.getLimits()[0]
         self.leftController = wpilib.PIDController(kV[0], kV[1], kV[2], kV[3], source=self.od.getLeftVelocity, output=self.setLeft)
         self.leftController.setInputRange(-self.MaxV-3, self.MaxV+3) #feet/second
@@ -86,7 +86,7 @@ class Ramsetes():
         self.rightController.disable()
         self.angleController.disable()
 
-    '''The Algorithm!'''
+    #The Algorithm!
 
     def initPath(self, name):
         self.finished = False
