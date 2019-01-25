@@ -26,13 +26,34 @@ class IntakeCargo(Command):
     def isFinished(self):
         return False
 
+class OuttakeCargo(Command):
+    def __init__(self):
+        super().__init__('OuttakeCargo')
+        robot = self.getRobot()
+        self.cargoMech = robot.cargoMech
+        self.requires(self.cargoMech)
+         
+    def initialize(self):
+        pass
+
+    def execute(self):
+        self.cargoMech.outtake()
+        
+    def interrupted(self):
+        self.cargoMech.stopIntake()
+
+    def end(self):
+        self.cargoMech.stopIntake()
+    
+    def isFinished(self):
+        return False
+
 class CargoMech(Subsystem):
     def __init__(self, Robot):
         """ Create all physical parts used by subsystem. """
         super().__init__('Cargo')
         # Set to true for extra info to smart dashboard
         self.debug = True
-
 
     def disable(self):
         self.stopIntake()
@@ -53,6 +74,15 @@ class CargoMech(Subsystem):
         pass
     def stopIntake(self):
         ''' Quit intake/outake '''
-        
         pass
+    def wristUp(self):
+        '''Move wrist up, make angle bigger'''
+        pass
+    def wristDown(self):
+        '''Move wrist down, make angle smaller: Make sure to stop it at a certain point'''
+        pass
+    def wristStop(self):
+        '''Stops wrist'''
+        pass
+    
     
