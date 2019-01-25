@@ -72,7 +72,7 @@ class MyRobot(CommandBasedRobot):
 
         self.drive = Drive.Drive(self)
         self.limelight = Limelight.Limelight(self)
-        self.pistons = HatchMech.HatchMech(self)
+        self.hatchMech = HatchMech.HatchMech(self)
 
         self.timer = wpilib.Timer()
         self.timer.start()
@@ -101,6 +101,7 @@ class MyRobot(CommandBasedRobot):
 
         self.curr = 0
         self.print = 10
+        self.hatchMech.subsystemInit()
 
     def robotPeriodic(self):
         if(self.dashboard):
@@ -169,6 +170,10 @@ class MyRobot(CommandBasedRobot):
         #self.limelight.UpdateDashboard()
 
         SmartDashboard.putNumber("DT_DistanceAvg", self.drive.getAvgDistance())
+        self.hatchMech.updateDashboard()
+        
+    def disabledInit(self):
+        self.hatchMech.disable()
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)

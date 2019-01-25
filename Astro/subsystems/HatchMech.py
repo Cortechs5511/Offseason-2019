@@ -1,32 +1,85 @@
-import math
-import ctre
 import wpilib
 from wpilib import SmartDashboard
 from wpilib.command.subsystem import Subsystem
+from wpilib.command import Command
 from wpilib import SmartDashboard as sd
 
-from sim import simComms
+class EjectHatch(Command):
+    def __init__(self):
+        super().__init__('HatchEject')
+        robot = self.getRobot()
+        self.hatchMech = robot.hatchMech
+        self.requires(self.hatchMech)
+         
+    def initialize(self):
+        pass
+
+    def execute(self):
+         self.hatchMech.ejectHatch()
+
+    def isFinished(self):
+        return True
+
+    def interrupted(self):
+        pass
+
+    def end(self):
+        pass
+
+#class EjectToggle(Command):
+#    """ JACOB Make this command toggle between eject in/out. """
+#    pass
+
 
 class HatchMech(Subsystem):
+    """ Controls the handling of hatches.
+
+    Expects pistons that we use to eject hatch onto docking surface.
+    Also has slider mechanism that can move back and forth.
+    """
 
     def __init__(self, Robot):
-        self.piston = wpilib.DoubleSolenoid(0,1)
+        """ Create all physical parts used by subsystem. """
+        super().__init__('Hatch')
+        # Set to true for extra info to smart dashboard
+        self.debug = True
+        self.ejectPiston = wpilib.Solenoid(0)
+        self.ejectPiston.setName("Hatch" , "Ejector")
 
-    def set(self, trigger):
-        if state == 2 and trigger == "Out":
-            state = wpilib.DoubleSolenoid.Value.kForward
-        elif state == 1 and trigger == "In":
-            state = wpilib.DoubleSolenoid.Value.kReverse
-        else:
-            pass
+    def isEjectorOut(self):
+        """ Returns True when ejector is sticking out. """
+        return self.ejectPiston.get()
+        
 
-    def setMode(self, mode):
-        if mode == "Forward":
-            state = wpilib.DoubleSolenoid.Value.kForward
-        elif mode == "Reverse":
-            state = wpilib.DoubleSolenoid.Value.kReverse
-        else:
-            pass
+    def ejectHatch(self):
+        """ Use this method to throw hatch onto docking surface. """
+        self.ejectPiston.set(True)
 
-        self.piston.set(state)
-        sd.putNumber("Piston",state)
+
+    def retractEjector(self):
+        """ Pulls the ejector back in. """
+        self.ejectPiston.set(False)
+
+    def slideOut(self):
+        """ Slides hatch mechanism out over bumpers. """
+        pass
+
+    def slideIn(self):
+        """ Pulls hatch mechanism back in. """
+        pass
+
+    def disable(self):
+        """ Disables subsystem and puts everything back to starting position. """
+        self.retractEjector()
+        self.slideIn()
+
+    def updateDashboard(self):
+        """ Put diagnostics out to smart dashboard. """
+        SmartDashboard.putBoolean("Ejector Out", self.isEjectorOut())
+
+    def subsystemInit(self):
+        """ Adds subsystem specific commands. """
+        if self.debug:
+            SmartDashboard.putData("Eject Hatch", EjectHatch())
+            SmartDashboard.putData("Hatch Mech", self)
+        self.retractEjector()
