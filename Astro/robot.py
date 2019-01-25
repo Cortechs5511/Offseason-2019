@@ -28,7 +28,7 @@ from commands import autonomous
 from commands.autonomous import TestPath
 from commands.autonomous import DriveStraight
 
-from subsystems import Drive, Limelight, HatchMech
+from subsystems import Drive, Limelight, HatchMech, CargoMech
 
 from CRLibrary.path import odometry as od
 
@@ -73,6 +73,7 @@ class MyRobot(CommandBasedRobot):
         self.drive = Drive.Drive(self)
         self.limelight = Limelight.Limelight(self)
         self.hatchMech = HatchMech.HatchMech(self)
+        self.cargoMech = CargoMech.CargoMech(self)
 
         self.timer = wpilib.Timer()
         self.timer.start()
@@ -102,6 +103,7 @@ class MyRobot(CommandBasedRobot):
         self.curr = 0
         self.print = 10
         self.hatchMech.subsystemInit()
+        self.cargoMech.subsystemInit()
 
     def robotPeriodic(self):
         if(self.dashboard):
@@ -170,10 +172,11 @@ class MyRobot(CommandBasedRobot):
         #self.limelight.UpdateDashboard()
 
         SmartDashboard.putNumber("DT_DistanceAvg", self.drive.getAvgDistance())
-        self.hatchMech.updateDashboard()
+        self.cargoMech.updateDashboard()
         
     def disabledInit(self):
         self.hatchMech.disable()
+        self.cargoMech.disable()
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)
