@@ -1,6 +1,6 @@
 #new outreach
 #imports important packages for running
-#this is andrew's code
+#this is andrew wang's code
 import wpilib
 import wpilib.drive
 from wpilib import SmartDashboard as sd
@@ -52,14 +52,12 @@ class MyRobot(wpilib.TimedRobot):
         self.RightDrive3.follow(self.RightDrive1)
         self.RightDrive2.follow(self.RightDrive1)
     #creates two joysticks for drive control
-        self.left_joystick = wpilib.Joystick(1)
-        self.right_joystick = wpilib.Joystick(0)
-        self.Controller1 =wpilib.Joystick(2)
+        self.Controller1 =wpilib.Joystick(0)
     #sets up encoders
         self.left_encoder = wpilib.Encoder(0,1)
         self.right_encoder = wpilib.Encoder(2,3)
     #switch between modes
-        self.tankMode = True
+        self.tankMode = False
         #self.modeButton = self.right_joystick.
     def teleopInit(self):
         self.count = 0
@@ -77,32 +75,22 @@ class MyRobot(wpilib.TimedRobot):
         self.ticks = self.getDistance()
         sd.putNumber("ticks",self.ticks)
     #limit breakers which set speeds based on axis units
-        left = -(self.left_joystick.getRawAxis(1))
-        right = -(self.right_joystick.getRawAxis(1))
-        intakeButton = -(self.Controller1.getRawButton(8))
-
-        outtakeButton = -(self.Controller1.getRawButton(7))
-
+        left = -(self.Controller1.getRawAxis(1))
+        right = -(self.Controller1.getRawAxis(5))
+        rotation = (self.Controller1.getRawAxis(4))
+        intakeButton = -(self.Controller1.getRawAxis(4))
+        outtakeButton = -(self.Controller1.getRawAxis(3))
+        liftButtonUp = (self.Controller1.getRawButton(4))
+        liftButtonDown = (self.Controller1.getRawButton(1))
         #arcade tank toggle
         if self.tankMode == True:
             self.drive(left, right)
         else:
             self.arcadeDrive(left,rotation)
+        #lift
+        self.lift(liftButtonUp,liftButtonDown)
+        #self.intake(intakeButton,outtakeButton)
 
-        if self.Controller1.getRawAxis(1) < 0:
-            self.Lift2.set(0.5)
-        elif self.Controller1.getRawAxis(1) > 0:
-            self.Lift2.set(-0.5)
-        else:
-            self.Lift2.set(0)
-
-        #intake
-        if self.Controller1.getRawAxis(2) > 0:
-            self.Intake2.set(0.5)
-        elif self.Controller1.getRawAxis(3) > 0:
-            self.Intake2.set(-0.5)
-        else:
-            self.Intake2.set(0)
 
     def autonomousPeriodic(self):
         #Count and time on SD
@@ -122,7 +110,6 @@ class MyRobot(wpilib.TimedRobot):
         distance = ticks * 4 *3.14
         return distance
 #action functions
-
     def forward(self,maxSpeed,maxPoint):
         #constant for a linear decline
         constant = (maxSpeed/maxPoint)
@@ -133,6 +120,26 @@ class MyRobot(wpilib.TimedRobot):
             self.drive(remaining_distance*constant+0.25,remaining_distance*constant+0.25)
         else:
             self.drive(0,0)
+    '''
+    #intake function
+    def intake(self,in,out):
+        if in and not out:
+            self.Intake2.set(0.5)
+        if out and not in:
+            self.Intake2.set(-0.5)
+        if out and in:
+            self.Intake2.set(0)
+    '''
+    #lift function
+    def lift(self,up,down):
+        if up and not down:
+            self.Lift2.set(-0.5)
+        if down and not up:
+            self.Lift2.set(0.5)
+        if down and up:
+            self.Lift2.set(0)
+        if (not down) and (not up):
+            self.Lift2.set(0)
     #tank drive
     def drive(self, left, right):
         #breakers
@@ -150,21 +157,20 @@ class MyRobot(wpilib.TimedRobot):
         #breakers
         if abs(left) <0.1:
             left = 0
-        left = left *0.9
+        left = left *0.65
         right = left
+
         if rotation <-0.1:
             #if the rotation is larger than 0.95, rotate in place
-            if rotation <-0.95:
-                left = 0
-            left = left *(1-abs(rotation*0.4))
-        elif rotation >0.1:
+            #if rotation <-0.95:
+            right = right + (abs(rotation*0.3))
+        elif rotation > 0.1:
             #if the rotation is larger than 0.95, rotate in place
-            if rotation >0.95:
-                right = 0
-            right = right *(1-abs(rotation*0.4))
+            left = left + (1-abs(rotation*0.3))
         #sets up powers
         self.LeftDrive1.set(left)
         self.RightDrive1.set(right)
+
     def disabledPeriodic(self):
         # a disabled period will reset the wrist and intake
         self.drive(0,0)
