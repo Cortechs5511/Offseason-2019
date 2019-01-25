@@ -8,8 +8,18 @@ import wpilib.buttons
 from wpilib.command import Command
 from commandbased import CommandBasedRobot
 
+from commands.setPositionWrist import setPositionWrist
+from commands.setPositionLift import setPositionLift
+
 from commands.setFixedDT import setFixedDT
+from commands.setFixedIntake import setFixedIntake
+from commands.setFixedLift import setFixedLift
+from commands.setFixedWrist import setFixedWrist
+
 from commands.setSpeedDT import setSpeedDT
+from commands.setSpeedLift import setSpeedLift
+from commands.setSpeedWrist import setSpeedWrist
+
 from commands.DriveStraightTime import DriveStraightTime
 from commands.DriveStraightDistance import DriveStraightDistance
 from commands.DriveStraightCombined import DriveStraightCombined
@@ -21,23 +31,36 @@ from commands.driveVision import driveVision
 
 from commands.Zero import Zero
 
+import navx
+
 from commands import Sequences
 
 from commands import autonomous
 
+from commands.autonomous import LeftSwitchMiddlePath
+from commands.autonomous import RightSwitchMiddlePath
+from commands.autonomous import LeftScalePath
+from commands.autonomous import RightScalePath
+from commands.autonomous import LeftOppositeScalePath
+from commands.autonomous import RightOppositeScalePath
 from commands.autonomous import TestPath
-from commands.autonomous import DriveStraight
 
-from subsystems import Drive, Limelight, HatchMech, CargoMech
+from commands.autonomous import LeftSwitchSide
+from commands.autonomous import RightSwitchSide
+from commands.autonomous import DriveStraight
+from commands.autonomous import LeftSwitchMiddle
+from commands.autonomous import RightSwitchMiddle
+from commands.autonomous import LeftSwitchMiddle2Cube
+from commands.autonomous import RightSwitchMiddle2Cube
+
+from subsystems import Wrist, Intake, Lift, Drive, Limelight
 
 from CRLibrary.path import odometry as od
 
-#import pathfinder as pf
+import pathfinder as pf
 
 from ctre import WPI_TalonSRX as Talon
 from ctre import WPI_VictorSPX as Victor
-
-#from navx import AHRS as navx
 
 class DebugRate(Command):
     def initialize(self):
@@ -65,15 +88,16 @@ class MyRobot(CommandBasedRobot):
         you will need to access later.
         '''
 
-        #self.setPeriod(0.025) #40 runs per second instead of 50
+        #self.setPeriod(0.025) #40 runs per second instead of #50
         #self.setPeriod(0.0333) #30 runs per second
 
         Command.getRobot = lambda x=0: self
 
         self.drive = Drive.Drive(self)
+        self.lift = Lift.Lift(self)
+        self.wrist = Wrist.Wrist(self)
+        self.intake = Intake.Intake(self)
         self.limelight = Limelight.Limelight(self)
-        self.hatchMech = HatchMech.HatchMech(self)
-        self.cargoMech = CargoMech.CargoMech(self)
 
         self.timer = wpilib.Timer()
         self.timer.start()
@@ -91,9 +115,21 @@ class MyRobot(CommandBasedRobot):
 
         follower = "Ramsetes"
 
+        self.LeftSwitchMiddlePath = LeftSwitchMiddlePath(follower)
+        self.RightSwitchMiddlePath = RightSwitchMiddlePath(follower)
+        self.LeftScalePath = LeftScalePath(follower)
+        self.RightScalePath = RightScalePath(follower)
+        self.LeftOppositeScalePath = LeftOppositeScalePath(follower)
+        self.RightOppositeScalePath = RightOppositeScalePath(follower)
         self.TestPath = TestPath(follower)
 
         self.DriveStraight = DriveStraight()
+        self.LeftSwitchSide = LeftSwitchSide()
+        self.RightSwitchSide = RightSwitchSide()
+        self.LeftSwitchMiddle = LeftSwitchMiddle()
+        self.RightSwitchMiddle = RightSwitchMiddle()
+        self.LeftSwitchMiddle2Cube = LeftSwitchMiddle2Cube()
+        self.RightSwitchMiddle2Cube = RightSwitchMiddle2Cube()
 
         oi.commands()
         SmartDashboard.putData("CPU Load", DebugRate())
@@ -102,8 +138,6 @@ class MyRobot(CommandBasedRobot):
 
         self.curr = 0
         self.print = 10
-        self.hatchMech.subsystemInit()
-        self.cargoMech.subsystemInit()
 
     def robotPeriodic(self):
         if(self.dashboard):
@@ -112,7 +146,10 @@ class MyRobot(CommandBasedRobot):
             pass
 
     def autonomousInit(self):
+        self.wrist.zero()
+        self.lift.zero()
         self.drive.zero()
+
         self.timer.reset()
         self.timer.start()
         self.curr = 0
@@ -122,10 +159,15 @@ class MyRobot(CommandBasedRobot):
 
         self.autoMode = self.autoLogic(gameData, position)
         if self.autoMode == "DriveStraight": self.DriveStraight.start()
-        elif self.autoMode == "TestPath": self.TestPath.start()
+        if self.autoMode == "DriveStraight": self.RightSwitchMiddlePath.start()
+        elif self.autoMode == "LeftSwitchSide": self.LeftSwitchSide.start()
+        elif self.autoMode == "LeftSwitchMiddle": self.LeftSwitchMiddlePath.start()
+        elif self.autoMode == "RightSwitchSide": self.RightSwitchSide.start()
+        elif self.autoMode == "RightSwitchMiddle": self.RightSwitchMiddlePath.start()
+        elif self.autoMode == "Test": self.TestPath.start()
 
     def autoLogic(self, gameData, auto):
-        return "RightSwitchMiddle"
+        return "Test"
 
         '''
         if(auto=="L"):
@@ -143,10 +185,22 @@ class MyRobot(CommandBasedRobot):
     def updateDashboardInit(self):
         #'''Subsystems'''
         #SmartDashboard.putData("Drive", self.drive)
+        #SmartDashboard.putData("Intake", self.intake)
+        #SmartDashboard.putData("Lift", self.lift)
+        #SmartDashboard.putData("Wrist", self.wrist)
 
         #'''Commands'''
+        #SmartDashboard.putData("setPositionWrist", setPositionWrist(0,True))
+        #SmartDashboard.putData("setPositionLift", setPositionLift(0, True))
+
         #SmartDashboard.putData("setFixedDT", setFixedDT())
+        #SmartDashboard.putData("setFixedIntake", setFixedIntake())
+        #SmartDashboard.putData("setFixedLift", setFixedLift())
+        #SmartDashboard.putData("setFixedWrist", setFixedWrist())
+
         #SmartDashboard.putData("setSpeedDT", setSpeedDT())
+        #SmartDashboard.putData("setSpeedLift", setSpeedLift())
+        #SmartDashboard.putData("setSpeedWrist", setSpeedWrist())
 
         #SmartDashboard.putData("DriveStraightDistance", DriveStraightDistance())
         #SmartDashboard.putData("DriveStraightTime", DriveStraightTime())
@@ -154,6 +208,7 @@ class MyRobot(CommandBasedRobot):
         #SmartDashboard.putData("DrivePath", DrivePath())
         #SmartDashboard.putData("TurnAngle", TurnAngle())
         #SmartDashboard.putData("driveVision", driveVision())
+
 
         #SmartDashboard.putData("Zero", Zero())
 
@@ -163,20 +218,19 @@ class MyRobot(CommandBasedRobot):
         pass
 
     def updateDashboardPeriodic(self):
-        #current = self.drive.getOutputCurrent()
+        #current = self.drive.getOutputCurrent()+self.intake.getOutputCurrent()+self.wrist.getOutputCurrent()+self.lift.getOutputCurrent()
         #SmartDashboard.putNumber("Total_Amps",current)
 
+        #SmartDashboard.putBoolean("Mech_Safety", (self.lift.lift.get() > 0.2 and self.wrist.getAngle() < math.pi/12))
 
         '''Additional UpdateDashboard Functions'''
         #self.drive.UpdateDashboard()
+        #self.lift.UpdateDashboard()
+        #self.wrist.UpdateDashboard()
+        #self.intake.UpdateDashboard()
         #self.limelight.UpdateDashboard()
 
         SmartDashboard.putNumber("DT_DistanceAvg", self.drive.getAvgDistance())
-        self.cargoMech.updateDashboard()
-        
-    def disabledInit(self):
-        self.hatchMech.disable()
-        self.cargoMech.disable()
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)
