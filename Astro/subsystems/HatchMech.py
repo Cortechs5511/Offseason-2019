@@ -34,8 +34,8 @@ class EjectToggle(Command):
     def __init__(self):
         super().__init__('toggleHatch')
         robot = self.getRobot()
-        self.toggleHatch = robot.toggleHatch
-        self.requires(self.toggleHatch)
+        self.hatchMech = robot.hatchMech
+        self.requires(self.hatchMech)
 
     def initialize(self):
         pass
