@@ -60,6 +60,7 @@ class CargoMech(Subsystem):
     def __init__(self, Robot):
         """ Create all physical parts used by subsystem. """
         super().__init__('Cargo')
+        self.robot = Robot
         #fix
         self.motorIntake = ctre.WPI_TalonSRX(0)
         self.motorWrist = ctre.WPI_TalonSRX(1)
@@ -73,15 +74,6 @@ class CargoMech(Subsystem):
         """ Put diagnostics out to smart dashboard. """
         pass
 
-    def subsystemInit(self):
-        """ Adds subsystem specific commands. """
-        if self.debug == True:
-            sd.putData("Intake", Intake('intake',1))
-            sd.putData("Outtake",Intake('outtake',-1))
-            sd.putData("Stop Inake",Intake('stop',0))
-            sd.putData("Wrist up",Wrist('wrist up',1))
-            sd.putData("Wrist down",Wrist('wrist down',-1))
-            sd.putData("Stop wrist",Wrist('stop wrist',0))
     def intake(self):
         ''' Intake the balls (turn wheels inward) '''
         self.motorIntake.set(0.5)
@@ -100,3 +92,22 @@ class CargoMech(Subsystem):
     def wristStop(self):
         '''Stops wrist'''
         self.motorWrist.set(0)
+
+    def subsystemInit(self):
+        """ Adds subsystem specific commands. """
+        if self.debug == True:
+            sd.putData("Intake", Intake('intake',1))
+            sd.putData("Outtake",Intake('outtake',-1))
+            sd.putData("Stop Inake",Intake('stop',0))
+            sd.putData("Wrist up",Wrist('wrist up',1))
+            sd.putData("Wrist down",Wrist('wrist down',-1))
+            sd.putData("Stop wrist",Wrist('stop wrist',0))
+        r = self.robot
+        wristUp : wpilib.buttons.JoystickButton = r.operatorButton(4)
+        wristUp.whenPressed(Wrist('wrist up',1))
+        wristDown : wpilib.buttons.JoystickButton = r.operatorButton(1)
+        wristDown.whenPressed(Wrist('wrist down',-1))
+        outtakeButton : wpilib.buttons.JoystickButton = r.operatorButton(5)
+        outtakeButton.whenPressed(Intake('outtake',-1))
+        intakeButton : wpilib.buttons.JoystickButton = r.operatorButton(6)
+        intakeButton.whenPressed(Intake('intake',1))
