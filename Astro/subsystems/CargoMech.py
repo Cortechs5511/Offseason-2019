@@ -3,19 +3,49 @@ from wpilib import SmartDashboard
 from wpilib.command.subsystem import Subsystem
 from wpilib.command import Command
 from wpilib import SmartDashboard as sd
-
-class IntakeCargo(Command):
-    def __init__(self):
-        super().__init__('IntakeCargo')
+import ctre
+class Wrist(Command):
+    def __init__(self,label,power):
+        super().__init__(label)
         robot = self.getRobot()
         self.cargoMech = robot.cargoMech
         self.requires(self.cargoMech)
-         
+        self.power = power
+
     def initialize(self):
         pass
 
     def execute(self):
-        self.cargoMech.intake()
+        if self.power == -1:
+            self.cargoMech.wristDown()
+        elif self.power == 1:
+            self.cargoMech.wristUp()
+        
+    def interrupted(self):
+        self.cargoMech.wristStop()
+
+    def end(self):
+        self.cargoMech.wristStop()
+    
+    def isFinished(self):
+        return self.power == 0
+
+class Intake(Command):
+    def __init__(self,label,power):
+        super().__init__(label)
+        robot = self.getRobot()
+        self.cargoMech = robot.cargoMech
+        self.requires(self.cargoMech)
+        self.power = power
+
+    def initialize(self):
+        pass
+
+    def execute(self):
+        if self.power == -1:
+            self.cargoMech.outtake()
+        elif self.power == 1:
+            self.cargoMech.intake()
         
     def interrupted(self):
         self.cargoMech.stopIntake()
@@ -24,34 +54,15 @@ class IntakeCargo(Command):
         self.cargoMech.stopIntake()
     
     def isFinished(self):
-        return False
-
-class OuttakeCargo(Command):
-    def __init__(self):
-        super().__init__('OuttakeCargo')
-        robot = self.getRobot()
-        self.cargoMech = robot.cargoMech
-        self.requires(self.cargoMech)
-         
-    def initialize(self):
-        pass
-
-    def execute(self):
-        self.cargoMech.outtake()
-        
-    def interrupted(self):
-        self.cargoMech.stopIntake()
-
-    def end(self):
-        self.cargoMech.stopIntake()
-    
-    def isFinished(self):
-        return False
+        return self.power == 0
 
 class CargoMech(Subsystem):
     def __init__(self, Robot):
         """ Create all physical parts used by subsystem. """
         super().__init__('Cargo')
+        #fix
+        self.motorIntake = ctre.WPI_TalonSRX(0)
+        self.motorWrist = ctre.WPI_TalonSRX(1)
         # Set to true for extra info to smart dashboard
         self.debug = True
 
@@ -60,29 +71,32 @@ class CargoMech(Subsystem):
 
     def updateDashboard(self):
         """ Put diagnostics out to smart dashboard. """
-        sd.putData("Intake", IntakeCargo())
-        sd.putData("Cargo Mech", self)
+        pass
 
     def subsystemInit(self):
         """ Adds subsystem specific commands. """
-        pass
+        if self.debug == True:
+            sd.putData("Intake", Intake('intake',1))
+            sd.putData("Outtake",Intake('outtake',-1))
+            sd.putData("Stop Inake",Intake('stop',0))
+            sd.putData("Wrist up",Wrist('wrist up',1))
+            sd.putData("Wrist down",Wrist('wrist down',-1))
+            sd.putData("Stop wrist",Wrist('stop wrist',0))
     def intake(self):
         ''' Intake the balls (turn wheels inward) '''
-        pass
-    def outake(self):
+        self.motorIntake.set(0.5)
+    def outtake(self):
         ''' Outake the balls (turn wheels outwards) '''
-        pass
+        self.motorIntake.set(-0.5)
     def stopIntake(self):
         ''' Quit intake/outake '''
-        pass
+        self.motorIntake.set(0)
     def wristUp(self):
         '''Move wrist up, make angle bigger'''
-        pass
+        self.motorWrist.set(0.5)
     def wristDown(self):
         '''Move wrist down, make angle smaller: Make sure to stop it at a certain point'''
-        pass
+        self.motorWrist.set(-0.5)
     def wristStop(self):
         '''Stops wrist'''
-        pass
-    
-    
+        self.motorWrist.set(0)

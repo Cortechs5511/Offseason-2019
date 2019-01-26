@@ -16,19 +16,47 @@ class EjectHatch(Command):
 
     def execute(self):
          self.hatchMech.ejectHatch()
+         
 
     def isFinished(self):
-        return True
+        return self.timeSinceInitialized()>3
 
     def interrupted(self):
         pass
 
     def end(self):
+         self.hatchMech.retractEjector()
+
+
+
+
+class EjectToggle(Command):
+    def __init__(self)
+        super().__init__('toggleHatch')
+        robot = self.getRobot()
+        self.toggleHatch = robot.toggleHatch
+        self.requires(self.toggleHatch)
+
+     def initialize(self):
         pass
 
-#class EjectToggle(Command):
+    def execute(self):
+        isEjectorOut = 
+         if EjectHatch(true)
+            
+
+         
+
+    def isFinished(self):
+        return true
+
+    def interrupted(self):
+        pass
+
+    def end(self):
+         self.hatchMech.retractEjector()
 #    """ JACOB Make this command toggle between eject in/out. """
-#    pass
+    
 
 
 class HatchMech(Subsystem):
@@ -38,13 +66,16 @@ class HatchMech(Subsystem):
     Also has slider mechanism that can move back and forth.
     """
 
-    def __init__(self, Robot):
+    def __init__(self, robot):
         """ Create all physical parts used by subsystem. """
         super().__init__('Hatch')
         # Set to true for extra info to smart dashboard
         self.debug = True
+        self.robot = robot
         self.ejectPiston = wpilib.Solenoid(0)
+        self.ejectPistonSlide = wpilib.Solenoid(1)
         self.ejectPiston.setName("Hatch" , "Ejector")
+        self.ejectPistonSlide.setName("Hatch" , "Slider")
 
     def isEjectorOut(self):
         """ Returns True when ejector is sticking out. """
@@ -56,18 +87,28 @@ class HatchMech(Subsystem):
         self.ejectPiston.set(True)
 
 
+
     def retractEjector(self):
         """ Pulls the ejector back in. """
         self.ejectPiston.set(False)
 
+
+
     def slideOut(self):
         """ Slides hatch mechanism out over bumpers. """
-        pass
+        self.ejectPistonSlide.set(True)
+
+
 
     def slideIn(self):
         """ Pulls hatch mechanism back in. """
-        pass
+        self.ejectPistonSlide.set(False)
 
+
+        """ says if the slide is in or not """
+    def isSlideIn(self):
+        return self.ejectPistonSlide.get()
+    
     def disable(self):
         """ Disables subsystem and puts everything back to starting position. """
         self.retractEjector()
@@ -75,7 +116,9 @@ class HatchMech(Subsystem):
 
     def updateDashboard(self):
         """ Put diagnostics out to smart dashboard. """
-        SmartDashboard.putBoolean("Ejector Out", self.isEjectorOut())
+        SmartDashboard.putBooleann("Ejector Out", self.isEjectorOut())
+        SmartDashboard.putBoolean("Slide Out",self.isSlideIn ())
+       # SmartDashboard.putBoolean("Ejector Toggle" , EjectToggle())
 
     def subsystemInit(self):
         """ Adds subsystem specific commands. """
@@ -83,3 +126,6 @@ class HatchMech(Subsystem):
             SmartDashboard.putData("Eject Hatch", EjectHatch())
             SmartDashboard.putData("Hatch Mech", self)
         self.retractEjector()
+        r = self.robot
+        b : wpilib.buttons.JoystickButton = r.operatorButton(3)
+        b.whenPressed(EjectHatch())

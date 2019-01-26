@@ -178,5 +178,17 @@ class MyRobot(CommandBasedRobot):
         self.hatchMech.disable()
         self.cargoMech.disable()
 
+    def driverLeftButton(self, id):
+        """ Return a button off of the left driver joystick that we want to map a command to. """
+        return wpilib.buttons.JoystickButton(self.joystick0, id)
+
+    def driverRightButton(self, id):
+        """ Return a button off of the right driver joystick that we want to map a command to. """
+        return wpilib.buttons.JoystickButton(self.joystick1, id)
+        
+    def operatorButton(self, id):
+        """ Return a button off of the operator gamepad that we want to map a command to. """
+        return wpilib.buttons.JoystickButton(self.xbox, id)
+
 if __name__ == "__main__":
     wpilib.run(MyRobot)
