@@ -64,6 +64,7 @@ class EjectToggle(Command):
 
 
 class SlideToggle(Command):
+    # this is a simple toggle command for pnuematics and the slide mechanism.
     def __init__(self):
         super().__init__('ToggleSlide')
         robot = self.getRobot()
@@ -102,6 +103,7 @@ class HatchMech(Subsystem):
         # Set to true for extra info to smart dashboard
         self.debug = True
         self.robot = robot
+        #Normally the ejectPiston would be on solanoid 1, but was changed to see if slide worked.
         self.ejectPiston = wpilib.Solenoid(1)
         self.ejectPistonSlide = wpilib.Solenoid(0)
         self.ejectPiston.setName("Hatch" , "Ejector")
