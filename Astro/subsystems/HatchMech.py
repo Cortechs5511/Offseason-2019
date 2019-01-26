@@ -41,9 +41,12 @@ class EjectToggle(Command):
         pass
 
     def execute(self):
-        #isEjectorOut = True
-        # if EjectHatch(true)
-        pass
+        ejectorOut = self.hatchMech.isEjectorOut()
+        if ejectorOut:
+            self.hatchMech.retractEjector()
+        else:
+            self.hatchMech.ejectHatch()
+
             
 
          
@@ -55,7 +58,7 @@ class EjectToggle(Command):
         pass
 
     def end(self):
-         self.hatchMech.retractEjector()
+       pass
 #    """ JACOB Make this command toggle between eject in/out. """
     
 
@@ -117,16 +120,20 @@ class HatchMech(Subsystem):
 
     def updateDashboard(self):
         """ Put diagnostics out to smart dashboard. """
-        SmartDashboard.putBoolean("Ejector Out", self.isEjectorOut())
-        SmartDashboard.putBoolean("Slide Out",self.isSlideIn ())
-       # SmartDashboard.putBoolean("Ejector Toggle" , EjectToggle())
+        if self.debug:
+            SmartDashboard.putBoolean("Ejector Out", self.isEjectorOut())
+            SmartDashboard.putBoolean("Slide Out",self.isSlideIn ())
+            
 
     def subsystemInit(self):
         """ Adds subsystem specific commands. """
         if self.debug:
             SmartDashboard.putData("Eject Hatch", EjectHatch())
             SmartDashboard.putData("Hatch Mech", self)
+            SmartDashboard.putData("Ejector Toggle" , EjectToggle())
         self.retractEjector()
         r = self.robot
         b : wpilib.buttons.JoystickButton = r.operatorButton(3)
         b.whenPressed(EjectHatch())
+        b : wpilib.buttons.JoystickButton = r.operatorButton(5)
+        b.whenPressed(EjectToggle())
