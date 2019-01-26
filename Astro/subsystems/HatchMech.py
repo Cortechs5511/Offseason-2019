@@ -4,99 +4,10 @@ from wpilib.command.subsystem import Subsystem
 from wpilib.command import Command
 from wpilib import SmartDashboard as sd
 
-class EjectHatch(Command):
-    def __init__(self):
-        super().__init__('HatchEject')
-        robot = self.getRobot()
-        self.hatchMech = robot.hatchMech
-        self.requires(self.hatchMech)
-         
-    def initialize(self):
-        pass
-
-    def execute(self):
-         self.hatchMech.ejectHatch()
-         
-
-    def isFinished(self):
-        return self.timeSinceInitialized()>3
-
-    def interrupted(self):
-        pass
-
-    def end(self):
-         self.hatchMech.retractEjector()
-
-
-
-
-
-class EjectToggle(Command):
-    def __init__(self):
-        super().__init__('toggleHatch')
-        robot = self.getRobot()
-        self.hatchMech = robot.hatchMech
-        self.requires(self.hatchMech)
-
-    def initialize(self):
-        pass
-
-    def execute(self):
-        ejectorOut = self.hatchMech.isEjectorOut()
-        if ejectorOut:
-            self.hatchMech.retractEjector()
-        else:
-            self.hatchMech.ejectHatch()
-
-            
-
-         
-
-    def isFinished(self):
-        return True
-
-    def interrupted(self):
-        pass
-
-    def end(self):
-       pass
-#    """ JACOB Make this command toggle between eject in/out. """
-
-
-class SlideToggle(Command):
-    # this is a simple toggle command for pnuematics and the slide mechanism.
-    def __init__(self):
-        super().__init__('ToggleSlide')
-        robot = self.getRobot()
-        self.hatchMech = robot.hatchMech
-        self.requires(self.hatchMech)
-
-    def initialize(self):
-        pass
-
-    def execute(self):
-        slideOut = self.hatchMech.isSlideIn()
-        if slideOut:
-            self.hatchMech.slideIn()
-        else:
-            self.hatchMech.slideOut()
-         
-
-    def isFinished(self):
-        return True
-
-    def interrupted(self):
-        pass
-
-    def end(self):
-       pass
-class HatchMech(Subsystem):
-    """ Controls the handling of hatches.
-
-    Expects pistons that we use to eject hatch onto docking surface.
-    Also has slider mechanism that can move back and forth.
-    """
-
+from ..commands.EjectToggle import EjectToggle
+from ..commands.EjectHatch import EjectHatch
+from ..commands.SlideToggle import SlideToggle
+class Hatch(Command):
     def __init__(self, robot):
         """ Create all physical parts used by subsystem. """
         super().__init__('Hatch')
