@@ -113,8 +113,8 @@ class DriveMech(Subsystem):
         """ Put diagnostics out to smart dashboard. """
         SmartDashboard.putBoolean("Driving Reverse", self.flipped)
         if self.debug:
-              SmartDashboard.putNumber("leftEncoder", self.leftEncoder.getRaw())
-              SmartDashboard.putNumber("rightEncoder", self.rightEncoder.getRaw())
+              SmartDashboard.putNumber("leftEncoder", self.leftEncoder.get())
+              SmartDashboard.putNumber("rightEncoder", self.rightEncoder.get())
               SmartDashboard.putNumber("leftEncoderdistance", self.leftEncoder.getDistance())
               SmartDashboard.putNumber("rightEncoderdistacne", self.rightEncoder.getDistance())
               SmartDashboard.putNumber("talonEncoder", self.driveLeft1.getQuadraturePosition())
