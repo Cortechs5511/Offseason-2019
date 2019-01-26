@@ -31,18 +31,18 @@ class EjectHatch(Command):
 
 
 class EjectToggle(Command):
-    def __init__(self)
+    def __init__(self):
         super().__init__('toggleHatch')
         robot = self.getRobot()
         self.toggleHatch = robot.toggleHatch
         self.requires(self.toggleHatch)
 
-     def initialize(self):
+    def initialize(self):
         pass
 
     def execute(self):
-        isEjectorOut = 
-         if EjectHatch(true)
+        isEjectorOut = True
+        # if EjectHatch(true)
             
 
          
