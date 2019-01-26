@@ -41,8 +41,9 @@ class EjectToggle(Command):
         pass
 
     def execute(self):
-        isEjectorOut = True
+        #isEjectorOut = True
         # if EjectHatch(true)
+        pass
             
 
          
