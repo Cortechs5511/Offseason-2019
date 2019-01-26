@@ -74,6 +74,7 @@ class DriveMech(Subsystem):
         self.debug = True
         self.flipped = False
         self.robot = robot
+
         self.driveLeft1 = ctre.WPI_TalonSRX(10)
         self.driveLeft2 = ctre.WPI_VictorSPX(11)
         self.driveLeft3 = ctre.WPI_VictorSPX(12)

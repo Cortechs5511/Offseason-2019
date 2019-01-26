@@ -4,31 +4,8 @@ from wpilib.command.subsystem import Subsystem
 from wpilib.command import Command
 from wpilib import SmartDashboard as sd
 import ctre
-class Wrist(Command):
-    def __init__(self,label,power):
-        super().__init__(label)
-        robot = self.getRobot()
-        self.cargoMech = robot.cargoMech
-        self.requires(self.cargoMech)
-        self.power = power
+from ..commands.Wrist import Wrist
 
-    def initialize(self):
-        pass
-
-    def execute(self):
-        if self.power == -1:
-            self.cargoMech.wristDown()
-        elif self.power == 1:
-            self.cargoMech.wristUp()
-        
-    def interrupted(self):
-        self.cargoMech.wristStop()
-
-    def end(self):
-        self.cargoMech.wristStop()
-    
-    def isFinished(self):
-        return self.power == 0
 
 class Intake(Command):
     def __init__(self,label,power):
