@@ -22,7 +22,7 @@ class FlipButton(Command):
         
         if self.driveMechanism.flipped:
             self.driveMechanism.flipped = True
-        else
+        else:
             self.driveMechanism.flipped = False 
     def interrupted(self):
         self.end()
