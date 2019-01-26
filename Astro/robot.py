@@ -8,13 +8,13 @@ import wpilib.buttons
 from wpilib.command import Command
 from commandbased import CommandBasedRobot
 
-from commands.setFixedDT import setFixedDT
-from commands.setSpeedDT import setSpeedDT
-from commands.DriveStraightTime import DriveStraightTime
-from commands.DriveStraightDistance import DriveStraightDistance
-from commands.DriveStraightCombined import DriveStraightCombined
-from commands.DrivePath import DrivePath
-from commands.TurnAngle import TurnAngle
+#from commands.setFixedDT import setFixedDT
+#from commands.setSpeedDT import setSpeedDT
+#from commands.DriveStraightTime import DriveStraightTime
+#from commands.DriveStraightDistance import DriveStraightDistance
+#from commands.DriveStraightCombined import DriveStraightCombined
+#from commands.DrivePath import DrivePath
+#from commands.TurnAngle import TurnAngle
 
 from commands.getLimelightData import getLimelightData
 from commands.driveVision import driveVision
@@ -28,7 +28,7 @@ from commands import autonomous
 from commands.autonomous import TestPath
 from commands.autonomous import DriveStraight
 
-from subsystems import Drive, Limelight, HatchMech, CargoMech
+from subsystems import Limelight, HatchMech, CargoMech, DriveMech
 
 from CRLibrary.path import odometry as od
 
@@ -70,14 +70,14 @@ class MyRobot(CommandBasedRobot):
 
         Command.getRobot = lambda x=0: self
 
-        self.drive = Drive.Drive(self)
+       # self.drive = Drive.Drive(self)
         self.limelight = Limelight.Limelight(self)
         self.hatchMech = HatchMech.HatchMech(self)
         self.cargoMech = CargoMech.CargoMech(self)
-
+        self.driveMech = DriveMech.DriveMech(self) 
         self.timer = wpilib.Timer()
         self.timer.start()
-
+ 
         '''
         Since OI instantiates commands and commands need access to subsystems,
         OI must be initialized after subsystems.
@@ -91,9 +91,9 @@ class MyRobot(CommandBasedRobot):
 
         follower = "Ramsetes"
 
-        self.TestPath = TestPath(follower)
+       # self.TestPath = TestPath(follower)
 
-        self.DriveStraight = DriveStraight()
+      #  self.DriveStraight = DriveStraight()
 
         oi.commands()
         SmartDashboard.putData("CPU Load", DebugRate())
@@ -104,6 +104,7 @@ class MyRobot(CommandBasedRobot):
         self.print = 10
         self.hatchMech.subsystemInit()
         self.cargoMech.subsystemInit()
+        self.driveMech.subsystemInit()
 
     def robotPeriodic(self):
         if(self.dashboard):
@@ -111,18 +112,18 @@ class MyRobot(CommandBasedRobot):
         else:
             pass
 
-    def autonomousInit(self):
-        self.drive.zero()
-        self.timer.reset()
-        self.timer.start()
-        self.curr = 0
+    # def autonomousInit(self):
+        # self.drive.zero()
+        #self.timer.reset()
+        #self.timer.start()
+        #self.curr = 0
 
-        gameData = "LLL" #wpilib.DriverStation.getInstance().getGameSpecificMessage()
-        position = "M" #SmartDashboard.getString("position", "M")
+        #gameData = "LLL" #wpilib.DriverStation.getInstance().getGameSpecificMessage()
+        #position = "M" #SmartDashboard.getString("position", "M")
 
-        self.autoMode = self.autoLogic(gameData, position)
-        if self.autoMode == "DriveStraight": self.DriveStraight.start()
-        elif self.autoMode == "TestPath": self.TestPath.start()
+       # self.autoMode = self.autoLogic(gameData, position)
+      #  if self.autoMode == "DriveStraight": self.DriveStraight.start()
+       # elif self.autoMode == "TestPath": self.TestPath.start()
 
     def autoLogic(self, gameData, auto):
         return "RightSwitchMiddle"
@@ -171,13 +172,16 @@ class MyRobot(CommandBasedRobot):
         #self.drive.UpdateDashboard()
         #self.limelight.UpdateDashboard()
 
-        SmartDashboard.putNumber("DT_DistanceAvg", self.drive.getAvgDistance())
+     #   SmartDashboard.putNumber("DT_DistanceAvg", self.drive.getAvgDistance())
         self.cargoMech.updateDashboard()
+        self.driveMech.updateDashboard()
+        self.hatchMech.updateDashboard()
+        
         
     def disabledInit(self):
         self.hatchMech.disable()
         self.cargoMech.disable()
-
+        self.driveMech.disable()
     def driverLeftButton(self, id):
         """ Return a button off of the left driver joystick that we want to map a command to. """
         return wpilib.buttons.JoystickButton(self.joystick0, id)
@@ -190,5 +194,8 @@ class MyRobot(CommandBasedRobot):
         """ Return a button off of the operator gamepad that we want to map a command to. """
         return wpilib.buttons.JoystickButton(self.xbox, id)
 
+    def getTankValues(self):
+        #returns left and right power for driving in tank mode
+        return (-self.joystick0.getRawAxis(1), -self.joystick1.getRawAxis(1)) 
 if __name__ == "__main__":
     wpilib.run(MyRobot)
