@@ -4,17 +4,17 @@ from wpilib.command.subsystem import Subsystem
 from wpilib.command import Command
 from wpilib import SmartDashboard as sd
 
-from ..commands.EjectToggle import EjectToggle
-from ..commands.EjectHatch import EjectHatch
-from ..commands.SlideToggle import SlideToggle
-class Hatch(Command):
+from commands.EjectToggle import EjectToggle
+from commands.EjectHatch import EjectHatch
+from commands.SlideToggle import SlideToggle
+class HatchMech(Command):
     def __init__(self, robot):
         """ Create all physical parts used by subsystem. """
         super().__init__('Hatch')
         # Set to true for extra info to smart dashboard
         self.debug = True
         self.robot = robot
-        #Normally the ejectPiston would be on solanoid 1, but was changed to see if slide worked.
+        #Normally the ejectPiston would be on solenoid 1, but was changed to see if slide worked.
         self.ejectPiston = wpilib.Solenoid(1)
         self.ejectPistonSlide = wpilib.Solenoid(0)
         self.ejectPiston.setName("Hatch" , "Ejector")
