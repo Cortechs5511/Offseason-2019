@@ -34,8 +34,8 @@ class EjectToggle(Command):
     def __init__(self):
         super().__init__('toggleHatch')
         robot = self.getRobot()
-        self.toggleHatch = robot.toggleHatch
-        self.requires(self.toggleHatch)
+        self.hatchMech = robot.hatchMech
+        self.requires(self.hatchMech)
 
     def initialize(self):
         pass
@@ -48,7 +48,7 @@ class EjectToggle(Command):
          
 
     def isFinished(self):
-        return true
+        return True
 
     def interrupted(self):
         pass
@@ -116,7 +116,7 @@ class HatchMech(Subsystem):
 
     def updateDashboard(self):
         """ Put diagnostics out to smart dashboard. """
-        SmartDashboard.putBooleann("Ejector Out", self.isEjectorOut())
+        SmartDashboard.putBoolean("Ejector Out", self.isEjectorOut())
         SmartDashboard.putBoolean("Slide Out",self.isSlideIn ())
        # SmartDashboard.putBoolean("Ejector Toggle" , EjectToggle())
 
