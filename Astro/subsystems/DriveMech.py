@@ -116,6 +116,8 @@ class DriveMech(Subsystem):
               SmartDashboard.putNumber("rightEncoder", self.rightEncoder.getRaw())
               SmartDashboard.putNumber("leftEncoderdistance", self.leftEncoder.getDistance())
               SmartDashboard.putNumber("rightEncoderdistacne", self.rightEncoder.getDistance())
+              SmartDashboard.putNumber("talonEncoder", self.driveLeft1.getQuadraturePosition())
+
     def subsystemInit(self):
         """ Adds subsystem specific commands. """
         if self.debug:
