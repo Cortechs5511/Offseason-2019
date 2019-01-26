@@ -30,6 +30,7 @@ class EjectHatch(Command):
 
 
 
+
 class EjectToggle(Command):
     def __init__(self):
         super().__init__('toggleHatch')
@@ -60,9 +61,34 @@ class EjectToggle(Command):
     def end(self):
        pass
 #    """ JACOB Make this command toggle between eject in/out. """
-    
 
 
+class SlideToggle(Command):
+    def __init__(self):
+        super().__init__('ToggleSlide')
+        robot = self.getRobot()
+        self.hatchMech = robot.hatchMech
+        self.requires(self.hatchMech)
+
+    def initialize(self):
+        pass
+
+    def execute(self):
+        slideOut = self.hatchMech.isSlideIn()
+        if slideOut:
+            self.hatchMech.slideIn()
+        else:
+            self.hatchMech.slideOut()
+         
+
+    def isFinished(self):
+        return True
+
+    def interrupted(self):
+        pass
+
+    def end(self):
+       pass
 class HatchMech(Subsystem):
     """ Controls the handling of hatches.
 
@@ -76,8 +102,8 @@ class HatchMech(Subsystem):
         # Set to true for extra info to smart dashboard
         self.debug = True
         self.robot = robot
-        self.ejectPiston = wpilib.Solenoid(0)
-        self.ejectPistonSlide = wpilib.Solenoid(1)
+        self.ejectPiston = wpilib.Solenoid(1)
+        self.ejectPistonSlide = wpilib.Solenoid(0)
         self.ejectPiston.setName("Hatch" , "Ejector")
         self.ejectPistonSlide.setName("Hatch" , "Slider")
 
@@ -137,3 +163,5 @@ class HatchMech(Subsystem):
         b.whenPressed(EjectHatch())
         b : wpilib.buttons.JoystickButton = r.operatorButton(5)
         b.whenPressed(EjectToggle())
+        b : wpilib.buttons.JoystickButton = r.operatorButton(6)
+        b.whenPressed(SlideToggle())
