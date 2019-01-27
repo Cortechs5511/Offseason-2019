@@ -8,9 +8,10 @@ class Odometer():
         [self.x, self.y, self.angle, self.rightVel, self.leftVel] = [0, 0, 0, 0, 0]
 
     def update(self, leftV, rightV, angleIn):
+        print(angleIn)
         speed = (leftV+rightV)/2
-        self.x += speed * 0.0333 * math.cos(math.pi/180*angleIn)
-        self.y += speed * 0.0333 * math.sin(math.pi/180*angleIn)
+        self.x += speed * 0.0200 * math.cos(math.pi/180*angleIn)
+        self.y += speed * 0.0200 * math.sin(math.pi/180*angleIn)
         self.angle = angleIn
         self.rightVel = rightV
         self.leftVel = leftV
@@ -29,4 +30,4 @@ class Odometer():
         leftVel = units.feetToMeters(self.leftVel)
         return [x, y, angle, leftVel, rightVel]
 
-    def display(self): print(get())
+    def display(self): print(self.get())

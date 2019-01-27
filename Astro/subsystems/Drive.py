@@ -131,7 +131,7 @@ class Drive(Subsystem):
 
         #Incorrect until redone
         transmission = DCMotor.DCMotorTransmission(8.3, 2.22, 1.10)
-        self.model = dDrive.DifferentialDrive(64, 10, 0, units.inchesToMeters(2.0), units.inchesToMeters(14), transmission, transmission)
+        self.model = dDrive.DifferentialDrive(64, 10, 0, units.inchesToMeters(3.0), units.inchesToMeters(14), transmission, transmission)
         self.maxVel = self.maxSpeed*self.model.getMaxAbsVelocity(0, 0, 12)
 
         self.Path = Path.Path(self, self.model, self.od, self.getDistance)
@@ -238,7 +238,6 @@ class Drive(Subsystem):
         self.leftVal = self.leftEncoder.get()
         self.rightVal = self.rightEncoder.get()
         self.navxVal = self.navx.getYaw()
-        self.navxVal = 0
 
     def getAngle(self):
         return self.navxVal

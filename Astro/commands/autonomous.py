@@ -13,7 +13,7 @@ from commands.drive.setFixedDT import SetFixedDT
 from commands.drive.setSpeedDT import SetSpeedDT
 from commands.drive.turnAngle import TurnAngle
 
-import commands.Sequences as seq
+import commands.sequences as seq
 
 class TestPath(CommandGroup):
     def __init__(self, follower="PathFinder"):

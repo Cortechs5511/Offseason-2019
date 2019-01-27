@@ -1,10 +1,7 @@
-import wpilib.buttons
-from wpilib.command.subsystem import Subsystem
 import math
+
 from wpilib import SmartDashboard
 from networktables import NetworkTables
-from subsystems import Drive
-from commands.getLimelightData import getLimelightData
 
 class Limelight():
 
