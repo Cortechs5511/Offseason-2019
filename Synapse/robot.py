@@ -57,7 +57,7 @@ class MyRobot(wpilib.TimedRobot):
         self.left_encoder = wpilib.Encoder(0,1)
         self.right_encoder = wpilib.Encoder(2,3)
     #switch between modes
-        self.tankMode = False
+        self.tankMode = True
         #self.modeButton = self.right_joystick.
     def teleopInit(self):
         self.count = 0
@@ -75,7 +75,7 @@ class MyRobot(wpilib.TimedRobot):
         self.ticks = self.getDistance()
         sd.putNumber("ticks",self.ticks)
     #limit breakers which set speeds based on axis units
-        left = -(self.Controller1.getRawAxis(1))
+        left = (self.Controller1.getRawAxis(1))
         right = -(self.Controller1.getRawAxis(5))
         rotation = (self.Controller1.getRawAxis(4))
         intakeButton = -(self.Controller1.getRawAxis(4))
