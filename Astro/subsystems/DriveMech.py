@@ -111,7 +111,6 @@ class DriveMech(Subsystem):
         self.flipped = False
         self.tankMode = True
         self.robot = robot
-        self.driveLeft2.follow(self.driveLeft1)
         
         if self.woodrow:
             L1 = wpilib.VictorSP(0)
