@@ -3,17 +3,16 @@ from wpilib.command.subsystem import Subsystem
 import math
 from wpilib import SmartDashboard
 from networktables import NetworkTables
-
+from subsystems import Drive
 from commands.getLimelightData import getLimelightData
 
 class Limelight():
 
-    abox = 20 #double check if exactly 20
+    abox = 22 #double check if exactly 20
 
     def __init__(self, Robot):
         self.table = NetworkTables.getTable("limelight")
         self.table.putNumber('ledMode',1)
-
         self.tv = 0
         self.tx = 0
         self.ty = 0
@@ -23,7 +22,7 @@ class Limelight():
 
     def readLimelightData(self):
         self.tv = self.table.getNumber('tv',None)
-        self.tx = self.table.getNumber('tx',None)
+        self.tx = self.table.getNumber('tx',0)
         self.ty = self.table.getNumber('ty',None)
         self.ta = self.table.getNumber('ta',None)
         self.ts = self.table.getNumber('ts',None)
@@ -47,14 +46,15 @@ class Limelight():
     def getHorizontal(self): return self.tx
     def getVertical(self): return self.ty
     def getArea(self): return self.ta
+    def getAngle2(self): pass
 
     def dashboardInit(self):
         pass
 
     def dashboardPeriodic(self):
         #SmartDashboard.putNumber("Limelight_tv", self.tv)
-        #SmartDashboard.putNumber("Limelight_tv", self.tx)
-        #SmartDashboard.putNumber("Limelight_tv", self.ty)
+        SmartDashboard.putNumber("Angle1", self.tx)
+        #SmartDashboard.putNumber("Angle2", self.getAngle2())
         #SmartDashboard.putNumber("Limelight_tv", self.ta)
         #SmartDashboard.putNumber("Limelight_tv", self.ts)
         #SmartDashboard.putNumber("Limelight_tv", self.tl)

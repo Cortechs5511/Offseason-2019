@@ -8,9 +8,9 @@ import wpilib.buttons
 from wpilib.command import Command
 from commandbased import CommandBasedRobot
 
-from commands.zero import Zero
+from commands.Zero import Zero
 
-from commands import sequences
+from commands import Sequences
 
 from commands import autonomous
 from commands.autonomous import TestPath
@@ -92,7 +92,7 @@ class MyRobot(CommandBasedRobot):
 
         SmartDashboard.putData("Zero", Zero())
 
-        sequences.dashboardInit()
+        Sequences.dashboardInit()
         autonomous.dashboardInit()
 
         self.limelight.dashboardInit()
@@ -105,7 +105,7 @@ class MyRobot(CommandBasedRobot):
         self.cargoMech.dashboardPeriodic()
         self.climber.dashboardPeriodic()
 
-        sequences.dashboardPeriodic()
+        Sequences.dashboardPeriodic()
         autonomous.dashboardPeriodic()
 
         self.limelight.dashboardPeriodic()

@@ -242,7 +242,6 @@ class Drive(Subsystem):
 
     def getAngle(self):
         return self.navxVal
-        return 0
 
     def getRaw(self):
         return [self.leftVal, self.rightVal]
@@ -306,6 +305,7 @@ class Drive(Subsystem):
         SmartDashboard.putNumber("DT_DistanceLeft", self.getDistance()[0])
         SmartDashboard.putNumber("DT_DistanceRight", self.getDistance()[1])
         SmartDashboard.putNumber("DT_Angle", self.getAngle())
+        SmartDashboard.putNumber("Angle2", self.getAngle()-90)
 
         SmartDashboard.putNumber("DT_PowerLeft", self.left.get())
         SmartDashboard.putNumber("DT_PowerRight", self.right.get())
