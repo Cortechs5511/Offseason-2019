@@ -127,7 +127,7 @@ class Drive(Subsystem):
         self.angleController = angleController
         self.angleController.disable()
 
-        self.od = od.Odometer()
+        self.od = od.Odometer(self.robot.period)
 
         #Incorrect until redone
         transmission = DCMotor.DCMotorTransmission(8.3, 2.22, 1.10)

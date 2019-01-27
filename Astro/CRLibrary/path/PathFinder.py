@@ -13,11 +13,15 @@ class PathFinder():
 
     def __init__(self, DT, model, odometer, getDistances):
 
+        self.od = odometer
+        self.period = self.od.getPeriod()
+        self.frequency = 1/self.period
+
         #Variables
         self.DT = DT
         self.model = model
         self.getDistances = getDistances
-        self.od = odometer
+        
         self.leftFollower = None
         self.rightFollower = None
         self.PID = 0
@@ -46,7 +50,7 @@ class PathFinder():
 
     def initPath(self, name):
         self.time = 0
-        [left,right,modifier] = PathGen.getTraj(name, self.model)
+        [left,right,modifier] = PathGen.getTraj(name, self.model, self.period)
         PathGen.showPath(left,right,modifier)
 
         self.leftFollower = pf.followers.EncoderFollower(left)

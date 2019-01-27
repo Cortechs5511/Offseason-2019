@@ -20,6 +20,9 @@ class Ramsetes():
         self.model = model
         self.od = odometer
 
+        self.period = odometer.getPeriod()
+        self.frequency = 1/self.period
+
         self.time = 0
         self.maxTime = 0
 
@@ -91,7 +94,7 @@ class Ramsetes():
     def initPath(self, name):
         self.finished = False
 
-        [self.left,self.right,modifier] = PathGen.getTraj(name, self.model)
+        [self.left,self.right,modifier] = PathGen.getTraj(name, self.model, self.period)
         PathGen.showPath(self.left,self.right,modifier)
 
         self.time = 0
@@ -133,8 +136,8 @@ class Ramsetes():
         leftOut = v - self.model.effWheelbaseRadius()*w #for velocity PID process variable
         rightOut = v + self.model.effWheelbaseRadius()*w
 
-        a = 50*(v-self.prev[0]) #50 iterations per second
-        alpha = 50*(w-self.prev[1])
+        a = self.frequency*(v-self.prev[0]) #50 iterations per second
+        alpha = self.frequency*(w-self.prev[1])
 
         self.prev = [v, w] #for next acceleration calculations
 

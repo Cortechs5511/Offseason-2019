@@ -32,6 +32,10 @@ class MyRobot(CommandBasedRobot):
     dashboard = True
     follower = "Ramsetes"
 
+    frequency = 50
+    period = 1/frequency
+
+
     def robotInit(self):
 
         '''
@@ -66,7 +70,7 @@ class MyRobot(CommandBasedRobot):
         self.DriveStraight = DriveStraight()
 
     def robotPeriodic(self):
-        self.drive.od.display()
+        #self.drive.od.display()
         self.limelight.readLimelightData()
         if(self.dashboard): self.updateDashboardPeriodic()
 
