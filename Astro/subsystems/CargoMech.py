@@ -1,32 +1,26 @@
 import wpilib
 from wpilib import SmartDashboard
+
 from wpilib.command.subsystem import Subsystem
 from wpilib.command import Command
-from wpilib import SmartDashboard as sd
+
 import ctre
-from commands.WristIntake import Intake
-from commands.WristMove import Wrist
 
-
-
+from commands.cargo.wristIntake import WristIntake
+from commands.cargo.wristMove import WristMove
 
 class CargoMech(Subsystem):
+
     def __init__(self, Robot):
         """ Create all physical parts used by subsystem. """
         super().__init__('Cargo')
+
+        self.debug = True
         self.robot = Robot
+
         #fix
         self.motorIntake = ctre.WPI_TalonSRX(0)
         self.motorWrist = ctre.WPI_TalonSRX(1)
-        # Set to true for extra info to smart dashboard
-        self.debug = True
-
-    def disable(self):
-        self.stopIntake()
-
-    def updateDashboard(self):
-        """ Put diagnostics out to smart dashboard. """
-        pass
 
     def intake(self):
         ''' Intake the balls (turn wheels inward) '''
@@ -50,18 +44,28 @@ class CargoMech(Subsystem):
     def subsystemInit(self):
         """ Adds subsystem specific commands. """
         if self.debug == True:
-            sd.putData("Intake", Intake('intake',1))
-            sd.putData("Outtake",Intake('outtake',-1))
-            sd.putData("Stop Inake",Intake('stop',0))
-            sd.putData("Wrist up",Wrist('wrist up',1))
-            sd.putData("Wrist down",Wrist('wrist down',-1))
-            sd.putData("Stop wrist",Wrist('stop wrist',0))
+            SmartDashboard.putData("Intake", WristIntake('intake',1))
+            SmartDashboard.putData("Outtake",WristIntake('outtake',-1))
+            SmartDashboard.putData("Stop Inake",WristIntake('stop',0))
+            SmartDashboard.putData("Wrist up",WristMove('wrist up',1))
+            SmartDashboard.putData("Wrist down",WristMove('wrist down',-1))
+            SmartDashboard.putData("Stop wrist",WristMove('stop wrist',0))
+
         r = self.robot
         wristUp : wpilib.buttons.JoystickButton = r.operatorButton(4)
-        wristUp.whenPressed(Wrist('wrist up',1))
+        wristUp.whenPressed(WristMove('wrist up',1))
         wristDown : wpilib.buttons.JoystickButton = r.operatorButton(1)
-        wristDown.whenPressed(Wrist('wrist down',-1))
+        wristDown.whenPressed(WristMove('wrist down',-1))
         outtakeButton : wpilib.buttons.JoystickButton = r.operatorButton(5)
-        outtakeButton.whenPressed(Intake('outtake',-1))
+        outtakeButton.whenPressed(WristIntake('outtake',-1))
         intakeButton : wpilib.buttons.JoystickButton = r.operatorButton(6)
-        intakeButton.whenPressed(Intake('intake',1))
+        intakeButton.whenPressed(WristIntake('intake',1))
+
+    def disable(self):
+        self.stopIntake()
+
+    def dashboardInit(self):
+        pass
+
+    def dashboardPeriodic(self):
+        pass

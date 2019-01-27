@@ -1,10 +1,9 @@
 from wpilib.command import Command
 
 
-
-class EjectToggle(Command):
+class EjectHatch(Command):
     def __init__(self):
-        super().__init__('toggleHatch')
+        super().__init__('EjectHatch')
         robot = self.getRobot()
         self.hatchMech = robot.hatchMech
         self.requires(self.hatchMech)
@@ -13,21 +12,14 @@ class EjectToggle(Command):
         pass
 
     def execute(self):
-        ejectorOut = self.hatchMech.isEjectorOut()
-        if ejectorOut:
-            self.hatchMech.retractEjector()
-        else:
-            self.hatchMech.ejectHatch()
+         self.hatchMech.ejectHatch()
 
-            
-
-         
 
     def isFinished(self):
-        return True
+        return self.timeSinceInitialized()>3
 
     def interrupted(self):
         pass
 
     def end(self):
-       pass
+         self.hatchMech.retractEjector()

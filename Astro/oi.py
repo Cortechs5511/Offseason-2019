@@ -7,8 +7,6 @@ from wpilib.buttons import Trigger
 
 from wpilib import XboxController as Xbox
 
-import commands.Sequences as seq
-
 from commands.crash import Crash
 
 class axisButton(Trigger):
@@ -20,7 +18,6 @@ class axisButton(Trigger):
 
     def get(self):
         return abs(self.f(self.num)) > self.Threshold
-
 
 def getJoystick(num):
     '''
@@ -39,3 +36,4 @@ def commands():
     joystick0 = getJoystick(0)
     joystick1 = getJoystick(1)
     xbox = getJoystick(2)
+    return [joystick0, joystick1, xbox]

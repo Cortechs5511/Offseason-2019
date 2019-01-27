@@ -6,24 +6,21 @@ from wpilib.command.subsystem import Subsystem
 from wpilib.command import Command
 from wpilib import SmartDashboard as sd
 
-
-
-
 class FlipButton(Command):
     def __init__(self):
         super().__init__('Flip')
         robot = self.getRobot()
         self.driveMech = robot.driveMech
-        
+
     def initialize(self):
         pass
 
     def execute(self):
-        
+
         if self.driveMech.flipped:
             self.driveMech.flipped = False
         else:
-            self.driveMech.flipped = True 
+            self.driveMech.flipped = True
     def interrupted(self):
         self.end()
 
@@ -32,7 +29,7 @@ class FlipButton(Command):
       #  self.driveMechanism.stopDrive()
 
     def isFinished(self):
-        return True 
+        return True
 
 class HumanDrive(Command):
     def __init__(self):
@@ -41,19 +38,16 @@ class HumanDrive(Command):
         self.driveMech = self.robot.driveMech
         self.requires(self.driveMech)
 
-
-
     def initialize(self):
         pass
 
     def execute(self):
-        leftSpeed, rightSpeed = self.robot.getTankValues()   
+        leftSpeed, rightSpeed = self.robot.getTankValues()
         if self.driveMech.flipped:
             oldLeft = leftSpeed
             leftSpeed = -rightSpeed
-            rightSpeed = -oldLeft   
+            rightSpeed = -oldLeft
         self.driveMech.drive(leftSpeed, rightSpeed)
-
 
     def interrupted(self):
         self.end()
@@ -67,7 +61,7 @@ class HumanDrive(Command):
 class DriveMech(Subsystem):
 
     def __init__(self, robot):
-      
+
         """ Create all physical parts used by subsystem. """
         super().__init__('Drive')
         # Set to true for extra info to smart dashboard
@@ -90,20 +84,12 @@ class DriveMech(Subsystem):
     #   self.driveLeft1.setInverted(True)
      #   self.driveRight1.setInverted(True)
 
-
-    
-
-
-
-
     def drive(self, leftSpeed, rightSpeed):
         self.driveLeft1.set(-leftSpeed)
         self.driveRight1.set(-rightSpeed)
-    
-    def stopDrive(self):
 
+    def stopDrive(self):
         self.drive(0,0)
-     
 
     def disable(self):
         """ Disables subsystem and puts everything back to starting position. """
@@ -126,8 +112,3 @@ class DriveMech(Subsystem):
         b = self.robot.driverRightButton(2)
         b.whenPressed(FlipButton())
         self.setDefaultCommand(HumanDrive())
-
-
-
-
-

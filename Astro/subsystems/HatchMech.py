@@ -1,19 +1,20 @@
 import wpilib
 from wpilib import SmartDashboard
+
 from wpilib.command.subsystem import Subsystem
 from wpilib.command import Command
-from wpilib import SmartDashboard as sd
 
-from commands.EjectToggle import EjectToggle
-from commands.EjectHatch import EjectHatch
-from commands.SlideToggle import SlideToggle
-class HatchMech(Command):
-    def __init__(self, robot):
+from commands.hatch.ejectToggle import EjectToggle
+from commands.hatch.ejectHatch import EjectHatch
+from commands.hatch.slideToggle import SlideToggle
+
+class HatchMech(Subsystem):
+    def __init__(self, Robot):
         """ Create all physical parts used by subsystem. """
         super().__init__('Hatch')
-        # Set to true for extra info to smart dashboard
         self.debug = True
-        self.robot = robot
+        self.robot = Robot
+
         #Normally the ejectPiston would be on solenoid 1, but was changed to see if slide worked.
         self.ejectPiston = wpilib.Solenoid(1)
         self.ejectPistonSlide = wpilib.Solenoid(0)
@@ -23,46 +24,26 @@ class HatchMech(Command):
     def isEjectorOut(self):
         """ Returns True when ejector is sticking out. """
         return self.ejectPiston.get()
-        
 
     def ejectHatch(self):
         """ Use this method to throw hatch onto docking surface. """
         self.ejectPiston.set(True)
 
-
-
     def retractEjector(self):
         """ Pulls the ejector back in. """
         self.ejectPiston.set(False)
-
-
 
     def slideOut(self):
         """ Slides hatch mechanism out over bumpers. """
         self.ejectPistonSlide.set(True)
 
-
-
     def slideIn(self):
         """ Pulls hatch mechanism back in. """
         self.ejectPistonSlide.set(False)
 
-
         """ says if the slide is in or not """
     def isSlideIn(self):
         return self.ejectPistonSlide.get()
-    
-    def disable(self):
-        """ Disables subsystem and puts everything back to starting position. """
-        self.retractEjector()
-        self.slideIn()
-
-    def updateDashboard(self):
-        """ Put diagnostics out to smart dashboard. """
-        if self.debug:
-            SmartDashboard.putBoolean("Ejector Out", self.isEjectorOut())
-            SmartDashboard.putBoolean("Slide Out",self.isSlideIn ())
-            
 
     def subsystemInit(self):
         """ Adds subsystem specific commands. """
@@ -78,3 +59,15 @@ class HatchMech(Command):
         b.whenPressed(EjectToggle())
         b : wpilib.buttons.JoystickButton = r.operatorButton(6)
         b.whenPressed(SlideToggle())
+
+    def disable(self):
+        self.retractEjector()
+        self.slideIn()
+
+    def dashboardInit(self):
+        pass
+
+    def dashboardPeriodic(self):
+        if self.debug:
+            SmartDashboard.putBoolean("EjectorOut", self.isEjectorOut())
+            SmartDashboard.putBoolean("SlideOut",self.isSlideIn ())

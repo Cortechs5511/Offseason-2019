@@ -5,10 +5,10 @@ from wpilib import SmartDashboard
 from wpilib.command import Command
 from wpilib.command import TimedCommand
 
-class driveVision(TimedCommand):
+class DriveVision(TimedCommand):
 
     def __init__(self, timeout = 300, PController = .03):
-        super().__init__('TurnVisionPID', timeoutInSeconds = timeout)
+        super().__init__('DriveVision', timeoutInSeconds = timeout)
 
         self.requires(self.getRobot().drive)
         self.DT = self.getRobot().drive

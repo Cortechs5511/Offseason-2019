@@ -8,7 +8,7 @@ from wpilib.command import TimedCommand
 class TurnAngle(TimedCommand):
 
     def __init__(self, angle = 0, timeout = 0):
-        super().__init__('TurnAnglePID', timeoutInSeconds = timeout)
+        super().__init__('TurnAngle', timeoutInSeconds = timeout)
         self.requires(self.getRobot().drive)
         self.DT = self.getRobot().drive
         self.angle = angle

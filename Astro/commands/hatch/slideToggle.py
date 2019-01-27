@@ -4,7 +4,7 @@ from wpilib.command import Command
 class SlideToggle(Command):
     # this is a simple toggle command for pnuematics and the slide mechanism.
     def __init__(self):
-        super().__init__('ToggleSlide')
+        super().__init__('SlideToggle')
         robot = self.getRobot()
         self.hatchMech = robot.hatchMech
         self.requires(self.hatchMech)
@@ -18,7 +18,7 @@ class SlideToggle(Command):
             self.hatchMech.slideIn()
         else:
             self.hatchMech.slideOut()
-         
+
 
     def isFinished(self):
         return True

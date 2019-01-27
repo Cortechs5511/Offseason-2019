@@ -6,9 +6,9 @@ from networktables import NetworkTables
 
 from commands.getLimelightData import getLimelightData
 
-class Limelight(Subsystem):
+class Limelight():
 
-    abox = 143
+    abox = 20 #double check if exactly 20
 
     def __init__(self, Robot):
         self.table = NetworkTables.getTable("limelight")
@@ -40,17 +40,18 @@ class Limelight(Subsystem):
     def getTl(self): return self.tl
 
     def getDistance(self):
-        if (4*math.tan(0.471)*math.tan(0.3576)*self.ta) == 0:
-            x = 1
-        else:
-            x = (4*math.tan(0.471)*math.tan(0.3576)*self.ta)
-        d = math.sqrt((self.abox)/x)
-        return d
+        const = 4 * math.tan(0.471)*math.tan(0.3576)
+        if(self.ta==None or self.ta==0): return -1
+        return math.sqrt((self.abox)/(const*self.ta))
 
-    def initDefaultCommand(self):
-        self.setDefaultCommand(getLimelightData())
+    def getHorizontal(self): return self.tx
+    def getVertical(self): return self.ty
+    def getArea(self): return self.ta
 
-    def UpdateDashboard(self):
+    def dashboardInit(self):
+        pass
+
+    def dashboardPeriodic(self):
         #SmartDashboard.putNumber("Limelight_tv", self.tv)
         #SmartDashboard.putNumber("Limelight_tv", self.tx)
         #SmartDashboard.putNumber("Limelight_tv", self.ty)

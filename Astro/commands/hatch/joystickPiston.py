@@ -6,6 +6,7 @@ from wpilib.command import TimedCommand
 
 class JoystickPiston(TimedCommand):
     def __init__(self, timeout = 0):
+        super().__init__('JoystickPiston')
         self.requires(self.getRobot().pistons)
         self.pistons = self.getRobot().pistons
 

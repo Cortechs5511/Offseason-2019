@@ -1,7 +1,8 @@
 from wpilib.command import Command
-class Wrist(Command):
-    def __init__(self,label,power):
-        super().__init__(label)
+
+class WristMove(Command):
+    def __init__(self, label, power):
+        super().__init__("WristMove: " + label)
         robot = self.getRobot()
         self.cargoMech = robot.cargoMech
         self.requires(self.cargoMech)
@@ -15,12 +16,12 @@ class Wrist(Command):
             self.cargoMech.wristDown()
         elif self.power == 1:
             self.cargoMech.wristUp()
-        
+
     def interrupted(self):
         self.cargoMech.wristStop()
 
     def end(self):
         self.cargoMech.wristStop()
-    
+
     def isFinished(self):
         return self.power == 0
