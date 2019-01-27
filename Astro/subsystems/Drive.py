@@ -1,11 +1,10 @@
 import math
-
 import ctre
 from ctre import WPI_TalonSRX as Talon
 from ctre import WPI_VictorSPX as Victor
 
-from navx import AHRS as navx
-
+import navx
+from subsystems.Limelight import Limelight
 import wpilib
 from wpilib import SmartDashboard
 from wpilib.command.subsystem import Subsystem
@@ -19,7 +18,6 @@ from commands.drive.driveVision import DriveVision
 from commands.drive.setFixedDT import SetFixedDT
 from commands.drive.setSpeedDT import SetSpeedDT
 from commands.drive.turnAngle import TurnAngle
-
 from sim import simComms
 
 from CRLibrary.physics import DCMotorTransmission as DCMotor
@@ -95,7 +93,8 @@ class Drive(Subsystem):
         self.left = TalonLeft
         self.right = TalonRight
 
-        self.navx = navx.create_spi()
+        self.navx = navx.ahrs.AHRS.create_spi()
+
 
         self.leftEncoder = wpilib.Encoder(0,1)
         self.leftEncoder.setDistancePerPulse(self.leftConv)
@@ -240,6 +239,8 @@ class Drive(Subsystem):
         self.navxVal = self.navx.getYaw()
 
     def getAngle(self):
+        if self.navxVal == None:
+            return 0
         return self.navxVal
 
     def getRaw(self):
@@ -280,6 +281,7 @@ class Drive(Subsystem):
         self.zeroEncoders()
         self.zeroNavx()
 
+
     def initDefaultCommand(self):
         self.setDefaultCommand(SetSpeedDT(timeout = 300))
 
@@ -287,6 +289,7 @@ class Drive(Subsystem):
         self.__tankDrive__(0,0)
 
     def dashboardInit(self):
+        self.zero()
         if(self.debug==False): return
         SmartDashboard.putData("DT_DiffDrive", DiffDrive())
         SmartDashboard.putData("DT_DrivePath", DrivePath())
@@ -298,13 +301,18 @@ class Drive(Subsystem):
         SmartDashboard.putData("DT_SetSpeedDT", SetSpeedDT())
         SmartDashboard.putData("DT_TurnAngle", TurnAngle())
 
+    def getXError(self):
+        return self.robot.limelight.getDistance() * math.sin(math.radians(self.getAngle()-90))
+
     def dashboardPeriodic(self):
         if(self.debug==False): return
         SmartDashboard.putNumber("DT_DistanceAvg", self.getAvgDistance())
         SmartDashboard.putNumber("DT_DistanceLeft", self.getDistance()[0])
         SmartDashboard.putNumber("DT_DistanceRight", self.getDistance()[1])
         SmartDashboard.putNumber("DT_Angle", self.getAngle())
-        SmartDashboard.putNumber("Angle2", self.getAngle()-90)
+        SmartDashboard.putNumber("Angle2", self.getAngle()- self.robot.limelight.getTa())
+        SmartDashboard.putNumber("xError", self.getXError())
+        print(self.getXError())
 
         SmartDashboard.putNumber("DT_PowerLeft", self.left.get())
         SmartDashboard.putNumber("DT_PowerRight", self.right.get())
