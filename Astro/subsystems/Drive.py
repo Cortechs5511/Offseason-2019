@@ -4,15 +4,21 @@ import ctre
 from ctre import WPI_TalonSRX as Talon
 from ctre import WPI_VictorSPX as Victor
 
-#from navx import AHRS as navx
+from navx import AHRS as navx
 
 import wpilib
 from wpilib import SmartDashboard
 from wpilib.command.subsystem import Subsystem
 
-from commands.diffDrive import diffDrive
-from commands.setSpeedDT import setSpeedDT
-from commands.setFixedDT import setFixedDT
+from commands.drive.diffDrive import DiffDrive
+from commands.drive.drivePath import DrivePath
+from commands.drive.driveStraightCombined import DriveStraightCombined
+from commands.drive.driveStraightDistance import DriveStraightDistance
+from commands.drive.driveStraightTime import DriveStraightTime
+from commands.drive.driveVision import DriveVision
+from commands.drive.setFixedDT import SetFixedDT
+from commands.drive.setSpeedDT import SetSpeedDT
+from commands.drive.turnAngle import TurnAngle
 
 from sim import simComms
 
@@ -35,16 +41,18 @@ class Drive(Subsystem):
 
     model = None
 
-    #navxVal = 0
+    navxVal = 0
     leftVal = 0
     rightVal = 0
 
     leftConv = 4/12 * math.pi / 255
-    rightConv = -4/12 * math.pi / 127
+    rightConv = -4/12 * math.pi / 255
 
     def __init__(self, Robot):
         super().__init__('Drive')
-        SmartDashboard.putNumber("RightGain", 0.9)
+
+        self.debug = True
+        self.robot = Robot
 
         timeout = 0
 
@@ -87,7 +95,7 @@ class Drive(Subsystem):
         self.left = TalonLeft
         self.right = TalonRight
 
-        #self.navx = navx.create_spi()
+        self.navx = navx.create_spi()
 
         self.leftEncoder = wpilib.Encoder(0,1)
         self.leftEncoder.setDistancePerPulse(self.leftConv)
@@ -119,12 +127,12 @@ class Drive(Subsystem):
         self.angleController = angleController
         self.angleController.disable()
 
-        self.od = od.Odometer()
+        self.od = od.Odometer(self.robot.period)
 
-        transmission = DCMotor.DCMotorTransmission(8.3, 2.22, 1.10) #8.02, 2.22, 1.10
-        self.model = dDrive.DifferentialDrive(64, 10, 0, units.inchesToMeters(2.0), units.inchesToMeters(14), transmission, transmission)
+        #Incorrect until redone
+        transmission = DCMotor.DCMotorTransmission(8.3, 2.22, 1.10)
+        self.model = dDrive.DifferentialDrive(64, 10, 0, units.inchesToMeters(3.0), units.inchesToMeters(14), transmission, transmission)
         self.maxVel = self.maxSpeed*self.model.getMaxAbsVelocity(0, 0, 12)
-        #print("Max Velocity: "+ str(self.maxVel))
 
         self.Path = Path.Path(self, self.model, self.od, self.getDistance)
 
@@ -192,29 +200,24 @@ class Drive(Subsystem):
         if(num==0): return 0
         return -1
 
+    def diffAssist(self, left, right):
+        wheelVelocity = dDrive.WheelState(left*self.maxVel/self.model.wheelRadius(), right*self.maxVel/self.model.wheelRadius())
+        wheelAcceleration = dDrive.WheelState(0, 0) #Add better math here later
+        voltage = self.model.solveInverseDynamics_WS(wheelVelocity, wheelAcceleration).getVoltage()
+        return [voltage[0]/12, voltage[1]/12]
+
     def tankDrive(self,left=0,right=0):
         self.updateSensors()
-        if(self.mode=="Distance"):
-            [left,right] = [self.distPID,self.distPID]
-        elif(self.mode=="Angle"):
-            [left,right] = [self.anglePID,-self.anglePID]
-        elif(self.mode=="Combined"):
-            [left,right] = [self.distPID+self.anglePID,self.distPID-self.anglePID]
-        elif(self.mode=="Path"):
-            [left, right] = self. Path.followPath()
-        elif(self.mode=="DiffDrive"):
-            wheelVelocity = dDrive.WheelState(left*self.maxVel/self.model.wheelRadius(), right*self.maxVel/self.model.wheelRadius())
-            wheelAcceleration = dDrive.WheelState(0, 0) #Add better math here later
-            voltage = self.model.solveInverseDynamics_WS(wheelVelocity, wheelAcceleration).getVoltage()
-            [left, right] = [voltage[0]/12, voltage[1]/12]
-        elif(self.mode=="Direct"):
-            [left, right] = [left, right] #Add advanced logic here
-        else:
-            [left, right] = [0,0]
+        if(self.mode=="Distance"): [left,right] = [self.distPID,self.distPID]
+        elif(self.mode=="Angle"): [left,right] = [self.anglePID,-self.anglePID]
+        elif(self.mode=="Combined"): [left,right] = [self.distPID+self.anglePID,self.distPID-self.anglePID]
+        elif(self.mode=="Path"): [left, right] = self.Path.followPath()
+        elif(self.mode=="DiffDrive"): [left, right] = self.diffAssist(left, right)
+        elif(self.mode=="Direct"): [left, right] = [left, right] #Add advanced math here
+        else: [left, right] = [0,0]
 
         left = min(abs(left),self.maxSpeed)*self.sign(left)
         right = min(abs(right),self.maxSpeed)*self.sign(right)
-
         self.__tankDrive__(left,right)
 
     def __tankDrive__(self,left,right):
@@ -234,12 +237,10 @@ class Drive(Subsystem):
     def updateSensors(self):
         self.leftVal = self.leftEncoder.get()
         self.rightVal = self.rightEncoder.get()
-        #self.navxVal = self.navx.getYaw()
-        #self.navxVal = 0
+        self.navxVal = self.navx.getYaw()
 
     def getAngle(self):
-        #return self.navxVal
-        return 0
+        return self.navxVal
 
     def getRaw(self):
         return [self.leftVal, self.rightVal]
@@ -251,7 +252,7 @@ class Drive(Subsystem):
         return (self.getDistance()[0]+self.getDistance()[1])/2
 
     def getVelocity(self):
-        velocity = [30*(self.getDistance()[0]-self.prevDist[0]),30*(self.getDistance()[1]-self.prevDist[1])]
+        velocity = [50*(self.getDistance()[0]-self.prevDist[0]),50*(self.getDistance()[1]-self.prevDist[1])]
         self.prevDist = self.getDistance()
         return velocity
 
@@ -272,34 +273,46 @@ class Drive(Subsystem):
         simComms.resetEncoders()
 
     def zeroNavx(self):
-        #self.navx.zeroYaw()
-        pass
+        self.navx.zeroYaw()
+        #pass
 
     def zero(self):
         self.zeroEncoders()
         self.zeroNavx()
 
     def initDefaultCommand(self):
-        self.setDefaultCommand(diffDrive(timeout = 300))
-        #self.setDefaultCommand(setSpeedDT(timeout = 300))
-        #pass
+        self.setDefaultCommand(SetSpeedDT(timeout = 300))
 
-    def UpdateDashboard(self):
-        #SmartDashboard.putData("DT_DistPID", self.distController)
-        #SmartDashboard.putData("DT_AnglePID", self.angleController)
+    def disable(self):
+        self.__tankDrive__(0,0)
 
+    def dashboardInit(self):
+        if(self.debug==False): return
+        SmartDashboard.putData("DT_DiffDrive", DiffDrive())
+        SmartDashboard.putData("DT_DrivePath", DrivePath())
+        SmartDashboard.putData("DT_DriveStraightCombined", DriveStraightCombined())
+        SmartDashboard.putData("DT_DriveStraightDistance", DriveStraightDistance())
+        SmartDashboard.putData("DT_DriveStraightTime", DriveStraightTime())
+        SmartDashboard.putData("DT_DriveVision", DriveVision())
+        SmartDashboard.putData("DT_SetFixedDT", SetFixedDT())
+        SmartDashboard.putData("DT_SetSpeedDT", SetSpeedDT())
+        SmartDashboard.putData("DT_TurnAngle", TurnAngle())
+
+    def dashboardPeriodic(self):
+        if(self.debug==False): return
         SmartDashboard.putNumber("DT_DistanceAvg", self.getAvgDistance())
-        #SmartDashboard.putNumber("DT_DistanceLeft", self.getDistance()[0])
-        #SmartDashboard.putNumber("DT_DistanceRight", self.getDistance()[1])
-        #SmartDashboard.putNumber("DT_Angle", self.getAngle())
+        SmartDashboard.putNumber("DT_DistanceLeft", self.getDistance()[0])
+        SmartDashboard.putNumber("DT_DistanceRight", self.getDistance()[1])
+        SmartDashboard.putNumber("DT_Angle", self.getAngle())
+        SmartDashboard.putNumber("Angle2", self.getAngle()-90)
 
-        #SmartDashboard.putNumber("DT_PowerLeft", self.left.get())
-        #SmartDashboard.putNumber("DT_PowerRight", self.right.get())
+        SmartDashboard.putNumber("DT_PowerLeft", self.left.get())
+        SmartDashboard.putNumber("DT_PowerRight", self.right.get())
 
-        #SmartDashboard.putNumber("DT_VelocityLeft", self.getVelocity()[0])
-        #SmartDashboard.putNumber("DT_VelocityRight", self.getVelocity()[1])
+        SmartDashboard.putNumber("DT_VelocityLeft", self.getVelocity()[0])
+        SmartDashboard.putNumber("DT_VelocityRight", self.getVelocity()[1])
 
-        #SmartDashboard.putNumber("DT_CounLeft", self.getRaw()[0])
-        #SmartDashboard.putNumber("DT_CountRight", self.getRaw()[1])
+        SmartDashboard.putNumber("DT_CounLeft", self.getRaw()[0])
+        SmartDashboard.putNumber("DT_CountRight", self.getRaw()[1])
 
-        #SmartDashboard.putNumber("DriveAmps",self.getOutputCurrent())
+        SmartDashboard.putNumber("DriveAmps",self.getOutputCurrent())

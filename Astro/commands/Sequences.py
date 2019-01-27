@@ -1,5 +1,8 @@
 from wpilib.command import CommandGroup
 from wpilib import SmartDashboard
 
-def UpdateDashboard():
+def dashboardInit():
+    pass
+
+def dashboardPeriodic():
     pass

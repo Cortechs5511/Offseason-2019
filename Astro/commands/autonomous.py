@@ -3,28 +3,30 @@ from wpilib.command.waitcommand import WaitCommand
 
 from wpilib import SmartDashboard
 
-from commands.DriveStraightCombined import DriveStraightCombined
-from commands.DriveStraightDistance import DriveStraightDistance
-from commands.DriveStraightTime import DriveStraightTime
-from commands.DrivePath import DrivePath
-from commands.TurnAngle import TurnAngle
+from commands.drive.diffDrive import DiffDrive
+from commands.drive.drivePath import DrivePath
+from commands.drive.driveStraightCombined import DriveStraightCombined
+from commands.drive.driveStraightDistance import DriveStraightDistance
+from commands.drive.driveStraightTime import DriveStraightTime
+from commands.drive.driveVision import DriveVision
+from commands.drive.setFixedDT import SetFixedDT
+from commands.drive.setSpeedDT import SetSpeedDT
+from commands.drive.turnAngle import TurnAngle
 
-from commands.setFixedDT import setFixedDT
-
-import commands.Sequences as seq
-#PATHFINDER AUTOS
+import commands.sequences as seq
 
 class TestPath(CommandGroup):
     def __init__(self, follower="PathFinder"):
         super().__init__("TestPath")
         self.addSequential(DrivePath(name="Test", follower=follower, timeout=15))
 
-'''STANDARD AUTOS'''
-
 class DriveStraight(CommandGroup):
     def __init__(self):
         super().__init__("DriveStraight")
         self.addSequential(DriveStraightCombined(distance=154/12.0, angle=0, timeout=5))
 
-def UpdateDashboard():
-    follower = "PathFinder"
+def dashboardInit():
+    pass
+
+def dashboardPeriodic():
+    pass

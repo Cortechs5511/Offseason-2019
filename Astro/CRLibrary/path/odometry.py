@@ -4,13 +4,18 @@ from CRLibrary.util import units
 
 class Odometer():
 
-    def __init__(self):
+    def __init__(self, period):
+        self.period = period
         [self.x, self.y, self.angle, self.rightVel, self.leftVel] = [0, 0, 0, 0, 0]
+
+    def getPeriod(self):
+        return self.period
 
     def update(self, leftV, rightV, angleIn):
         speed = (leftV+rightV)/2
-        self.x += speed * 0.0333 * math.cos(math.pi/180*angleIn)
-        self.y += speed * 0.0333 * math.sin(math.pi/180*angleIn)
+        self.x += speed * self.period * math.cos(math.pi/180*angleIn)
+        self.y += speed * self.period * math.sin(math.pi/180*angleIn)
+
         self.angle = angleIn
         self.rightVel = rightV
         self.leftVel = leftV
@@ -29,4 +34,4 @@ class Odometer():
         leftVel = units.feetToMeters(self.leftVel)
         return [x, y, angle, leftVel, rightVel]
 
-    def display(self): print(get())
+    def display(self): print(self.get())

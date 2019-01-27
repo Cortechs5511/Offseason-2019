@@ -20,7 +20,7 @@ def getLimits():
     global MAXV, MAXA, MAXJ
     return [MAXV, MAXA, MAXJ]
 
-def getTraj(name, model):
+def getTraj(name, model, period):
     path = os.path.join(os.path.join(os.path.abspath(os.path.join(os.path.abspath(
     os.path.join(os.path.abspath(os.path.join(__file__, os.pardir)), os.pardir)), os.pardir)),"path"),name)
     if(not os.path.exists(path)): os.makedirs(path)
@@ -32,7 +32,7 @@ def getTraj(name, model):
     if wpilib.RobotBase.isSimulation():
         points = PathList.makeTraj(name)
         info, trajectory = pf.generate(points, pf.FIT_HERMITE_CUBIC, pf.SAMPLES_HIGH,
-        dt=.0333, max_velocity=MAXV, max_acceleration=MAXA, max_jerk=MAXJ)
+        dt=period, max_velocity=MAXV, max_acceleration=MAXA, max_jerk=MAXJ)
 
         modifier = pf.modifiers.TankModifier(trajectory).modify(units.metersToFeet(model.effWheelbaseRadius()))
         left = modifier.getLeftTrajectory()
