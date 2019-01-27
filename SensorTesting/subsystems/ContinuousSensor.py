@@ -16,11 +16,8 @@ class ContinuousSensor(Subsystem):
         if len(self.list) >= x:
             self.majorList = []
             for i in range(1,(x+1)):
-                self.d = 1.0 / x
-                if list[-i] == 0 and list[(-i-1)] == 0 and list[(-i-2)] == 0:
-                    self.majorList.append((x+1-i) * (self.d) * (self.list[-i]))
-                elif list[-i] != 0:
-                    self.majorList.append((x+1-i) * (self.d) * (self.list[-i]))
+                if (list[-i] == 0 and list[(-i-1)] == 0 and list[(-i-2)] == 0) or (list[-i] != 0):
+                    self.majorList.append(((x)^-(i-3))/10) * list[-i]
                 else: pass
         elif len(self.list) >= 1:
             self.majorList = [self.list[-1]]
