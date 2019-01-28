@@ -10,7 +10,10 @@ from CRLibrary.path import odometry as od
 
 class DrivePath(TimedCommand):
 
-    def __init__(self, name="DriveStraight", follower="PathFinder", timeout = 10):
+    startX = 0
+    startY = 0
+
+    def __init__(self, name="DriveStraight", follower="PathFinder", timeout = 300):
         super().__init__('DrivePath', timeoutInSeconds = timeout)
 
         self.requires(self.getRobot().drive)
@@ -21,9 +24,13 @@ class DrivePath(TimedCommand):
 
         self.Path = self.DT.Path
 
+    def start(self, x=0, y=0):
+        [self.startX, self.startY] = [x, y]
+        super(DrivePath, self).start()
+
     def initialize(self):
-        self.Path.reset(x=0, y=-5, angle=0)
-        self.DT.setPath(name=self.name, follower=self.follower)
+        self.Path.reset(x = self.startX, y = self.startY, angle = 0)
+        self.DT.setPath(name = self.name, follower = self.follower)
 
     def execute(self):
         self.DT.tankDrive()

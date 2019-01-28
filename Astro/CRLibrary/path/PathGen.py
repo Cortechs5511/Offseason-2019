@@ -12,7 +12,7 @@ from CRLibrary.util import util
 
 from path import PathList
 
-MAXV = 5
+MAXV = 8
 MAXA = 10
 MAXJ = 10
 
@@ -49,6 +49,9 @@ def getTraj(name, model, period):
         return [left,right,modifier]
 
 def showPath(left,right,modifier):
+    pass
+
+    '''
     if wpilib.RobotBase.isSimulation():
         from pyfrc.sim import get_user_renderer
         renderer = get_user_renderer()
@@ -56,3 +59,4 @@ def showPath(left,right,modifier):
             renderer.draw_pathfinder_trajectory(left, color='#0000ff', offset=(-1.5,0)) #half width in feet
             renderer.draw_pathfinder_trajectory(modifier.source, color='#00ff00', show_dt=1.0, dt_offset=0.0)
             renderer.draw_pathfinder_trajectory(right, color='#0000ff', offset=(1.5,0)) #half width in feet
+    '''

@@ -16,6 +16,8 @@ from commands import autonomous
 from commands.autonomous import TestPath
 from commands.autonomous import DriveStraight
 
+from commands.drive.drivePath import DrivePath
+
 from subsystems import HatchMech
 from subsystems import CargoMech
 from subsystems import Climber
@@ -68,9 +70,11 @@ class MyRobot(CommandBasedRobot):
 
         self.TestPath = TestPath(self.follower)
         self.DriveStraight = DriveStraight()
+        self.DrivePath = DrivePath(name="Test", follower="Ramsetes")
 
     def robotPeriodic(self):
         #self.drive.odMain.display()
+        self.drive.odTemp.display()
         self.limelight.readLimelightData()
         if(self.dashboard): self.updateDashboardPeriodic()
 
@@ -80,9 +84,13 @@ class MyRobot(CommandBasedRobot):
         self.timer.start()
         self.curr = 0
 
+        self.DrivePath.start(0,-5)
+
+        '''
         self.autoMode = "TestPath" #self.autoMode = "DriveStraight"
         if self.autoMode == "DriveStraight": self.DriveStraight.start()
-        elif self.autoMode == "TestPath": self.TestPath.start()
+        elif self.autoMode == "TestPath": self.TestPath.init()
+        '''
 
     def updateDashboardInit(self):
         SmartDashboard.putData("Drive", self.drive)
