@@ -18,12 +18,12 @@ class Limelight():
         self.tl = 0
 
     def readLimelightData(self):
-        self.tv = self.table.getNumber('tv',None)
-        self.tx = self.table.getNumber('tx',0)
-        self.ty = self.table.getNumber('ty',None)
-        self.ta = self.table.getNumber('ta',None)
-        self.ts = self.table.getNumber('ts',None)
-        self.tl = self.table.getNumber('tl',None)
+        self.tv = self.table.getNumber('tv',1000)
+        self.tx = self.table.getNumber('tx',1000)
+        self.ty = self.table.getNumber('ty',1000)
+        self.ta = self.table.getNumber('ta',1000)
+        self.ts = self.table.getNumber('ts',1000)
+        self.tl = self.table.getNumber('tl',1000)
 
     def get(self):
         return [self.tv, self.tx, self.ty, self.ta, self.ts, self.tl]
@@ -36,9 +36,10 @@ class Limelight():
     def getTl(self): return self.tl
 
     def getDistance(self):
+        """returns distance in inches from limelight to target"""
         const = 4 * math.tan(0.471)*math.tan(0.3576)
         if(self.ta==None or self.ta==0): return -1
-        return math.sqrt((self.abox)/(const*self.ta))
+        return math.sqrt((self.abox)/(const*self.ta*100))
 
     def getHorizontal(self): return self.tx
     def getVertical(self): return self.ty
@@ -51,6 +52,7 @@ class Limelight():
     def dashboardPeriodic(self):
         #SmartDashboard.putNumber("Limelight_tv", self.tv)
         SmartDashboard.putNumber("Angle1", self.tx)
+        #SmartDashboard.putNumber("xError", self.tx)
         #SmartDashboard.putNumber("Angle2", self.getAngle2())
         #SmartDashboard.putNumber("Limelight_tv", self.ta)
         #SmartDashboard.putNumber("Limelight_tv", self.ts)

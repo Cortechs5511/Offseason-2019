@@ -13,10 +13,9 @@ from CRLibrary.path import PathGen
 
 class Ramsetes():
 
-    def __init__(self, drivetrain, model, odometer):
+    def __init__(self, model, odometer):
 
         '''Variables'''
-        self.DT = drivetrain
         self.model = model
         self.od = odometer
 
@@ -29,15 +28,14 @@ class Ramsetes():
         self.prev = [0, 0]
         self.PID = [0, 0, 0] #left, right, angle
 
-        self.DT = None
         self.finished = False
 
         '''Gains'''
-        kV = [0.40, 0.0, 0.1, 0.0]
-        kA = [0.03, 0.0, 0.0, 0.0]
+        kV = [0.40, 0.0, 0.2, 0.0]
+        kA = [0.05, 0.0, 0.0, 0.0]
 
-        self.kB = 1.5
-        self.kZeta = 0.4
+        self.kB = 2
+        self.kZeta = 0.7
 
         TolVel = 0.2
         TolAngle = 3
@@ -65,6 +63,13 @@ class Ramsetes():
         self.angleController.setAbsoluteTolerance(TolAngle)
         self.angleController.setContinuous(True)
         self.angleController.disable()
+
+    def reset(self, od = None):
+        self.time = 0
+        self.maxTime = 0
+        self.prev = [0, 0]
+        self.PID = [0, 0, 0]
+        self.finished = False
 
     def setLeft(self, output):
         self.PID[0] = output
@@ -157,4 +162,5 @@ class Ramsetes():
 
     def sinc(self, theta): return (1 if theta==0 else math.sin(theta)/theta)
 
-    def isFinished(self): return self.time>self.maxTime
+    def isFinished(self):
+        return self.time>=self.maxTime

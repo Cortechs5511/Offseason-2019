@@ -21,7 +21,7 @@ class PathFinder():
         self.DT = DT
         self.model = model
         self.getDistances = getDistances
-        
+
         self.leftFollower = None
         self.rightFollower = None
         self.PID = 0
@@ -39,6 +39,13 @@ class PathFinder():
         self.angleController.setAbsoluteTolerance(TolAngle)
         self.angleController.setContinuous(True)
         self.angleController.disable()
+
+    def reset(self, od = None):
+        self.leftFollower = None
+        self.rightFollower = None
+        self.PID = 0
+
+        self.time = 0
 
     def setAngle(self, output): self.PID = output
 

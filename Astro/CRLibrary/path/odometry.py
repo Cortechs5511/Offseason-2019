@@ -4,9 +4,9 @@ from CRLibrary.util import units
 
 class Odometer():
 
-    def __init__(self, period):
+    def __init__(self, period=1/50, x=0, y=0, angle=0):
         self.period = period
-        [self.x, self.y, self.angle, self.rightVel, self.leftVel] = [0, 0, 0, 0, 0]
+        [self.x, self.y, self.angle, self.rightVel, self.leftVel] = [x, y, angle, 0, 0]
 
     def getPeriod(self):
         return self.period
@@ -35,3 +35,10 @@ class Odometer():
         return [x, y, angle, leftVel, rightVel]
 
     def display(self): print(self.get())
+
+    def reset(self, x=0, y=0, angle=0):
+        self.x = x
+        self.y = y
+        self.angle = angle
+        self.rightVel = 0
+        self.leftVel = 0

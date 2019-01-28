@@ -1,11 +1,10 @@
 import math
-
 import ctre
 from ctre import WPI_TalonSRX as Talon
 from ctre import WPI_VictorSPX as Victor
 
-from navx import AHRS as navx
-
+import navx
+from subsystems.Limelight import Limelight
 import wpilib
 from wpilib import SmartDashboard
 from wpilib.command.subsystem import Subsystem
@@ -19,7 +18,6 @@ from commands.drive.driveVision import DriveVision
 from commands.drive.setFixedDT import SetFixedDT
 from commands.drive.setSpeedDT import SetSpeedDT
 from commands.drive.turnAngle import TurnAngle
-
 from sim import simComms
 
 from CRLibrary.physics import DCMotorTransmission as DCMotor
@@ -95,7 +93,7 @@ class Drive(Subsystem):
         self.left = TalonLeft
         self.right = TalonRight
 
-        self.navx = navx.create_spi()
+        self.navx = navx.ahrs.AHRS.create_spi()
 
         self.leftEncoder = wpilib.Encoder(0,1)
         self.leftEncoder.setDistancePerPulse(self.leftConv)
@@ -127,14 +125,15 @@ class Drive(Subsystem):
         self.angleController = angleController
         self.angleController.disable()
 
-        self.od = od.Odometer(self.robot.period)
+        self.odMain = od.Odometer(self.robot.period)
+        self.odTemp = od.Odometer(self.robot.period)
 
         #Incorrect until redone
         transmission = DCMotor.DCMotorTransmission(8.3, 2.22, 1.10)
         self.model = dDrive.DifferentialDrive(64, 10, 0, units.inchesToMeters(3.0), units.inchesToMeters(14), transmission, transmission)
         self.maxVel = self.maxSpeed*self.model.getMaxAbsVelocity(0, 0, 12)
 
-        self.Path = Path.Path(self, self.model, self.od, self.getDistance)
+        self.Path = Path.Path(self, self.model, self.odTemp, self.getDistance)
 
     def __getDistance__(self):
         return self.getAvgDistance()
@@ -176,24 +175,16 @@ class Drive(Subsystem):
             self.angleController.disable()
         self.mode = mode
 
-    def setDistance(self, distance):
-        self.setMode("Distance",distance=distance)
-
-    def setAngle(self, angle):
-        self.setMode("Angle",angle=angle)
-
-    def setCombined(self, distance, angle):
-        self.setMode("Combined",distance=distance,angle=angle)
+    def setDistance(self, distance): self.setMode("Distance",distance=distance)
+    def setAngle(self, angle): self.setMode("Angle",angle=angle)
+    def setCombined(self, distance, angle): self.setMode("Combined",distance=distance,angle=angle)
 
     def setPath(self, name, follower):
         self.Path.setFollower(follower)
         self.setMode("Path", name=name)
 
-    def setDiffDrive(self):
-        self.setMode("DiffDrive")
-
-    def setDirect(self):
-        self.setMode("Direct")
+    def setDiffDrive(self): self.setMode("DiffDrive")
+    def setDirect(self): self.setMode("Direct")
 
     def sign(self,num):
         if(num>0): return 1
@@ -224,11 +215,12 @@ class Drive(Subsystem):
         self.left.set(left)
         self.right.set(right)
 
-        self.updateOdometry(left, right)
+        self.updateOdometry()
 
-    def updateOdometry(self, left, right):
+    def updateOdometry(self):
         vel = self.getVelocity()
-        self.od.update(vel[0],vel[1],self.getAngle())
+        self.odMain.update(vel[0], vel[1], self.getAngle())
+        self.odTemp.update(vel[0], vel[1], self.getAngle())
         self.prevDist = self.getDistance()
 
     def getOutputCurrent(self):
@@ -252,7 +244,7 @@ class Drive(Subsystem):
         return (self.getDistance()[0]+self.getDistance()[1])/2
 
     def getVelocity(self):
-        velocity = [50*(self.getDistance()[0]-self.prevDist[0]),50*(self.getDistance()[1]-self.prevDist[1])]
+        velocity = [self.robot.frequency*(self.getDistance()[0]-self.prevDist[0]),self.robot.frequency*(self.getDistance()[1]-self.prevDist[1])]
         self.prevDist = self.getDistance()
         return velocity
 
@@ -287,6 +279,7 @@ class Drive(Subsystem):
         self.__tankDrive__(0,0)
 
     def dashboardInit(self):
+        self.zero()
         if(self.debug==False): return
         SmartDashboard.putData("DT_DiffDrive", DiffDrive())
         SmartDashboard.putData("DT_DrivePath", DrivePath())
@@ -298,13 +291,18 @@ class Drive(Subsystem):
         SmartDashboard.putData("DT_SetSpeedDT", SetSpeedDT())
         SmartDashboard.putData("DT_TurnAngle", TurnAngle())
 
+    def getXError(self):
+        return self.robot.limelight.getDistance() * math.sin(math.radians(self.getAngle()-90))
+
     def dashboardPeriodic(self):
         if(self.debug==False): return
         SmartDashboard.putNumber("DT_DistanceAvg", self.getAvgDistance())
         SmartDashboard.putNumber("DT_DistanceLeft", self.getDistance()[0])
         SmartDashboard.putNumber("DT_DistanceRight", self.getDistance()[1])
         SmartDashboard.putNumber("DT_Angle", self.getAngle())
-        SmartDashboard.putNumber("Angle2", self.getAngle()-90)
+        SmartDashboard.putNumber("Angle2", self.getAngle()- self.robot.limelight.getTa())
+        SmartDashboard.putNumber("xError", self.getXError())
+        #print(self.getXError())
 
         SmartDashboard.putNumber("DT_PowerLeft", self.left.get())
         SmartDashboard.putNumber("DT_PowerRight", self.right.get())

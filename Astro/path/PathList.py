@@ -19,10 +19,6 @@ def makeTraj(name):
     elif(name=="Test"):
         points = [
             pf.Waypoint(0,0,0),
-            pf.Waypoint(10,0,0),
-            pf.Waypoint(20,10,math.radians(-90)),
-            pf.Waypoint(10,20,math.radians(180)),
-            pf.Waypoint(0,10,math.radians(90)),
             pf.Waypoint(10,0,0)
         ]
     return points
