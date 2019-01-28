@@ -70,12 +70,12 @@ class MyRobot(CommandBasedRobot):
         self.DriveStraight = DriveStraight()
 
     def robotPeriodic(self):
-        #self.drive.od.display()
+        #self.drive.odMain.display()
         self.limelight.readLimelightData()
         if(self.dashboard): self.updateDashboardPeriodic()
 
     def autonomousInit(self):
-        self.drive.zero()
+        #self.drive.zero()
         self.timer.reset()
         self.timer.start()
         self.curr = 0

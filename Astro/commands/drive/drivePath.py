@@ -6,6 +6,7 @@ from wpilib.command import TimedCommand
 
 from CRLibrary.path import PathFinder
 from CRLibrary.path import Ramsetes
+from CRLibrary.path import odometry as od
 
 class DrivePath(TimedCommand):
 
@@ -21,6 +22,7 @@ class DrivePath(TimedCommand):
         self.Path = self.DT.Path
 
     def initialize(self):
+        self.Path.reset(x=0, y=-5, angle=0)
         self.DT.setPath(name=self.name, follower=self.follower)
 
     def execute(self):

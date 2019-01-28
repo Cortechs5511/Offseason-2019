@@ -11,11 +11,18 @@ from CRLibrary.path import Ramsetes
 
 class Path():
 
-    def __init__(self, DT, model, odometer, getDistances, follower="PathFinder"):
+    follower = "PathFinder"
 
+    def __init__(self, DT, model, odometer, getDistances, follower=None):
+        self.odometer = odometer
         self.PathFinder = PathFinder.PathFinder(DT, model, odometer, getDistances)
-        self.Ramsetes = Ramsetes.Ramsetes(DT, model, odometer)
-        self.setFollower(follower)
+        self.Ramsetes = Ramsetes.Ramsetes(model, odometer)
+        if(follower!=None): self.setFollower(follower)
+
+    def reset(self, x=0, y=0, angle=0):
+        self.odometer.reset(x, y, angle)
+        self.PathFinder.reset()
+        self.Ramsetes.reset()
 
     def setFollower(self, follower):
         self.follower = follower
@@ -37,5 +44,6 @@ class Path():
         elif(self.follower=="Ramsetes"): return self.Ramsetes.followPath()
 
     def isFinished(self):
-        if(self.follower=="PathFinder"): self.PathFinder.isFinished()
-        elif(self.follower=="Ramsetes"): self.Ramsetes.isFinished()
+        if(self.follower=="PathFinder"): return self.PathFinder.isFinished()
+        elif(self.follower=="Ramsetes"): return self.Ramsetes.isFinished()
+        return True
