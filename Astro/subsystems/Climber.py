@@ -12,20 +12,20 @@ class thirdLevelFront(Command):
         super().__init__('thirdLevel')
         self.robot = self.getRobot()
         self.thirdLevel = self.robot.thirdLevel
-    
+
     def initialize(self):
         pass
 
     def execute(self):
         #read encoder values to check
         liftFront()
-    
+
     def interrupted(self):
         stopFront()
 
     def end(self):
         stopFront()
-    
+
 
     def isFinished(self):
         #stop if encoder is over the height of the third level
@@ -41,13 +41,13 @@ class Climber(Subsystem):
         self.robot = Robot
         self.debug = True
         self.backLift = ctre.WPI_TalonSRX(0)
-        self.frontLift = ctre.WPI_TalonSRX(1)  
+        self.frontLift = ctre.WPI_TalonSRX(1)
         self.backWheel1 = ctre.WPI_VictorSPX(2)
         self.backWheel2 = ctre.WPI_VictorSPX(3)
-        self.encoder1 = wpilib.Encoder(0,1)
-        self.encoder2 = wpilib.Encoder(2,3)
+        #self.encoder1 = wpilib.Encoder(0,1)
+        #self.encoder2 = wpilib.Encoder(2,3)
 
-    
+
     def getHeight(self):
         #this will return the height in inches from encoder
         pass
