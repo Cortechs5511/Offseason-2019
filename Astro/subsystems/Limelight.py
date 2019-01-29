@@ -5,7 +5,7 @@ from networktables import NetworkTables
 
 class Limelight():
 
-    abox = 22 #double check if exactly 20
+    abox = 92.25 #area of box around targets
 
     def __init__(self, Robot):
         self.table = NetworkTables.getTable("limelight")
@@ -24,6 +24,10 @@ class Limelight():
         self.ta = self.table.getNumber('ta',1000)
         self.ts = self.table.getNumber('ts',1000)
         self.tl = self.table.getNumber('tl',1000)
+        self.thor = self.table.getNumber('thor',1000)
+        self.tvert = self.table.getNumber('tvert',1000)
+        self.tlong = self.table.getNumber('tlong',1000)
+        self.tshort = self.table.getNumber('tshort',1000)
 
     def get(self):
         return [self.tv, self.tx, self.ty, self.ta, self.ts, self.tl]
@@ -37,9 +41,10 @@ class Limelight():
 
     def getDistance(self):
         """returns distance in inches from limelight to target"""
+        taBox = (self.thor * self.tvert)/(102400) #box area as percentage of whole
         const = 4 * math.tan(0.471)*math.tan(0.3576)
-        if(self.ta==None or self.ta==0): return -1
-        return math.sqrt((self.abox)/(const*self.ta*100))
+        if(taBox==None or taBox==0): return -1
+        return math.sqrt((self.abox)/(const*taBox))
 
     def getHorizontal(self): return self.tx
     def getVertical(self): return self.ty
