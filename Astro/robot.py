@@ -85,7 +85,7 @@ class MyRobot(CommandBasedRobot):
         self.curr = 0
         x = self.limelight.getXError()
         y = self.limelight.getYError()
-        self.DrivePath.start(x,-y)
+        self.DrivePath.start(-x,-y)
 
         '''
         self.autoMode = "TestPath" #self.autoMode = "DriveStraight"
