@@ -49,7 +49,7 @@ class Drive(Subsystem):
     def __init__(self, Robot):
         super().__init__('Drive')
 
-        self.debug = True
+        self.debug = False
         self.robot = Robot
 
         timeout = 0
@@ -132,7 +132,6 @@ class Drive(Subsystem):
         transmission = DCMotor.DCMotorTransmission(8.3, 2.22, 1.10)
         self.model = dDrive.DifferentialDrive(64, 10, 0, units.inchesToMeters(3.0), units.inchesToMeters(14), transmission, transmission)
         self.maxVel = self.maxSpeed*self.model.getMaxAbsVelocity(0, 0, 12)
-
         self.Path = Path.Path(self, self.model, self.odTemp, self.getDistance)
 
     def __getDistance__(self):
@@ -308,14 +307,9 @@ class Drive(Subsystem):
         SmartDashboard.putNumber("DT_DistanceLeft", self.getDistance()[0])
         SmartDashboard.putNumber("DT_DistanceRight", self.getDistance()[1])
         SmartDashboard.putNumber("DT_Angle", self.getAngle())
-        SmartDashboard.putNumber("Angle2", self.getAngle2())
-        SmartDashboard.putNumber("xError", self.getXError())
-        SmartDashboard.putNumber("yError", self.getYError())
         #print(self.getXError())
-
         SmartDashboard.putNumber("DT_PowerLeft", self.left.get())
         SmartDashboard.putNumber("DT_PowerRight", self.right.get())
-
         SmartDashboard.putNumber("DT_VelocityLeft", self.getVelocity()[0])
         SmartDashboard.putNumber("DT_VelocityRight", self.getVelocity()[1])
 

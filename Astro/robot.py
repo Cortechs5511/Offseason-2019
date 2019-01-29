@@ -103,26 +103,23 @@ class MyRobot(CommandBasedRobot):
         self.hatchMech.dashboardInit()
         self.cargoMech.dashboardInit()
         self.climber.dashboardInit()
-
-        SmartDashboard.putData("Zero", Zero())
+        self.limelight.dashboardInit()
 
         sequences.dashboardInit()
         autonomous.dashboardInit()
 
-        self.limelight.dashboardInit()
+        SmartDashboard.putData("Zero", Zero())
 
     def updateDashboardPeriodic(self):
         self.rate.execute()
-
         self.drive.dashboardPeriodic()
         self.hatchMech.dashboardPeriodic()
         self.cargoMech.dashboardPeriodic()
         self.climber.dashboardPeriodic()
+        self.limelight.dashboardPeriodic()
 
         sequences.dashboardPeriodic()
         autonomous.dashboardPeriodic()
-
-        self.limelight.dashboardPeriodic()
 
     def disabledInit(self):
         self.drive.disable()

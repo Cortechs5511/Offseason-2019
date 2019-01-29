@@ -8,6 +8,7 @@ class Limelight():
     abox = 92.25 #area of box around targets
 
     def __init__(self, Robot):
+        self.robot = Robot
         self.table = NetworkTables.getTable("limelight")
         self.table.putNumber('ledMode',1)
         self.tv = 0
@@ -57,8 +58,10 @@ class Limelight():
     def dashboardPeriodic(self):
         #SmartDashboard.putNumber("Limelight_tv", self.tv)
         SmartDashboard.putNumber("Angle1", self.tx)
-        #SmartDashboard.putNumber("xError", self.tx)
-        #SmartDashboard.putNumber("Angle2", self.getAngle2())
+        SmartDashboard.putNumber("xError", self.robot.drive.getXError())
+        SmartDashboard.putNumber("yError", self.robot.drive.getYError())
+        SmartDashboard.putNumber("Angle2", self.robot.drive.getAngle2())
+        SmartDashboard.putNumber("NavXAngle", self.robot.drive.getAngle())
         #SmartDashboard.putNumber("Limelight_tv", self.ta)
         #SmartDashboard.putNumber("Limelight_tv", self.ts)
         #SmartDashboard.putNumber("Limelight_tv", self.tl)
