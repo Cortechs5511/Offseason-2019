@@ -79,13 +79,13 @@ class MyRobot(CommandBasedRobot):
         if(self.dashboard): self.updateDashboardPeriodic()
 
     def autonomousInit(self):
-        #self.drive.zero()
+        self.drive.zero()
         self.timer.reset()
         self.timer.start()
         self.curr = 0
-        x = self.limelight.getXError()
-        y = self.limelight.getYError()
-        self.DrivePath.start(-x,-y)
+
+        [x,y] = self.limelight.getPathXY()
+        self.DrivePath.start(x,y)
 
         '''
         self.autoMode = "TestPath" #self.autoMode = "DriveStraight"

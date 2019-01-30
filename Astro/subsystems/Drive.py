@@ -278,7 +278,6 @@ class Drive(Subsystem):
         self.__tankDrive__(0,0)
 
     def dashboardInit(self):
-        self.zero()
         if(self.debug==False): return
         SmartDashboard.putData("DT_DiffDrive", DiffDrive())
         SmartDashboard.putData("DT_DrivePath", DrivePath())
@@ -290,24 +289,13 @@ class Drive(Subsystem):
         SmartDashboard.putData("DT_SetSpeedDT", SetSpeedDT())
         SmartDashboard.putData("DT_TurnAngle", TurnAngle())
 
-    def getAngle2(self):
-        return self.getAngle() - self.robot.limelight.getTa()
-
-    def getXError(self):
-        angle2 = self.getAngle2()
-        return self.robot.limelight.getDistance() * math.sin(math.radians(angle2))
-
-    def getYError(self):
-        angle2 = self.getAngle2()
-        return self.robot.limelight.getDistance() * math.cos(math.radians(angle2))
-
     def dashboardPeriodic(self):
         if(self.debug==False): return
         SmartDashboard.putNumber("DT_DistanceAvg", self.getAvgDistance())
         SmartDashboard.putNumber("DT_DistanceLeft", self.getDistance()[0])
         SmartDashboard.putNumber("DT_DistanceRight", self.getDistance()[1])
         SmartDashboard.putNumber("DT_Angle", self.getAngle())
-        #print(self.getXError())
+
         SmartDashboard.putNumber("DT_PowerLeft", self.left.get())
         SmartDashboard.putNumber("DT_PowerRight", self.right.get())
         SmartDashboard.putNumber("DT_VelocityLeft", self.getVelocity()[0])
