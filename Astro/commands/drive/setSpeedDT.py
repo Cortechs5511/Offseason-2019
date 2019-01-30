@@ -22,6 +22,9 @@ class SetSpeedDT(TimedCommand):
     def execute(self):
         left = self.Joystick0.getY()
         right = self.Joystick1.getY()
+        flip = self.Joystick1.getButton(1) or self.Joystick0.getButton(1)
+        if flip == True:
+            self.DT.tankDrive(right * self.maxspeed ,left * self.maxspeed)
         self.DT.tankDrive(-left * self.maxspeed ,-right * self.maxspeed)
 
     def interrupted(self):

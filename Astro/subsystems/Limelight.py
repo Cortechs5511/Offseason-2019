@@ -1,13 +1,15 @@
 import math
 
+import wpilib
 from wpilib import SmartDashboard
 from networktables import NetworkTables
 
 class Limelight():
 
-    abox = 22 #double check if exactly 20
+    abox = 92.25 #area of box around targets
 
     def __init__(self, Robot):
+        self.robot = Robot
         self.table = NetworkTables.getTable("limelight")
         self.table.putNumber('ledMode',1)
         self.tv = 0
@@ -24,9 +26,16 @@ class Limelight():
         self.ta = self.table.getNumber('ta',1000)
         self.ts = self.table.getNumber('ts',1000)
         self.tl = self.table.getNumber('tl',1000)
+        self.thor = self.table.getNumber('thor',1000)
+        self.tvert = self.table.getNumber('tvert',1000)
+        self.tlong = self.table.getNumber('tlong',1000)
+        self.tshort = self.table.getNumber('tshort',1000)
 
     def get(self):
-        return [self.tv, self.tx, self.ty, self.ta, self.ts, self.tl]
+        return [self.tv, self.tx, self.ty, self.ta]
+
+    def getAll(self):
+        return [self.tv, self.tx, self.ty, self.ta, self.ts, self.tl, self.thor, self.tvert, self.tlong, self.tshort]
 
     def getTv(self): return self.tv
     def getTx(self): return self.tx
@@ -34,28 +43,42 @@ class Limelight():
     def getTa(self): return self.ta
     def getTs(self): return self.ts
     def getTl(self): return self.tl
+    def getThor(self): return self.thor
+    def getTvert(self): return self.tvert
+    def getTlong(self): return self.tlong
+    def getTshort(self): return self.tshort
 
     def getDistance(self):
         """returns distance in inches from limelight to target"""
-        const = 4 * math.tan(0.471)*math.tan(0.3576)
-        if(self.ta==None or self.ta==0): return -1
-        return math.sqrt((self.abox)/(const*self.ta*100))
 
-    def getHorizontal(self): return self.tx
-    def getVertical(self): return self.ty
-    def getArea(self): return self.ta
-    def getAngle2(self): pass
+        taBox = (self.thor * self.tvert)/(320**2) #box area as percentage of whole
+        if(taBox==None or taBox<=0): return -1
+
+        const = 4 * math.tan(0.471)*math.tan(0.3576)
+        return math.sqrt((self.abox)/(const*taBox))
+
+    def getAngle2(self):
+        #return self.robot.drive.getAngle() - self.getTa() #idk if typo
+        return self.robot.drive.getAngle() - self.getTx()
+
+    def getXError(self):
+        return self.robot.limelight.getDistance() * math.sin(math.radians(self.getAngle2()))
+
+    def getYError(self):
+        return self.robot.limelight.getDistance() * math.cos(math.radians(self.getAngle2()))
+
+    def getPathXY(self):
+        if wpilib.RobotBase.isSimulation(): return [-10, -5]
+        return [-self.getYError()/12, self.getXError()/12]
 
     def dashboardInit(self):
         pass
 
     def dashboardPeriodic(self):
-        #SmartDashboard.putNumber("Limelight_tv", self.tv)
-        SmartDashboard.putNumber("Angle1", self.tx)
-        #SmartDashboard.putNumber("xError", self.tx)
-        #SmartDashboard.putNumber("Angle2", self.getAngle2())
-        #SmartDashboard.putNumber("Limelight_tv", self.ta)
-        #SmartDashboard.putNumber("Limelight_tv", self.ts)
-        #SmartDashboard.putNumber("Limelight_tv", self.tl)
-        #SmartDashboard.putNumber("Limelight_tv", self.tl)
+        SmartDashboard.putNumber("xError", self.getPathXY()[0])
+        SmartDashboard.putNumber("yError", self.getPathXY()[1])
         SmartDashboard.putNumber("Distance",self.getDistance())
+
+        SmartDashboard.putNumber("Angle1", self.tx)
+        SmartDashboard.putNumber("Angle2", self.getAngle2())
+        SmartDashboard.putNumber("NavXAngle", self.robot.drive.getAngle())

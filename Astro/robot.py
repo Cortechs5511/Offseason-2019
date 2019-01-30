@@ -79,12 +79,13 @@ class MyRobot(CommandBasedRobot):
         if(self.dashboard): self.updateDashboardPeriodic()
 
     def autonomousInit(self):
-        #self.drive.zero()
+        self.drive.zero()
         self.timer.reset()
         self.timer.start()
         self.curr = 0
 
-        self.DrivePath.start(0,-5)
+        [x,y] = self.limelight.getPathXY()
+        self.DrivePath.start(x,y)
 
         '''
         self.autoMode = "TestPath" #self.autoMode = "DriveStraight"
@@ -102,26 +103,23 @@ class MyRobot(CommandBasedRobot):
         self.hatchMech.dashboardInit()
         self.cargoMech.dashboardInit()
         self.climber.dashboardInit()
-
-        SmartDashboard.putData("Zero", Zero())
+        self.limelight.dashboardInit()
 
         sequences.dashboardInit()
         autonomous.dashboardInit()
 
-        self.limelight.dashboardInit()
+        SmartDashboard.putData("Zero", Zero())
 
     def updateDashboardPeriodic(self):
         self.rate.execute()
-
         self.drive.dashboardPeriodic()
         self.hatchMech.dashboardPeriodic()
         self.cargoMech.dashboardPeriodic()
         self.climber.dashboardPeriodic()
+        self.limelight.dashboardPeriodic()
 
         sequences.dashboardPeriodic()
         autonomous.dashboardPeriodic()
-
-        self.limelight.dashboardPeriodic()
 
     def disabledInit(self):
         self.drive.disable()
