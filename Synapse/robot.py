@@ -52,7 +52,9 @@ class MyRobot(wpilib.TimedRobot):
         self.RightDrive3.follow(self.RightDrive1)
         self.RightDrive2.follow(self.RightDrive1)
     #creates two joysticks for drive control
-        self.Controller1 =wpilib.Joystick(0)
+        self.Joystick0 =wpilib.Joystick(0)
+        self.Joystick1 =wpilib.Joystick(1)
+        self.Controller1 =wpilib.Joystick(1)
     #sets up encoders
         self.left_encoder = wpilib.Encoder(0,1)
         self.right_encoder = wpilib.Encoder(2,3)
@@ -75,9 +77,9 @@ class MyRobot(wpilib.TimedRobot):
         self.ticks = self.getDistance()
         sd.putNumber("ticks",self.ticks)
     #limit breakers which set speeds based on axis units
-        left = (self.Controller1.getRawAxis(1))
-        right = -(self.Controller1.getRawAxis(5))
-        rotation = (self.Controller1.getRawAxis(4))
+        left = (self.Joystick0.getRawAxis(1))
+        right = -(self.Joystick1.getRawAxis(1))
+        rotation = (self.Controller1.getRawAxis(2))
         intakeButton = -(self.Controller1.getRawAxis(4))
         outtakeButton = -(self.Controller1.getRawAxis(3))
         liftButtonUp = (self.Controller1.getRawButton(4))
