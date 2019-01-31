@@ -4,10 +4,14 @@ from wpilib.joystick import Joystick
 from wpilib.buttons.joystickbutton import JoystickButton
 from wpilib.buttons import Button
 from wpilib.buttons import Trigger
+from wpilib import SmartDashboard
+
 
 from wpilib import XboxController as Xbox
 
 from commands.crash import Crash
+
+from commands.drive.bump import Bump
 
 class axisButton(Trigger):
 
@@ -33,6 +37,8 @@ def getJoystick(num):
     else: return xbox
 
 def commands():
+    SmartDashboard.putData("bumpDrive", Bump())
+
     joystick0 = getJoystick(0)
     joystick1 = getJoystick(1)
     xbox = getJoystick(2)
