@@ -53,7 +53,6 @@ class Limelight():
 
         taBox = (self.thor * self.tvert)/(320**2) #box area as percentage of whole
         if(taBox==None or taBox<=0): return -1
-
         const = 4 * math.tan(0.471)*math.tan(0.3576)
         return math.sqrt((self.abox)/(const*taBox))
 

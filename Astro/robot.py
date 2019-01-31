@@ -64,7 +64,7 @@ class MyRobot(CommandBasedRobot):
         [self.joystick0, self.joystick1, self.xbox] = oi.commands()
 
         self.rate = rate.DebugRate()
-        self.rate.initialize()
+        self.rate.start()
 
         if(self.dashboard): self.updateDashboardInit()
 
@@ -111,7 +111,7 @@ class MyRobot(CommandBasedRobot):
         SmartDashboard.putData("Zero", Zero())
 
     def updateDashboardPeriodic(self):
-        self.rate.execute()
+    #    self.rate.execute()
         self.drive.dashboardPeriodic()
         self.hatchMech.dashboardPeriodic()
         self.cargoMech.dashboardPeriodic()
