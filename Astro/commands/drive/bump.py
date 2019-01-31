@@ -9,7 +9,7 @@ class Bump(Command):
 
     def __init__(self):
         self.debug = True
-        super().__init__('Bump', timeoutInSeconds = timeout)
+        super().__init__('Bump')
         self.requires(self.getRobot().drive)
         self.DT = self.getRobot().drive
 
