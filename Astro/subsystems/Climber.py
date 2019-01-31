@@ -3,15 +3,17 @@ from wpilib import SmartDashboard
 
 from wpilib.command.subsystem import Subsystem
 from wpilib.command import Command
-
+import wpilib.Encoder
 import ctre
 
+# TODO DETERMINE CONVERSION!!!!
+TICKS_TO_INCHES = 1.0
 
 class thirdLevelFront(Command):
     def __init__(self):
-        super().__init__('thirdLevel')
+        super().__init__('thirdLevelFront')
         self.robot = self.getRobot()
-        self.thirdLevel = self.robot.thirdLevel
+        self.thirdLevelFront = self.robot.thirdLevelFront
 
     def initialize(self):
         pass
@@ -31,10 +33,58 @@ class thirdLevelFront(Command):
         #stop if encoder is over the height of the third level
         return True
 
+class lowerFront(command):
+    def __init__(self):
+        super().__init__('lowerFront')
+        self.robot = self.getRobot()
+        self.lowerFront = self.robot.lowerFront
+
+    def initialize(self):
+        pass
+
+    def execute(self):
+        #read encoder values to check
+        lowerFront()
+
+    def interrupted(self):
+        stopFront()
+
+    def end(self):
+        stopFront()
+
+
+    def isFinished(self):
+        #stop if encoder is over the height of the third level
+        return True
+class setSpeedWheel(Command):
+
+    def __init__(self):
+        super().__init__('setSpeedWheel')
+        self.robot = self.getRobot()
+        self.setSpeedWheel = self.robot.setSpeedWheel
+
+    def initialize(self):
+        pass
+
+    def execute(self):
+        #read encoder values to check
+        wheelSpeed()
+
+    def interrupted(self):
+        pass
+
+    def end(self):
+        wheelSpeed()
+
+
+def isFinished(self):
+    #stop if encoder is over the height of the third level
+    return True
+
+
 
 
 class Climber(Subsystem):
-
     def __init__(self, Robot):
         """ Create all physical parts used by subsystem. """
         super().__init__('Climber')
@@ -44,42 +94,69 @@ class Climber(Subsystem):
         self.frontLift = ctre.WPI_TalonSRX(1)
         self.backWheel1 = ctre.WPI_VictorSPX(2)
         self.backWheel2 = ctre.WPI_VictorSPX(3)
-        #self.encoder1 = wpilib.Encoder(0,1)
-        #self.encoder2 = wpilib.Encoder(2,3)
+        self.backWheel1.follow(self.backWheel2)
+        self.encoder1 = wpilib.Encoder(0,1)
+        self.encoder2 = wpilib.Encoder(2,3)
 
+    def getHeightFront(self):
+        """this will return the height in inches from encoder
+            Pass height to SD
+        """
+        ticks = self.frontLift.getQuadraturePosition()
+        return ticks * TICK_TO_INCHES
 
-    def getHeight(self):
-        #this will return the height in inches from encoder
-        pass
+    def getHeightBack(self):
+        """this will return the height in inches from encoder
+            Pass height to SD
+        """
+        ticks = self.backLift.getQuadraturePosition()
+        return ticks * TICK_TO_INCHES
 
-    def wheelSpeed(self):
-        #basic drive function for extended wheels
-        self.backWheel1.set(0.5)
-        self.backWheel2.set(0.5)
+    def liftFront(self,lift):
+        """ Basic lift function for lifting robot.
+        @param lift - Positive values make lift go down
+        """
+        if getHeightFront()>=19:
+            self.frontLift.set(0)
+        else:
+            self.frontLift.set(lift)
+        if getHeightFront()<=0:
+            self.frontLift.set(0)
+        else:
+            self.frontLift.set(lift)
 
-    def liftFront(self):
-        self.frontLift.set(0.5)
+    def liftBack(self,lift):
+        """ Basic lift function for lifting robot.
+        @param lift - Positive values make lift go down
+        """
+        if getHeightBack()>=19:
+            self.backLift.set(0)
+        else:
+            self.backLift.set(lift)
+        if getHeightBack()<=0:
+            self.backLift.set(0)
+        else:
+            self.backLift.set(lift)
+    def wheelSpeed(self,speed):
+        """ Basic drive function for extended wheels.
+            dont' forget breakers
+        @param speed - Positive values go true.
+         """
+        self.backWheel2.set(speed)
 
-    def lowerFront(self):
-        self.frontLift.set(-0.5)
-
+        '''stopping functions'''
     def stopFront(self):
         self.frontLift.set(0)
-
-    def liftBack(self):
-        self.backLift.set(0.5)
-
-    def lowerBack(self):
-        self.backLift.set(-0.5)
-
     def stopBack(self):
         self.backLift.set(0)
-
+    def stopDrive(self):
+        self.backWheel2.set(0)
     def disable(self):
-        pass
+        self.stopFront()
+        self.stopBack()
+        self.stopDrive()
 
     def dashboardInit(self):
         pass
-
     def dashboardPeriodic(self):
         pass
