@@ -68,25 +68,7 @@ class HumanDrive(Command):
         pass
 
     def execute(self):
-<<<<<<< HEAD
 
-        if self.driveMech.tankMode:
-
-            leftSpeed, rightSpeed = self.robot.getTankValues()
-
-
-            if self.driveMech.flipped:
-                oldLeft = leftSpeed
-                leftSpeed = -rightSpeed
-                rightSpeed = -oldLeft
-        else:
-            #compute power for arcade Mode
-            leftSpeed = 0
-            rightSpeed = 0
-        self.driveMech.drive(leftSpeed, rightSpeed)
-
-
-=======
         leftSpeed, rightSpeed = self.robot.getTankValues()
         if self.driveMech.flipped:
             oldLeft = leftSpeed
@@ -94,7 +76,6 @@ class HumanDrive(Command):
             rightSpeed = -oldLeft
         self.driveMech.drive(leftSpeed, rightSpeed)
 
->>>>>>> e20be0e1e29b90262838b9d70333cc92becc12fc
     def interrupted(self):
         self.end()
 
@@ -181,7 +162,3 @@ class DriveMech(Subsystem):
         b.whenPressed(FlipButton())
         self.setDefaultCommand(HumanDrive())
         SmartDashboard.putData("Tank Mode", DriveMode())
-
-
-
-
