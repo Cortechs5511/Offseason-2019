@@ -26,6 +26,7 @@ from subsystems import Limelight
 
 from CRLibrary.path import odometry as od
 
+from robotpy_ext.misc.looptimer import LoopTimer
 
 import rate
 
@@ -72,11 +73,15 @@ class MyRobot(CommandBasedRobot):
         self.DriveStraight = DriveStraight()
         self.DrivePath = DrivePath(name="Test", follower="Ramsetes")
 
+        self.loop_timer = LoopTimer(self.logger)
+
     def robotPeriodic(self):
         #self.drive.odMain.display()
-        self.drive.odTemp.display()
+        #self.drive.odTemp.display()
         self.limelight.readLimelightData()
         if(self.dashboard): self.updateDashboardPeriodic()
+
+        self.loop_timer.measure()
 
     def autonomousInit(self):
         self.drive.zero()

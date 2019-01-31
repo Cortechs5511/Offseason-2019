@@ -3,7 +3,7 @@ from wpilib import SmartDashboard
 
 from wpilib.command.subsystem import Subsystem
 from wpilib.command import Command
-import wpilib.Encoder
+import wpilib.encoder
 import ctre
 
 # TODO DETERMINE CONVERSION!!!!
@@ -97,9 +97,9 @@ class Climber(Subsystem):
         self.backWheel1 = ctre.WPI_VictorSPX(2)
         self.backWheel2 = ctre.WPI_VictorSPX(3)
         self.backWheel1.follow(self.backWheel2)
-        self.encoder1 = wpilib.Encoder(0,1)
-        self.encoder2 = wpilib.Encoder(2,3)
-        
+        #self.encoder1 = wpilib.Encoder(0,1)
+        #self.encoder2 = wpilib.Encoder(2,3)
+
 
     def getHeightFront(self):
         """this will return the height in inches from encoder
