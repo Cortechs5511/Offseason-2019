@@ -54,6 +54,8 @@ class Drive(Subsystem):
 
         timeout = 0
 
+        self.accel = wpilib.BuiltInAccelerometer()
+
         TalonLeft = Talon(10)
         TalonRight = Talon(20)
         TalonLeft.setSafetyEnabled(False)
@@ -305,3 +307,15 @@ class Drive(Subsystem):
         SmartDashboard.putNumber("DT_CountRight", self.getRaw()[1])
 
         SmartDashboard.putNumber("DriveAmps",self.getOutputCurrent())
+
+    def bumpCheck(self, bumpInt = 0.4):
+        ''' Returns true if acceleration is greater than bumpInt (0.4) '''
+        self.accelX = self.accel.getX()
+        self.accelY = self.accel.getY()
+        if self.debug:
+            SmartDashboard.putNumber("X", self.accelX)
+            SmartDashboard.putNumber("Y", self.accelY)
+        if abs(self.accelX) >= bumpInt or abs(self.accelY) >= bumpInt:
+            return True
+        else:
+            return False
