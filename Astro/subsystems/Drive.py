@@ -43,8 +43,8 @@ class Drive(Subsystem):
     leftVal = 0
     rightVal = 0
 
-    leftConv = 4/12 * math.pi / 255
-    rightConv = -4/12 * math.pi / 255
+    leftConv = 5.75/12 * math.pi / 256 
+    rightConv = -5.75/12 * math.pi / 256
 
     def __init__(self, Robot):
         super().__init__('Drive')
@@ -293,6 +293,11 @@ class Drive(Subsystem):
         SmartDashboard.putData("DT_TurnAngle", TurnAngle())
 
     def dashboardPeriodic(self):
+        SmartDashboard.putNumber("Left Counts", self.leftEncoder.get())
+        SmartDashboard.putNumber("Left Distance", self.leftEncoder.getDistance())
+        SmartDashboard.putNumber("Right Counts", self.rightEncoder.get())
+        SmartDashboard.putNumber("Right Distance", self.rightEncoder.getDistance())
+
         if(self.debug==False): return
         SmartDashboard.putNumber("DT_DistanceAvg", self.getAvgDistance())
         SmartDashboard.putNumber("DT_DistanceLeft", self.getDistance()[0])
