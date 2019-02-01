@@ -37,7 +37,7 @@ def getJoystick(num):
     else: return xbox
 
 def commands():
-    SmartDashboard.putData("bumpDrive", Bump())
+    #SmartDashboard.putData("bumpDrive", Bump())
 
     joystick0 = getJoystick(0)
     joystick1 = getJoystick(1)

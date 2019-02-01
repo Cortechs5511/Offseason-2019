@@ -32,7 +32,7 @@ import rate
 
 class MyRobot(CommandBasedRobot):
 
-    dashboard = True
+    dashboard = False
     follower = "Ramsetes"
 
     frequency = 50
@@ -50,7 +50,7 @@ class MyRobot(CommandBasedRobot):
 
         self.limelight = Limelight.Limelight(self)
         self.hatchMech = HatchMech.HatchMech(self)
-        self.cargoMech = CargoMech.CargoMech(self)
+        #self.cargoMech = CargoMech.CargoMech(self)
         self.climber = Climber.Climber(self)
         self.drive = Drive.Drive(self)
 
@@ -129,7 +129,7 @@ class MyRobot(CommandBasedRobot):
     def disabledInit(self):
         self.drive.disable()
         self.hatchMech.disable()
-        self.cargoMech.disable()
+        #self.cargoMech.disable()
         self.climber.disable()
 
     def disabledPeriodic(self):
