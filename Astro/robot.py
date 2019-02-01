@@ -26,6 +26,7 @@ from subsystems import Limelight
 
 from CRLibrary.path import odometry as od
 
+from robotpy_ext.misc.looptimer import LoopTimer
 
 import rate
 
@@ -64,7 +65,7 @@ class MyRobot(CommandBasedRobot):
         [self.joystick0, self.joystick1, self.xbox] = oi.commands()
 
         self.rate = rate.DebugRate()
-        self.rate.initialize()
+        self.rate.start()
 
         if(self.dashboard): self.updateDashboardInit()
 
@@ -72,11 +73,15 @@ class MyRobot(CommandBasedRobot):
         self.DriveStraight = DriveStraight()
         self.DrivePath = DrivePath(name="Test", follower="Ramsetes")
 
+        self.loop_timer = LoopTimer(self.logger)
+
     def robotPeriodic(self):
         #self.drive.odMain.display()
-        self.drive.odTemp.display()
+        #self.drive.odTemp.display()
         self.limelight.readLimelightData()
         if(self.dashboard): self.updateDashboardPeriodic()
+
+        self.loop_timer.measure()
 
     def autonomousInit(self):
         self.drive.zero()
@@ -111,7 +116,7 @@ class MyRobot(CommandBasedRobot):
         SmartDashboard.putData("Zero", Zero())
 
     def updateDashboardPeriodic(self):
-        self.rate.execute()
+    #    self.rate.execute()
         self.drive.dashboardPeriodic()
         self.hatchMech.dashboardPeriodic()
         self.cargoMech.dashboardPeriodic()

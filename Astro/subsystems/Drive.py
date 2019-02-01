@@ -274,7 +274,8 @@ class Drive(Subsystem):
         self.zeroNavx()
 
     def initDefaultCommand(self):
-        self.setDefaultCommand(SetSpeedDT(timeout = 300))
+        pass
+        #self.setDefaultCommand(SetSpeedDT(timeout = 300))
 
     def disable(self):
         self.__tankDrive__(0,0)
