@@ -79,7 +79,8 @@ class Drive(Subsystem):
                 motor.clearStickyFaults(timeout)
                 motor.setSafetyEnabled(False)
                 motor.setInverted(False)
-
+            VictorLeft1.setInverted(True)
+            VictorLeft2.setInverted(True)
 
 
         for motor in [TalonLeft,TalonRight]:
@@ -101,8 +102,6 @@ class Drive(Subsystem):
         self.right = TalonRight
 
         TalonLeft.setInverted(True)
-        VictorLeft1.setInverted(True)
-        VictorLeft2.setInverted(True)
 
         self.navx = navx.ahrs.AHRS.create_spi()
 
@@ -240,8 +239,7 @@ class Drive(Subsystem):
     def updateSensors(self):
         #self.leftVal = self.leftEncoder.get()
         #self.rightVal = self.rightEncoder.get()
-        #self.navxVal = self.navx.getYaw()
-        pass
+        self.navxVal = -(self.navx.getYaw())
 
     def getAngle(self):
         return self.navxVal
