@@ -1,8 +1,8 @@
 from wpilib.command import Command
 
-class FrontClimb(Command):
+class LowerRobot(Command):
     def __init__(self):
-        super().__init__('setSpeedWheel')
+        super().__init__('lowerRobot')
         robot = self.getRobot()
         self.climber = robot.climber
 
@@ -10,13 +10,15 @@ class FrontClimb(Command):
         pass
 
     def execute(self):
-        pass
+        self.climber.liftFront(-0.25)
+        self.climber.liftBack(-0.25)
 
     def interrupted(self):
         self.climber.stopFront()
+        self.climber.stopBack()
 
     def end(self):
-        self.climber.stopFront()
-
+      
+        self.interrupted()
     def isFinished(self):
-        return True
+        return self.climber.isFullyExtendedBoth()

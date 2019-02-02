@@ -41,7 +41,7 @@ class CargoMech(Subsystem):
         '''Stops wrist'''
         self.motorWrist.set(0)
 
-    def subsystemInit(self):
+    def dashboardInit(self):
         """ Adds subsystem specific commands. """
         if self.debug == True:
             SmartDashboard.putData("Intake", WristIntake('intake',1))
@@ -64,8 +64,7 @@ class CargoMech(Subsystem):
     def disable(self):
         self.stopIntake()
 
-    def dashboardInit(self):
-        pass
+    
 
     def dashboardPeriodic(self):
         pass

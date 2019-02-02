@@ -31,7 +31,7 @@ import rate
 
 class MyRobot(CommandBasedRobot):
 
-    dashboard = False
+    dashboard = True
     follower = "Ramsetes"
 
     frequency = 50
@@ -48,7 +48,7 @@ class MyRobot(CommandBasedRobot):
 
         self.limelight = Limelight.Limelight(self)
         self.hatchMech = HatchMech.HatchMech(self)
-        #self.cargoMech = CargoMech.CargoMech(self)
+        self.cargoMech = CargoMech.CargoMech(self)
         self.climber = Climber.Climber(self)
         self.drive = Drive.Drive(self)
 
@@ -65,8 +65,8 @@ class MyRobot(CommandBasedRobot):
         self.rate = rate.DebugRate()
         self.rate.initialize()
 
-        if(self.dashboard): self.updateDashboardInit()
-
+       # if(self.dashboard): self.updateDashboardInit()
+        self.updateDashboardInit()
         self.TestPath = TestPath(self.follower)
         self.DriveStraight = DriveStraight()
         self.DrivePath = DrivePath(name="Test", follower="Ramsetes")
