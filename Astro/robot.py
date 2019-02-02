@@ -26,7 +26,6 @@ from subsystems import Limelight
 
 from CRLibrary.path import odometry as od
 
-from robotpy_ext.misc.looptimer import LoopTimer
 
 import rate
 
@@ -45,7 +44,6 @@ class MyRobot(CommandBasedRobot):
         This is a good place to set up your subsystems and anything else that
         you will need to access later.
         '''
-
         Command.getRobot = lambda x=0: self
 
         self.limelight = Limelight.Limelight(self)
@@ -65,23 +63,19 @@ class MyRobot(CommandBasedRobot):
         [self.joystick0, self.joystick1, self.xbox] = oi.commands()
 
         self.rate = rate.DebugRate()
-        self.rate.start()
+        self.rate.initialize()
 
-        if(self.dashboard): self.updateDashboardInit()
-
+       # if(self.dashboard): self.updateDashboardInit()
+        self.updateDashboardInit()
         self.TestPath = TestPath(self.follower)
         self.DriveStraight = DriveStraight()
         self.DrivePath = DrivePath(name="Test", follower="Ramsetes")
 
-        self.loop_timer = LoopTimer(self.logger)
-
     def robotPeriodic(self):
         #self.drive.odMain.display()
-        #self.drive.odTemp.display()
+        self.drive.odTemp.display()
         self.limelight.readLimelightData()
         if(self.dashboard): self.updateDashboardPeriodic()
-
-        self.loop_timer.measure()
 
     def autonomousInit(self):
         self.drive.zero()
@@ -116,7 +110,7 @@ class MyRobot(CommandBasedRobot):
         SmartDashboard.putData("Zero", Zero())
 
     def updateDashboardPeriodic(self):
-    #    self.rate.execute()
+        self.rate.execute()
         self.drive.dashboardPeriodic()
         self.hatchMech.dashboardPeriodic()
         self.cargoMech.dashboardPeriodic()
@@ -129,14 +123,14 @@ class MyRobot(CommandBasedRobot):
     def disabledInit(self):
         self.drive.disable()
         self.hatchMech.disable()
-        self.cargoMech.disable()
+        #self.cargoMech.disable()
         self.climber.disable()
 
     def disabledPeriodic(self):
         self.disabledInit()
 
     #I think the below should go in oi.py somehow, but I'm lazy tonight - Abhijit
-    '''
+
     def driverLeftButton(self, id):
         """ Return a button off of the left driver joystick that we want to map a command to. """
         return wpilib.buttons.JoystickButton(self.joystick0, id)
@@ -149,6 +143,12 @@ class MyRobot(CommandBasedRobot):
         """ Return a button off of the operator gamepad that we want to map a command to. """
         return wpilib.buttons.JoystickButton(self.xbox, id)
     '''
+    def operatorAxis(self,id):
+        """ Return a Joystick off of the operator gamepad that we want to map a command to. """
+        #food-for-thought: use getX/getY with setXchannel/setYchannel
+        return wpilib.joystick.setAxisChannel(self.xbox, id)
+    '''
+ 
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)

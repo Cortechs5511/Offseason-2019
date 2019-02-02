@@ -228,18 +228,20 @@ class Drive(Subsystem):
         self.updateOdometry()
 
     def updateOdometry(self):
-        vel = self.getVelocity()
+        '''vel = self.getVelocity()
         self.odMain.update(vel[0], vel[1], self.getAngle())
         self.odTemp.update(vel[0], vel[1], self.getAngle())
-        self.prevDist = self.getDistance()
+        self.prevDist = self.getDistance()'''
+        pass
 
     def getOutputCurrent(self):
         return (self.right.getOutputCurrent()+self.left.getOutputCurrent())*3
 
     def updateSensors(self):
-        self.leftVal = self.leftEncoder.get()
-        self.rightVal = self.rightEncoder.get()
-        self.navxVal = self.navx.getYaw()
+        #self.leftVal = self.leftEncoder.get()
+        #self.rightVal = self.rightEncoder.get()
+        #self.navxVal = self.navx.getYaw()
+        pass
 
     def getAngle(self):
         return self.navxVal

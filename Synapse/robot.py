@@ -5,11 +5,14 @@ import wpilib
 import wpilib.drive
 from wpilib import SmartDashboard as sd
 import ctre
+from robotpy_ext.misc.looptimer import LoopTimer
 
 #class of robot
 class MyRobot(wpilib.TimedRobot):
 #initialization
     def robotInit(self):
+        self.loop_timer = LoopTimer(self.logger)
+
         #Intake motors
         self.Intake1 = ctre.WPI_TalonSRX(50)
         self.Intake1.setNeutralMode(2)
@@ -70,6 +73,7 @@ class MyRobot(wpilib.TimedRobot):
         self.autonTimer.start()
 
     def teleopPeriodic(self):
+        self.loop_timer.measure()
     #teleoporated period; man control
         self.count += 1
     #puts the count variable on the SmartDashboard
