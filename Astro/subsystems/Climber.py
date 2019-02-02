@@ -56,7 +56,8 @@ class Climber(Subsystem):
      
 
 
-
+    def getPitch(self):
+        return self.robot.drive.pitch
     #gets height
     def getHeightFront(self):
         """this will return the height in inches from encoder

@@ -13,9 +13,9 @@ class SetSpeedWheel(Command):
 
     def execute(self):
         if self.power == 1:
-            self.climber.wheelFoward(1)
-        if self.power == -1:
-            self.climber.wheelBack(-1)
+            self.climber.wheelForward()
+        if self.power == -1:           
+            self.climber.wheelBack()
 
     def interrupted(self):
         self.climber.stopDrive()
