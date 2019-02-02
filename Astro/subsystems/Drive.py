@@ -18,6 +18,8 @@ from commands.drive.driveVision import DriveVision
 from commands.drive.setFixedDT import SetFixedDT
 from commands.drive.setSpeedDT import SetSpeedDT
 from commands.drive.turnAngle import TurnAngle
+from commands.drive.measured import Measured
+from commands.drive.autonCheck import AutonCheck
 from sim import simComms
 
 from CRLibrary.physics import DCMotorTransmission as DCMotor
@@ -43,13 +45,14 @@ class Drive(Subsystem):
     leftVal = 0
     rightVal = 0
 
-    leftConv = 5.75/12 * math.pi / 256 
-    rightConv = -5.75/12 * math.pi / 256
+    measuredCorrection = 9.74/9.25
+    leftConv = 5.75/12 * math.pi / 256 * measuredCorrection
+    rightConv = -5.75/12 * math.pi / 256 * measuredCorrection
 
     def __init__(self, Robot):
         super().__init__('Drive')
 
-        self.debug = False
+        self.debug = True
         self.robot = Robot
 
         timeout = 0
@@ -75,10 +78,12 @@ class Drive(Subsystem):
             for motor in [VictorLeft1,VictorLeft2,VictorRight1,VictorRight2]:
                 motor.clearStickyFaults(timeout)
                 motor.setSafetyEnabled(False)
-                motor.setInverted(True)
+                motor.setInverted(False)
+
+
 
         for motor in [TalonLeft,TalonRight]:
-            motor.setInverted(True)
+            motor.setInverted(False)
             motor.setSafetyEnabled(False)
             motor.clearStickyFaults(timeout) #Clears sticky faults
 
@@ -94,6 +99,10 @@ class Drive(Subsystem):
 
         self.left = TalonLeft
         self.right = TalonRight
+
+        TalonLeft.setInverted(True)
+        VictorLeft1.setInverted(True)
+        VictorLeft2.setInverted(True)
 
         self.navx = navx.ahrs.AHRS.create_spi()
 
@@ -215,7 +224,7 @@ class Drive(Subsystem):
     def __tankDrive__(self,left,right):
         self.left.set(left)
         self.right.set(right)
-
+        print([left, right])
         self.updateOdometry()
 
     def updateOdometry(self):
@@ -274,8 +283,7 @@ class Drive(Subsystem):
         self.zeroNavx()
 
     def initDefaultCommand(self):
-        pass
-        #self.setDefaultCommand(SetSpeedDT(timeout = 300))
+        self.setDefaultCommand(SetSpeedDT(timeout = 300))
 
     def disable(self):
         self.__tankDrive__(0,0)
@@ -291,6 +299,10 @@ class Drive(Subsystem):
         SmartDashboard.putData("DT_SetFixedDT", SetFixedDT())
         SmartDashboard.putData("DT_SetSpeedDT", SetSpeedDT())
         SmartDashboard.putData("DT_TurnAngle", TurnAngle())
+
+        SmartDashboard.putData("Measure", Measured())
+        SmartDashboard.putData("autonCheck Frw", AutonCheck(9.75))
+        SmartDashboard.putData("autonCheck Bkwd", AutonCheck(-9.75))
 
     def dashboardPeriodic(self):
         SmartDashboard.putNumber("Left Counts", self.leftEncoder.get())
