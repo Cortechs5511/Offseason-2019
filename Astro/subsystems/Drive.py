@@ -42,6 +42,7 @@ class Drive(Subsystem):
     model = None
 
     navxVal = 0
+    pitch = 0
     leftVal = 0
     rightVal = 0
 
@@ -102,6 +103,8 @@ class Drive(Subsystem):
         self.right = TalonRight
 
         TalonLeft.setInverted(True)
+        """ VictorLeft1.setInverted(True)
+        VictorLeft2.setInverted(True)"""
 
         self.navx = navx.ahrs.AHRS.create_spi()
 
