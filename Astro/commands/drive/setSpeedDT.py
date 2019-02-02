@@ -1,31 +1,44 @@
 import math
 import wpilib
+#from robot import MyRobot
+#from subsystems.Drive import Drive
 
 from wpilib.command import Command
 from wpilib.command import TimedCommand
-
+from wpilib import SmartDashboard
+from wpilib.drive.differentialdrive import DifferentialDrive 
 class SetSpeedDT(TimedCommand):
 
     def __init__(self, timeout = 0):
         super().__init__('SetSpeedDT', timeoutInSeconds = timeout)
-        self.requires(self.getRobot().drive)
-        self.DT = self.getRobot().drive
+        self.robot = self.getRobot()
+        self.requires(self.robot.drive)
+        self.DT = self.robot.drive
 
-        self.Joystick0 = self.getRobot().joystick0
-        self.Joystick1 = self.getRobot().joystick1
-
+        self.Joystick0 = self.robot.joystick0
+        self.Joystick1 = self.robot.joystick1
+        SmartDashboard.putNumber("gain",1)
         self.maxspeed = 1.00 #In addition to normal reducing factor in Drive.py
-
+        self.diffDrive = DifferentialDrive(self.DT.left,self.DT.right)
+        self.diffDrive.setSafetyEnabled(False)
+        
     def initialize(self):
         self.DT.setDirect()
-
     def execute(self):
         left = self.Joystick0.getY()
         right = self.Joystick1.getY()
-        flip = self.Joystick1.getButton(1) or self.Joystick0.getButton(1)
-        if flip == True:
-            self.DT.tankDrive(right * self.maxspeed ,left * self.maxspeed)
-        self.DT.tankDrive(-left * self.maxspeed ,-right * self.maxspeed)
+        gain = SmartDashboard.getNumber("gain",1)
+        if (abs(left)<0.1) or (abs(right)<0.1):
+            power = -(self.robot.operatorAxis(1))
+            rotation = self.robot.operatorAxis(4)
+            quickTurn = self.robot.readOperatorButton(10)
+            #self.DT.tankDrive(power*gain,power)
+            self.diffDrive.curvatureDrive(power,rotation,quickTurn)
+        else:
+            #flip = self.Joystick1.getButton(1) or self.Joystick0.getButton(1)
+            #if flip == True:
+                #self.DT.tankDrive(right * self.maxspeed ,left * self.maxspeed)
+            self.DT.tankDrive(-left * self.maxspeed ,-right * self.maxspeed)
 
     def interrupted(self):
         self.end()

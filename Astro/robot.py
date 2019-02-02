@@ -142,12 +142,14 @@ class MyRobot(CommandBasedRobot):
     def operatorButton(self, id):
         """ Return a button off of the operator gamepad that we want to map a command to. """
         return wpilib.buttons.JoystickButton(self.xbox, id)
-    '''
     def operatorAxis(self,id):
         """ Return a Joystick off of the operator gamepad that we want to map a command to. """
-        #food-for-thought: use getX/getY with setXchannel/setYchannel
-        return wpilib.joystick.setAxisChannel(self.xbox, id)
-    '''
+        #id is axis channel for taking value of axis
+        return self.xbox.getRawAxis(id)
+        #wpilib.joystick.setAxisChannel(self.xbox, id)
+    def readOperatorButton(self,id):
+        """ Return button value """
+        return self.xbox.getRawButton(id)
  
 
 if __name__ == "__main__":
