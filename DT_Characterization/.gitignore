@@ -1,0 +1,11 @@
+*-data.json
+*.csv
+*.pyc
+
+.settings
+bin
+
+*/.gradle
+*/.vscode
+*/.wpilib
+*/build
