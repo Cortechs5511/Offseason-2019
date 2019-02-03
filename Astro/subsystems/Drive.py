@@ -3,12 +3,13 @@ import ctre
 from ctre import WPI_TalonSRX as Talon
 from ctre import WPI_VictorSPX as Victor
 
+
 import navx
 from subsystems.Limelight import Limelight
 import wpilib
 from wpilib import SmartDashboard
 from wpilib.command.subsystem import Subsystem
-
+from wpilib.command import Command
 from commands.drive.diffDrive import DiffDrive
 from commands.drive.drivePath import DrivePath
 from commands.drive.driveStraightCombined import DriveStraightCombined
@@ -50,11 +51,12 @@ class Drive(Subsystem):
     leftConv = 5.75/12 * math.pi / 256 * measuredCorrection
     rightConv = -5.75/12 * math.pi / 256 * measuredCorrection
 
-    def __init__(self, Robot):
+    def __init__(self, robot):
         super().__init__('Drive')
-
-        self.debug = True
-        self.robot = Robot
+     
+        self.flipped = False 
+        self.robot = robot 
+        self.debug = False 
 
         timeout = 0
 
@@ -271,7 +273,9 @@ class Drive(Subsystem):
 
     def getAvgAbsVelocity(self):
         return (abs(self.getVelocity()[0])+abs(self.getVelocity()[1]))/2
-
+    def isFlipped(self):
+        #indicates if front or back needs to be reversed while driving
+        return (self.flipped)
     def zeroEncoders(self):
         self.leftEncoder.reset()
         self.rightEncoder.reset()
@@ -292,7 +296,13 @@ class Drive(Subsystem):
         self.__tankDrive__(0,0)
 
     def dashboardInit(self):
+        SmartDashboard.putData("Flipped drive", FlipButton())
+        SmartDashboard.putData("Measure", Measured())
+        b = self.robot.driverRightButton(2)
+        b.whenPressed(FlipButton())
         if(self.debug==False): return
+        SmartDashboard.putData("autonCheck Frw", AutonCheck(9.75))
+        SmartDashboard.putData("autonCheck Bkwd", AutonCheck(-9.75))
         SmartDashboard.putData("DT_DiffDrive", DiffDrive())
         SmartDashboard.putData("DT_DrivePath", DrivePath())
         SmartDashboard.putData("DT_DriveStraightCombined", DriveStraightCombined())
@@ -303,17 +313,14 @@ class Drive(Subsystem):
         SmartDashboard.putData("DT_SetSpeedDT", SetSpeedDT())
         SmartDashboard.putData("DT_TurnAngle", TurnAngle())
 
-        SmartDashboard.putData("Measure", Measured())
-        SmartDashboard.putData("autonCheck Frw", AutonCheck(9.75))
-        SmartDashboard.putData("autonCheck Bkwd", AutonCheck(-9.75))
-
     def dashboardPeriodic(self):
+        SmartDashboard.putBoolean("Driving Reverse", self.flipped)
+
+        if(self.debug==False): return
         SmartDashboard.putNumber("Left Counts", self.leftEncoder.get())
         SmartDashboard.putNumber("Left Distance", self.leftEncoder.getDistance())
         SmartDashboard.putNumber("Right Counts", self.rightEncoder.get())
         SmartDashboard.putNumber("Right Distance", self.rightEncoder.getDistance())
-
-        if(self.debug==False): return
         SmartDashboard.putNumber("DT_DistanceAvg", self.getAvgDistance())
         SmartDashboard.putNumber("DT_DistanceLeft", self.getDistance()[0])
         SmartDashboard.putNumber("DT_DistanceRight", self.getDistance()[1])
@@ -340,3 +347,45 @@ class Drive(Subsystem):
             return True
         else:
             return False
+
+class FlipButton(Command):
+    def __init__(self):
+        super().__init__('Flip')
+        robot = self.getRobot()
+        self.drive = robot.drive
+
+    def initialize(self):
+        if self.drive.flipped:
+            self.drive.flipped = False
+        else:
+            self.drive.flipped = True
+
+    def isFinished(self):
+        return True
+
+""" class HumanDrive(Command):
+
+    def __init__(self):
+        super().__init__('driveMech')
+        self.robot = self.getRobot()
+        self.driveMech = self.robot.driveMech
+        self.requires(self.driveMech)
+
+    def initialize(self):
+        pass
+
+    def execute(self):
+        if self.driveMech.flipped:
+            oldLeft = leftSpeed
+            leftSpeed = -rightSpeed
+            rightSpeed = -oldLeft
+        self.driveMech.drive(leftSpeed, rightSpeed)
+
+    def interrupted(self):
+        self.end()
+
+    def end(self):
+        self.driveMech.stopDrive()
+
+    def isFinished(self):
+        return False """

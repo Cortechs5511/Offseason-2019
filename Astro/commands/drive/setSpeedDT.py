@@ -24,21 +24,24 @@ class SetSpeedDT(TimedCommand):
         
     def initialize(self):
         self.DT.setDirect()
+
     def execute(self):
-        left = self.Joystick0.getY()
-        right = self.Joystick1.getY()
-        gain = SmartDashboard.getNumber("gain",1)
-        if (abs(left)<0.1) or (abs(right)<0.1):
+        left = -self.Joystick0.getY()
+        right = -self.Joystick1.getY()
+        flip = self.DT.isFlipped()
+
+        if (abs(left)<0.025) or (abs(right)<0.025):
+            gain = SmartDashboard.getNumber("gain",1)
             power = -(self.robot.operatorAxis(1))
             rotation = self.robot.operatorAxis(4)
             quickTurn = self.robot.readOperatorButton(10)
-            #self.DT.tankDrive(power*gain,power)
-            self.diffDrive.curvatureDrive(power,rotation,quickTurn)
+            self.DT.tankDrive(power*gain,power)
+            #self.diffDrive.curvatureDrive(power,rotation,quickTurn)
         else:
-            #flip = self.Joystick1.getButton(1) or self.Joystick0.getButton(1)
-            #if flip == True:
-                #self.DT.tankDrive(right * self.maxspeed ,left * self.maxspeed)
-            self.DT.tankDrive(-left * self.maxspeed ,-right * self.maxspeed)
+            if flip == True:
+                self.DT.tankDrive (-right * self.maxspeed ,-left * self.maxspeed)
+            else:
+                self.DT.tankDrive(left * self.maxspeed ,right * self.maxspeed)
 
     def interrupted(self):
         self.end()
