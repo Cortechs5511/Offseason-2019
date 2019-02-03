@@ -362,7 +362,7 @@ class FlipButton(Command):
 
     def isFinished(self):
         return True
-
+ 
 """ class HumanDrive(Command):
 
     def __init__(self):

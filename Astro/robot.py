@@ -152,5 +152,16 @@ class MyRobot(CommandBasedRobot):
         """ Return button value """
         return self.xbox.getRawButton(id)
 
+    def readDriverRightButton(self,id):
+        """ Return button value from right joystick """
+        return self.joystick1.getRawButton(id)
+    
+    def readDriverLeftButton(self,id):
+        """ Return button value from left joystick """
+        return self.joystick0.getRawButton(id)
+    
+    
+    
+
 if __name__ == "__main__":
     wpilib.run(MyRobot)
