@@ -36,9 +36,10 @@ class SetSpeedDT(TimedCommand):
             gain = SmartDashboard.getNumber("gain",1)
             power = -(self.robot.operatorAxis(1))
             rotation = self.robot.operatorAxis(4)
-            quickTurn = self.robot.readOperatorButton(10)
-            self.DT.tankDrive(power*gain,power)
+            #quickTurn = self.robot.readOperatorButton(10)
             #self.diffDrive.curvatureDrive(power,rotation,quickTurn)
+            self.diffDrive.arcadeDrive(power, rotation)
+            #self.DT.tankDrive(power*gain,power)
         else:
             if flip == True:
                 self.DT.tankDrive (-right * self.maxspeed ,-left * self.maxspeed)
