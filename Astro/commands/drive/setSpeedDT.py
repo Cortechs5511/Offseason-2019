@@ -36,7 +36,7 @@ class SetSpeedDT(TimedCommand):
         if self.robot.readDriverLeftButton(3):
             left = left / 100
             right = right / 100
-        
+    
         if (abs(left)<0.025) or (abs(right)<0.025):
             gain = SmartDashboard.getNumber("gain",1)
             power = -(self.robot.operatorAxis(1))
