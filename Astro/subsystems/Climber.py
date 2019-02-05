@@ -15,6 +15,7 @@ MAX_EXTEND = 12.0
 
 
 
+
 class Climber(Subsystem):
     def __init__(self, Robot):
         """ Create all physical parts used by subsystem. """
@@ -25,9 +26,7 @@ class Climber(Subsystem):
         self.frontLift = ctre.WPI_TalonSRX(41)
         """ self.backWheel1 = ctre.WPI_VictorSPX(2)"""
         self.backWheel2 = ctre.WPI_VictorSPX(3)
-#        self.backWheel1.follow(self.backWheel2)
-        self.encoder1 = wpilib.Encoder(4,5)
-        self.encoder2 = wpilib.Encoder(6,7) 
+#        self.backWheel1.follow(self.backWheel2) 
         self.backLift.setName("Climber" , "BackLift")
         self.frontLift.setName("Climber" , "FrontLift")
         self.backWheel2.setName("Climber" , "Wheels")
