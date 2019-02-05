@@ -29,9 +29,14 @@ class SetSpeedDT(TimedCommand):
         left = -self.Joystick0.getY()
         right = -self.Joystick1.getY()
         flip = self.DT.isFlipped()
-        if self.robot.readDriverRightButton(4):
+        if self.robot.readDriverRightButton(3):
             left = left / 2
             right = right / 2
+        
+        if self.robot.readDriverLeftButton(3):
+            left = left / 100
+            right = right / 100
+        
         if (abs(left)<0.025) or (abs(right)<0.025):
             gain = SmartDashboard.getNumber("gain",1)
             power = -(self.robot.operatorAxis(1))
