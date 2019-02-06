@@ -21,6 +21,7 @@ from commands.drive.setSpeedDT import SetSpeedDT
 from commands.drive.turnAngle import TurnAngle
 from commands.drive.measured import Measured
 from commands.drive.autonCheck import AutonCheck
+from commands.drive.relativeTurn import RelativeTurn
 from sim import simComms
 
 from CRLibrary.physics import DCMotorTransmission as DCMotor
@@ -56,7 +57,7 @@ class Drive(Subsystem):
      
         self.flipped = False 
         self.robot = robot 
-        self.debug = False 
+        self.debug = True
 
         timeout = 0
 
@@ -311,8 +312,8 @@ class Drive(Subsystem):
         SmartDashboard.putData("DT_DriveVision", DriveVision())
         SmartDashboard.putData("DT_SetFixedDT", SetFixedDT())
         SmartDashboard.putData("DT_SetSpeedDT", SetSpeedDT())
-        SmartDashboard.putData("DT_TurnAngle", TurnAngle())
-
+        SmartDashboard.putData("DT_TurnAngle", TurnAngle(90))
+        SmartDashboard.putData("DT_RelativeTurn", RelativeTurn(90))
     def dashboardPeriodic(self):
         SmartDashboard.putBoolean("Driving Reverse", self.flipped)
 
