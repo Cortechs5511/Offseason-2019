@@ -54,9 +54,9 @@ class Drive(Subsystem):
 
     def __init__(self, robot):
         super().__init__('Drive')
-     
-        self.flipped = False 
-        self.robot = robot 
+
+        self.flipped = False
+        self.robot = robot
         self.debug = True
 
         timeout = 0
@@ -145,8 +145,8 @@ class Drive(Subsystem):
         self.odTemp = od.Odometer(self.robot.period)
 
         #Incorrect until redone
-        transmission = DCMotor.DCMotorTransmission(8.3, 2.22, 1.10)
-        self.model = dDrive.DifferentialDrive(64, 10, 0, units.inchesToMeters(3.0), units.inchesToMeters(14), transmission, transmission)
+        transmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.08)
+        self.model = dDrive.DifferentialDrive(29, 1.83, 0, units.inchesToMeters(3.0), units.inchesToMeters(20), transmission, transmission)
         self.maxVel = self.maxSpeed*self.model.getMaxAbsVelocity(0, 0, 12)
         self.Path = Path.Path(self, self.model, self.odTemp, self.getDistance)
 
@@ -214,6 +214,7 @@ class Drive(Subsystem):
 
     def tankDrive(self,left=0,right=0):
         self.updateSensors()
+
         if(self.mode=="Distance"): [left,right] = [self.distPID,self.distPID]
         elif(self.mode=="Angle"): [left,right] = [self.anglePID,-self.anglePID]
         elif(self.mode=="Combined"): [left,right] = [self.distPID+self.anglePID,self.distPID-self.anglePID]
@@ -229,23 +230,22 @@ class Drive(Subsystem):
     def __tankDrive__(self,left,right):
         self.left.set(left)
         self.right.set(right)
-        print([left, right])
         self.updateOdometry()
 
     def updateOdometry(self):
-        '''vel = self.getVelocity()
+        vel = self.getVelocity()
         self.odMain.update(vel[0], vel[1], self.getAngle())
         self.odTemp.update(vel[0], vel[1], self.getAngle())
-        self.prevDist = self.getDistance()'''
-        pass
+        self.prevDist = self.getDistance()
 
     def getOutputCurrent(self):
         return (self.right.getOutputCurrent()+self.left.getOutputCurrent())*3
 
     def updateSensors(self):
-        #self.leftVal = self.leftEncoder.get()
-        #self.rightVal = self.rightEncoder.get()
-        self.navxVal = -(self.navx.getYaw())
+        self.leftVal = self.leftEncoder.get()
+        self.rightVal = self.rightEncoder.get()
+        self.navxVal = -self.navx.getYaw()
+        if wpilib.RobotBase.isSimulation(): self.navxVal*=-1
 
     def getAngle(self):
         return self.navxVal
@@ -260,8 +260,10 @@ class Drive(Subsystem):
         return (self.getDistance()[0]+self.getDistance()[1])/2
 
     def getVelocity(self):
-        velocity = [self.robot.frequency*(self.getDistance()[0]-self.prevDist[0]),self.robot.frequency*(self.getDistance()[1]-self.prevDist[1])]
-        self.prevDist = self.getDistance()
+        dist = self.getDistance()
+        velocity = [self.robot.frequency*(dist[0]-self.prevDist[0]),self.robot.frequency*(dist[1]-self.prevDist[1])]
+        self.prevDist = dist
+
         return velocity
 
     '''
@@ -274,9 +276,11 @@ class Drive(Subsystem):
 
     def getAvgAbsVelocity(self):
         return (abs(self.getVelocity()[0])+abs(self.getVelocity()[1]))/2
+
     def isFlipped(self):
         #indicates if front or back needs to be reversed while driving
         return (self.flipped)
+
     def zeroEncoders(self):
         self.leftEncoder.reset()
         self.rightEncoder.reset()
@@ -299,8 +303,11 @@ class Drive(Subsystem):
     def dashboardInit(self):
         SmartDashboard.putData("Flipped drive", FlipButton())
         SmartDashboard.putData("Measure", Measured())
+
+        '''This doesn't belong here - Abhijit'''
         b = self.robot.driverRightButton(2)
         b.whenPressed(FlipButton())
+
         if(self.debug==False): return
         SmartDashboard.putData("autonCheck Frw", AutonCheck(9.75))
         SmartDashboard.putData("autonCheck Bkwd", AutonCheck(-9.75))
@@ -314,6 +321,7 @@ class Drive(Subsystem):
         SmartDashboard.putData("DT_SetSpeedDT", SetSpeedDT())
         SmartDashboard.putData("DT_TurnAngle", TurnAngle(90))
         SmartDashboard.putData("DT_RelativeTurn", RelativeTurn(90))
+
     def dashboardPeriodic(self):
         SmartDashboard.putBoolean("Driving Reverse", self.flipped)
 
@@ -363,7 +371,7 @@ class FlipButton(Command):
 
     def isFinished(self):
         return True
- 
+
 """ class HumanDrive(Command):
 
     def __init__(self):

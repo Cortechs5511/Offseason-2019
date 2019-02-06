@@ -74,6 +74,7 @@ class MyRobot(CommandBasedRobot):
     def robotPeriodic(self):
         #self.drive.odMain.display()
         self.drive.odTemp.display()
+
         self.limelight.readLimelightData()
         if(self.dashboard): self.updateDashboardPeriodic()
 
@@ -83,7 +84,8 @@ class MyRobot(CommandBasedRobot):
         self.timer.start()
         self.curr = 0
 
-        [x,y] = self.limelight.getPathXY()
+        #[x,y] = self.limelight.getPathXY()
+        [x,y] = [-10,-5]
         self.DrivePath.start(x,y)
 
         '''
@@ -155,13 +157,13 @@ class MyRobot(CommandBasedRobot):
     def readDriverRightButton(self,id):
         """ Return button value from right joystick """
         return self.joystick1.getRawButton(id)
-    
+
     def readDriverLeftButton(self,id):
         """ Return button value from left joystick """
         return self.joystick0.getRawButton(id)
-    
-    
-    
+
+
+
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)
