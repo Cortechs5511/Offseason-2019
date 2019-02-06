@@ -316,7 +316,7 @@ class Drive(Subsystem):
         SmartDashboard.putData("DT_DriveStraightCombined", DriveStraightCombined())
         SmartDashboard.putData("DT_DriveStraightDistance", DriveStraightDistance())
         SmartDashboard.putData("DT_DriveStraightTime", DriveStraightTime())
-        SmartDashboard.putData("DT_DriveVision", DriveVision())
+        #SmartDashboard.putData("DT_DriveVision", DriveVision())
         SmartDashboard.putData("DT_SetFixedDT", SetFixedDT())
         SmartDashboard.putData("DT_SetSpeedDT", SetSpeedDT())
         SmartDashboard.putData("DT_TurnAngle", TurnAngle(90))

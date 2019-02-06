@@ -12,7 +12,7 @@ from CRLibrary.util import util
 
 from path import PathList
 
-MAXV = 5
+MAXV = 8
 MAXA = 10
 MAXJ = 10
 

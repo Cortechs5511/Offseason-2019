@@ -8,14 +8,15 @@ class Zero(InstantCommand):
 
     def __init__(self):
         super().__init__('Zero')
-        self.cargoMech = self.getRobot().cargoMech
-        self.cargoMech = self.getRobot().hatchMech
-        self.requires(self.getRobot().cargoMech)
-        self.requires(self.getRobot().hatchMech)
+        #self.cargoMech = self.getRobot().cargoMech
+        #self.cargoMech = self.getRobot().hatchMech
+        #self.requires(self.getRobot().cargoMech)
+        #self.requires(self.getRobot().hatchMech)
 
     def initialize(self):
-        self.cargoMech.zero()
-        self.hatchMech.zero()
+        #self.cargoMech.zero()
+        #self.hatchMech.zero()
+        pass
 
     def interrupted(self):
         pass
