@@ -23,7 +23,7 @@ from subsystems import CargoMech
 from subsystems import Climber
 from subsystems import Drive
 from subsystems import Limelight
-
+from robotpy_ext.misc import looptimer
 from CRLibrary.path import odometry as od
 
 
@@ -31,12 +31,14 @@ import rate
 
 class MyRobot(CommandBasedRobot):
 
-    dashboard = False
+    dashboard = True
     follower = "Ramsetes"
 
     frequency = 50
     period = 1/frequency
 
+    def __init__(self):
+        super().__init__(.04)
 
     def robotInit(self):
 
@@ -70,6 +72,14 @@ class MyRobot(CommandBasedRobot):
         self.TestPath = TestPath(self.follower)
         self.DriveStraight = DriveStraight()
         self.DrivePath = DrivePath(name="Test", follower="Ramsetes")
+
+
+    def teleopInit(self):
+        self.loop_timer = looptimer.LoopTimer(self.logger)
+
+    def teleopPeriodic(self):
+        super().teleopPeriodic()
+        self.loop_timer.measure()
 
     def robotPeriodic(self):
         #self.drive.odMain.display()

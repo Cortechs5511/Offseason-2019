@@ -31,11 +31,13 @@ class Ramsetes():
         self.finished = False
 
         '''Gains'''
-        kV = [0.20, 0.0, 0.2, 0.0]
-        kA = [0.01, 0.0, 0.0, 0.0]
+        #velocity
+        kV = [0.02, 0.0, 0.0, 0.0]
+        #angle
+        kA = [0.0, 0.0, 0.0, 0.0]
 
-        self.kB = 2
-        self.kZeta = 0.5
+        self.kB = 0.7
+        self.kZeta = 2
 
         TolVel = 0.2
         TolAngle = 1

@@ -39,7 +39,7 @@ class Drive(Subsystem):
 
     prevDist = [0,0]
 
-    maxSpeed = 1
+    maxSpeed = 0.75
 
     model = None
 
@@ -146,7 +146,7 @@ class Drive(Subsystem):
 
         #Incorrect until redone
         transmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.08)
-        self.model = dDrive.DifferentialDrive(29, 1.83, 0, units.inchesToMeters(3.0), units.inchesToMeters(20), transmission, transmission)
+        self.model = dDrive.DifferentialDrive(29, 1.83, 0, units.inchesToMeters(3.0), units.inchesToMeters(14), transmission, transmission)
         self.maxVel = self.maxSpeed*self.model.getMaxAbsVelocity(0, 0, 12)
         self.Path = Path.Path(self, self.model, self.odTemp, self.getDistance)
 
