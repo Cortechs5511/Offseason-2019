@@ -57,7 +57,7 @@ class MyRobot(wpilib.TimedRobot):
     #creates two joysticks for drive control
         self.Joystick0 =wpilib.Joystick(0)
         self.Joystick1 =wpilib.Joystick(1)
-        self.Controller1 =wpilib.Joystick(1)
+        self.Controller1 =wpilib.Joystick(2)
     #sets up encoders
         self.left_encoder = wpilib.Encoder(0,1)
         self.right_encoder = wpilib.Encoder(2,3)
@@ -81,21 +81,24 @@ class MyRobot(wpilib.TimedRobot):
         self.ticks = self.getDistance()
         sd.putNumber("ticks",self.ticks)
     #limit breakers which set speeds based on axis units
-        left = (self.Joystick0.getRawAxis(1))
+        left = -(self.Joystick0.getRawAxis(1))
         right = -(self.Joystick1.getRawAxis(1))
-        rotation = (self.Controller1.getRawAxis(2))
-        intakeButton = -(self.Controller1.getRawAxis(4))
-        outtakeButton = -(self.Controller1.getRawAxis(3))
+        rotation = (self.Joystick0.getRawAxis(0))
+        intakeButton = self.Controller1.getRawAxis(2)
+        outtakeButton = self.Controller1.getRawAxis(3)
         liftButtonUp = (self.Controller1.getRawButton(4))
         liftButtonDown = (self.Controller1.getRawButton(1))
         #arcade tank toggle
-        if self.tankMode == True:
+        if True:
+            self.mrbDrive(left, rotation)
+        elif self.tankMode == True:
             self.drive(left, right)
         else:
             self.arcadeDrive(left,rotation)
         #lift
         self.lift(liftButtonUp,liftButtonDown)
-        #self.intake(intakeButton,outtakeButton)
+
+        self.intake(intakeButton > 0.5,outtakeButton > 0.5)
 
 
     def autonomousPeriodic(self):
@@ -126,16 +129,16 @@ class MyRobot(wpilib.TimedRobot):
             self.drive(remaining_distance*constant+0.25,remaining_distance*constant+0.25)
         else:
             self.drive(0,0)
-    '''
+    
     #intake function
-    def intake(self,in,out):
-        if in and not out:
+    def intake(self,intakeIn,out):
+        if intakeIn and not out:
             self.Intake2.set(0.5)
-        if out and not in:
+        elif out and not intakeIn:
             self.Intake2.set(-0.5)
-        if out and in:
+        else:
             self.Intake2.set(0)
-    '''
+    
     #lift function
     def lift(self,up,down):
         if up and not down:
@@ -146,6 +149,30 @@ class MyRobot(wpilib.TimedRobot):
             self.Lift2.set(0)
         if (not down) and (not up):
             self.Lift2.set(0)
+
+    def mrbDrive(self, throttle, rotation):
+        left = 0
+        right = 0
+        power = 0.4
+        rotGain = 1.25
+
+        deflect = 0.75
+        if throttle > deflect:
+            left = power
+            right = power
+        elif throttle < -deflect:
+            left = -power
+            right = -power
+        elif rotation > deflect:
+            left = power * rotGain
+            right = -power * rotGain
+        elif rotation < -deflect:
+            left = -power * rotGain
+            right = power * rotGain
+
+        self.LeftDrive1.set(left)
+        self.RightDrive1.set(right)        
+
     #tank drive
     def drive(self, left, right):
         #breakers
