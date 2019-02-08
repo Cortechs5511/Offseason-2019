@@ -6,21 +6,20 @@ class ContinuousSensor(Subsystem):
 
     def __init__(self, function):
         self.function = function
-        self.list = []
+        self.measurement = 0
+        self.estimite = 0 #initial estimate
+        self.prediction = 0
+        self.g = 0 #g value
+        self.h = 0 #h value
+        self.time_step = 0
+        self.gain = 0
 
     def updateList(self):
-        self.value = self.function()
-        self.list.append(self.value)
+        self.measurement = self.function()
+        self.time_step += 1
+        self.prediction = self.estimite + self.gain
+        self.gain += (self.h * (self.measurement - self.prediction) / self.time_step)
+        self.estimate = self.prediction + (self.g * (self.measurement - self.prediction))
 
-    def returnValue(self, x = 5):
-        if len(self.list) >= x:
-            self.majorList = []
-            for i in range(1,(x+1)):
-                if (list[-i] == 0 and list[(-i-1)] == 0 and list[(-i-2)] == 0) or (list[-i] != 0):
-                    self.majorList.append(((x)^-(i-3))/10) * list[-i]
-                else: pass
-        elif len(self.list) >= 1:
-            self.majorList = [self.list[-1]]
-        else:
-            return 0
-        return (sum(self.majorList) / len(self.majorList))
+    def returnValue(self):
+        return [self.estimate, (self.estimate + self.gain)]
