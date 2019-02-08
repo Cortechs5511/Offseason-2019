@@ -9,8 +9,8 @@ from wpilib import SmartDashboard
 class AutonCheck(Command):
     '''test command for checking bump detection'''
     def __init__(self, dist=9.75):
-        self.debug = True
         super().__init__('AutonCheck')
+        self.debug = True
         self.requires(self.getRobot().drive)
         self.DT = self.getRobot().drive
 
@@ -22,6 +22,8 @@ class AutonCheck(Command):
             self.mult = 1
         elif self.dist < 0:
             self.mult = -1
+        self.leftMult = 0.92
+        self.rightMult = 1.0
 
     def execute(self):
         distAchieved = abs(self.DT.getDistance()[0]-self.start[0])
@@ -36,13 +38,16 @@ class AutonCheck(Command):
             pass
         #if distAchieved <= .5 * self.dist:
         if distToGo > 5:
-            self.DT.tankDrive(.4 * self.mult, .4 * self.mult)
+            speed = self.mult * .4
         else:
             speed = min(.4, distToGo/13.2) * self.mult
-            self.DT.tankDrive(speed, speed)
+            speed = max(speed, .3)
+
+        #self.DT.tankDrive(self.leftMult * speed, self.rightMult * speed)
 
     def end(self):
-        self.DT.disable()
+        #self.DT.tankDrive(0,0)
+        pass
     def interrupted(self):
         self.end()
 
