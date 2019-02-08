@@ -10,9 +10,6 @@ from CRLibrary.path import odometry as od
 
 class DrivePath(TimedCommand):
 
-    startX = 0
-    startY = 0
-
     def __init__(self, name="DriveStraight", follower="PathFinder", timeout = 300):
         super().__init__('DrivePath', timeoutInSeconds = timeout)
 

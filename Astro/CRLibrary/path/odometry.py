@@ -4,7 +4,7 @@ from CRLibrary.util import units
 
 class Odometer():
 
-    def __init__(self, period=1/50, x=0, y=0, angle=0):
+    def __init__(self, period=.075, x=0, y=0, angle=0):
         self.period = period
         [self.x, self.y, self.angle, self.rightVel, self.leftVel] = [x, y, angle, 0, 0]
 

@@ -38,7 +38,7 @@ class MyRobot(CommandBasedRobot):
     period = 1/frequency
 
     def __init__(self):
-        super().__init__(.04)
+        super().__init__(.075)
 
     def robotInit(self):
 
@@ -123,7 +123,7 @@ class MyRobot(CommandBasedRobot):
 
     def updateDashboardPeriodic(self):
         self.rate.execute()
-        self.drive.dashboardPeriodic()
+        #self.drive.dashboardPeriodic()
         #self.hatchMech.dashboardPeriodic()
         #self.cargoMech.dashboardPeriodic()
         #self.climber.dashboardPeriodic()

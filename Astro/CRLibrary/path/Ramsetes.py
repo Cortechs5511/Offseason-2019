@@ -34,10 +34,10 @@ class Ramsetes():
         #velocity
         kV = [0.02, 0.0, 0.0, 0.0]
         #angle
-        kA = [0.0, 0.0, 0.0, 0.0]
+        kA = [-0.013, 0.0, 0.0, 0.0]
 
-        self.kB = 0.7
-        self.kZeta = 2
+        self.kB = 0 #curvature
+        self.kZeta = 0.8 #dampening
 
         TolVel = 0.2
         TolAngle = 1
