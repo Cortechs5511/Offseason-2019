@@ -12,7 +12,7 @@ from commands.drive.driveVision import DriveVision
 from commands.drive.setFixedDT import SetFixedDT
 from commands.drive.setSpeedDT import SetSpeedDT
 from commands.drive.turnAngle import TurnAngle
-
+from commands.hatch.ejectToggle import EjectToggle
 import commands.sequences as seq
 
 class TestPath(CommandGroup):
@@ -30,3 +30,12 @@ def dashboardInit():
 
 def dashboardPeriodic():
     pass
+
+
+
+'''command to deliver hatch to front post'''
+def autoFrontHath():
+    cg = CommandGroup('frontHatch')
+    cg.addSequential(WaitCommand(3))
+    cg.addSequential(EjectToggle())
+    return cg
