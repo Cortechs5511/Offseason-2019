@@ -16,9 +16,24 @@ def makeTraj(name):
             pf.Waypoint(0,0,0),
             pf.Waypoint(20,0,0)
         ]
-    elif(name=="Test"):
+
+    elif(name=="AlignBack"):
         points = [
             pf.Waypoint(-10,0,0),
+            pf.Waypoint(-5,0,0),
+            pf.Waypoint(0,0,0)
+        ]
+
+    elif(name=="AlignLeft"):
+        points = [
+            pf.Waypoint(-10,5,0),
+            pf.Waypoint(-5,0,0),
+            pf.Waypoint(0,0,0)
+        ]
+
+    elif(name=="AlignRight"):
+        points = [
+            pf.Waypoint(-10,-5,0),
             pf.Waypoint(-5,0,0),
             pf.Waypoint(0,0,0)
         ]
