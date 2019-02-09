@@ -31,14 +31,24 @@ class Ramsetes():
         self.finished = False
 
         '''Gains'''
-        kV = [0.20, 0.0, 0.0, 0.0] #velocity
-        kA = [0.01, 0.0, 0.0, 0.0] #angle
+        kV = [0.05, 0.0, 0.004, 0.0] #velocity
+        kA = [0.00001, 0.0, 0.00001, 0.0] #angle
 
-        self.kB = 1 #curvature
-        self.kZeta = 0.4 #dampening
+        self.kB = 0.01 #curvature
+        self.kZeta = 0.38 #dampening
 
         TolVel = 0.2
         TolAngle = 1
+
+        ''' drive straight Gains
+        kV = [0.05, 0.0, 0.01, 0.0] #velocity
+        kA = [0.01, 0.0, 0.0, 0.0] #angle
+
+        self.kB = 2 #curvature
+        self.kZeta = 0.7 #dampening
+
+        TolVel = 0.2
+        TolAngle = 1 '''
 
         '''PID Controllers'''
         self.MaxV = PathGen.getLimits()[0]

@@ -50,10 +50,10 @@ class MyRobot(CommandBasedRobot):
 
         Command.getRobot = lambda x=0: self
 
-        #self.limelight = Limelight.Limelight(self)
-        #self.hatchMech = HatchMech.HatchMech(self)
-        #self.cargoMech = CargoMech.CargoMech(self)
-        #self.climber = Climber.Climber(self)
+        self.limelight = Limelight.Limelight(self)
+        self.hatchMech = HatchMech.HatchMech(self)
+        self.cargoMech = CargoMech.CargoMech(self)
+        self.climber = Climber.Climber(self)
         self.drive = Drive.Drive(self)
 
         self.timer = wpilib.Timer()
@@ -72,8 +72,12 @@ class MyRobot(CommandBasedRobot):
        # if(self.dashboard): self.updateDashboardInit()
         self.updateDashboardInit()
 
-        self.DrivePath = DrivePath(name="DriveStraight", follower="Ramsetes")
-        self.Align = Align(follower="Ramsetes")
+
+
+        self.hatchMech.subsystemInit()
+        self.cargoMech.subsystemInit()
+        self.climber.subsystemInit()
+    
 
     def teleopInit(self):
         self.loop_timer = looptimer.LoopTimer(self.logger)
@@ -96,8 +100,8 @@ class MyRobot(CommandBasedRobot):
         self.curr = 0
 
         #[x,y] = self.limelight.getPathXY()
-        [x,y] = [-10, 0]
-        self.DrivePath.start(0, 0)
+        #[x,y] = [-10, 0]
+        self.DrivePath.start()
         #self.Align.start(x,y)
 
         '''
@@ -136,9 +140,9 @@ class MyRobot(CommandBasedRobot):
 
     def disabledInit(self):
         self.drive.disable()
-        #self.hatchMech.disable()
-        #self.cargoMech.disable()
-        #self.climber.disable()
+        self.hatchMech.disable()
+        self.cargoMech.disable()
+        self.climber.disable()
 
     def disabledPeriodic(self):
         self.disabledInit()

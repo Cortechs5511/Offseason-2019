@@ -14,7 +14,7 @@ from path import PathList
 
 MAXV = 5
 MAXA = 5
-MAXJ = 10
+MAXJ = 5
 
 def getLimits():
     global MAXV, MAXA, MAXJ
@@ -49,7 +49,7 @@ def getTraj(name, model, period):
         return [left,right,modifier]
 
 def showPath(left,right,modifier):
-    if(False):
+    if(True):
         if wpilib.RobotBase.isSimulation():
             from pyfrc.sim import get_user_renderer
             renderer = get_user_renderer()

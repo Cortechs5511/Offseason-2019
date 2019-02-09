@@ -2,8 +2,6 @@ import math
 import ctre
 from ctre import WPI_TalonSRX as Talon
 from ctre import WPI_VictorSPX as Victor
-
-
 import navx
 from subsystems.Limelight import Limelight
 import wpilib
@@ -29,6 +27,8 @@ from CRLibrary.physics import DifferentialDrive as dDrive
 from CRLibrary.path import odometry as od
 from CRLibrary.path import Path
 from CRLibrary.util import units as units
+
+import robotMap
 
 class Drive(Subsystem):
 
@@ -62,19 +62,19 @@ class Drive(Subsystem):
 
         self.accel = wpilib.BuiltInAccelerometer()
 
-        TalonLeft = Talon(10)
-        TalonRight = Talon(20)
+        TalonLeft = Talon(robotMap.driveLeft1)
+        TalonRight = Talon(robotMap.driveRight1)
         TalonLeft.setSafetyEnabled(False)
         TalonRight.setSafetyEnabled(False)
 
         if not wpilib.RobotBase.isSimulation():
-            VictorLeft1 = Victor(11)
-            VictorLeft2 = Victor(12)
+            VictorLeft1 = Victor(robotMap.driveLeft2)
+            VictorLeft2 = Victor(robotMap.driveLeft3)
             VictorLeft1.follow(TalonLeft)
             VictorLeft2.follow(TalonLeft)
 
-            VictorRight1 = Victor(21)
-            VictorRight2 = Victor(22)
+            VictorRight1 = Victor(robotMap.driveRight2)
+            VictorRight2 = Victor(robotMap.driveRight3)
             VictorRight1.follow(TalonRight)
             VictorRight2.follow(TalonRight)
 
@@ -110,11 +110,11 @@ class Drive(Subsystem):
 
         self.navx = navx.ahrs.AHRS.create_spi()
 
-        self.leftEncoder = wpilib.Encoder(0,1)
+        self.leftEncoder = wpilib.Encoder(robotMap.leftEncoder[0], robotMap.leftEncoder[1])
         self.leftEncoder.setDistancePerPulse(self.leftConv)
         self.leftEncoder.setSamplesToAverage(10)
 
-        self.rightEncoder = wpilib.Encoder(2,3)
+        self.rightEncoder = wpilib.Encoder(robotMap.rightEncoder[0], robotMap.rightEncoder[1])
         self.rightEncoder.setDistancePerPulse(self.rightConv)
         self.rightEncoder.setSamplesToAverage(10)
 
@@ -144,8 +144,12 @@ class Drive(Subsystem):
         self.odTemp = od.Odometer(self.robot.period)
 
         #Incorrect until redone
-        transmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.08)
-        self.model = dDrive.DifferentialDrive(29, 1.83, 0, units.inchesToMeters(3.0), units.inchesToMeters(14), transmission, transmission)
+        if wpilib.RobotBase.isSimulation():
+            Ltransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.08)
+            Rtransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.08)
+        Ltransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.08)
+        Rtransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.2)
+        self.model = dDrive.DifferentialDrive(29, 1.83, 0, units.inchesToMeters(3.0), units.inchesToMeters(14), Ltransmission, Rtransmission)
         self.maxVel = self.maxSpeed*self.model.getMaxAbsVelocity(0, 0, 12)
         self.Path = Path.Path(self, self.model, self.odTemp, self.getDistance)
 
@@ -243,8 +247,9 @@ class Drive(Subsystem):
     def updateSensors(self):
         self.leftVal = self.leftEncoder.get()
         self.rightVal = self.rightEncoder.get()
-        self.navxVal = -self.navx.getYaw()
-        if wpilib.RobotBase.isSimulation(): self.navxVal*=-1
+        self.navxVal = self.navx.getYaw()
+
+        #if wpilib.RobotBase.isSimulation(): self.navxVal*=-1
 
     def getAngle(self):
         return self.navxVal
