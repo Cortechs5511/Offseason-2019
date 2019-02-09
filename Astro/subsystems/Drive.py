@@ -39,7 +39,7 @@ class Drive(Subsystem):
 
     prevDist = [0,0]
 
-    maxSpeed = 0.75
+    maxSpeed = 1
 
     model = None
 
@@ -48,9 +48,8 @@ class Drive(Subsystem):
     leftVal = 0
     rightVal = 0
 
-    measuredCorrection = 9.74/9.25
-    leftConv = 5.75/12 * math.pi / 256 * measuredCorrection
-    rightConv = -5.75/12 * math.pi / 256 * measuredCorrection
+    leftConv = 6/12 * math.pi / 256
+    rightConv = -6/12 * math.pi / 256
 
     def __init__(self, robot):
         super().__init__('Drive')
@@ -349,13 +348,13 @@ class Drive(Subsystem):
         ''' Returns true if acceleration is greater than bumpInt (0.4) '''
         self.accelX = self.accel.getX()
         self.accelY = self.accel.getY()
+
         if self.debug:
             SmartDashboard.putNumber("X", self.accelX)
             SmartDashboard.putNumber("Y", self.accelY)
-        if abs(self.accelX) >= bumpInt or abs(self.accelY) >= bumpInt:
-            return True
-        else:
-            return False
+
+        if abs(self.accelX) >= bumpInt or abs(self.accelY) >= bumpInt: return True
+        return False
 
 class FlipButton(Command):
     def __init__(self):
@@ -371,30 +370,3 @@ class FlipButton(Command):
 
     def isFinished(self):
         return True
-
-""" class HumanDrive(Command):
-
-    def __init__(self):
-        super().__init__('driveMech')
-        self.robot = self.getRobot()
-        self.driveMech = self.robot.driveMech
-        self.requires(self.driveMech)
-
-    def initialize(self):
-        pass
-
-    def execute(self):
-        if self.driveMech.flipped:
-            oldLeft = leftSpeed
-            leftSpeed = -rightSpeed
-            rightSpeed = -oldLeft
-        self.driveMech.drive(leftSpeed, rightSpeed)
-
-    def interrupted(self):
-        self.end()
-
-    def end(self):
-        self.driveMech.stopDrive()
-
-    def isFinished(self):
-        return False """

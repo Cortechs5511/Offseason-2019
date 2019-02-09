@@ -4,7 +4,7 @@ from CRLibrary.util import units
 
 class Odometer():
 
-    def __init__(self, period=.075, x=0, y=0, angle=0):
+    def __init__(self, period=1/50, x=0, y=0, angle=0):
         self.period = period
         [self.x, self.y, self.angle, self.rightVel, self.leftVel] = [x, y, angle, 0, 0]
 
@@ -15,7 +15,7 @@ class Odometer():
         speed = (leftV+rightV)/2
         self.x += speed * self.period * math.cos(math.pi/180*angleIn)
         self.y += speed * self.period * math.sin(math.pi/180*angleIn)
-
+        #Can be updated to assume constant curvature as opposed to constant velocity (see Tyler's book)
         self.angle = angleIn
         self.rightVel = rightV
         self.leftVel = leftV
