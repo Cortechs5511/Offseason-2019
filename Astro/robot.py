@@ -17,6 +17,7 @@ from commands.autonomous import TestPath
 from commands.autonomous import DriveStraight
 
 from commands.drive.drivePath import DrivePath
+from commands.drive.align import Align
 
 from subsystems import HatchMech
 from subsystems import CargoMech
@@ -46,6 +47,7 @@ class MyRobot(CommandBasedRobot):
         This is a good place to set up your subsystems and anything else that
         you will need to access later.
         '''
+
         Command.getRobot = lambda x=0: self
 
         #self.limelight = Limelight.Limelight(self)
@@ -69,10 +71,9 @@ class MyRobot(CommandBasedRobot):
 
        # if(self.dashboard): self.updateDashboardInit()
         self.updateDashboardInit()
-        self.TestPath = TestPath(self.follower)
-        self.DriveStraight = DriveStraight()
-        self.DrivePath = DrivePath(name="Test", follower="Ramsetes")
 
+        self.DrivePath = DrivePath(name="DriveStraight", follower="Ramsetes")
+        self.Align = Align(follower="Ramsetes")
 
     def teleopInit(self):
         self.loop_timer = looptimer.LoopTimer(self.logger)
@@ -95,8 +96,9 @@ class MyRobot(CommandBasedRobot):
         self.curr = 0
 
         #[x,y] = self.limelight.getPathXY()
-        [x,y] = [-10, 5]
-        self.DrivePath.start(x,y)
+        [x,y] = [-10, -7]
+        #self.DrivePath.start(0, 0)
+        self.Align.start(x,y)
 
         '''
         self.autoMode = "TestPath" #self.autoMode = "DriveStraight"
