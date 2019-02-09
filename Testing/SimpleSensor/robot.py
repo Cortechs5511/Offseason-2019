@@ -3,7 +3,7 @@ from wpilib import SmartDashboard
 from wpilib import TimedRobot
 from wpilib.joystick import Joystick
 
-import navx
+from navx.ahrs import AHRS as nav
 
 import ctre
 from ctre import WPI_TalonSRX as Talon
@@ -13,7 +13,7 @@ class MyRobot(TimedRobot):
 
     def robotInit(self):
 
-        self.navx = navx.ahrs.AHRS(0)
+        self.navx = nav.create_spi()
 
         self.timer = wpilib.Timer()
         self.timer.start()
@@ -37,7 +37,7 @@ class MyRobot(TimedRobot):
         self.left = TalonLeft
         self.right = TalonRight
 
-        self.function = self.navx.getYaw
+        self.function = self.get_ticks
         self.measurement = 0
         self.estimate = 0
         self.prediction = 0
@@ -45,6 +45,9 @@ class MyRobot(TimedRobot):
         self.h = 0.3
         self.time_step = 0
         self.gain = 0
+
+        self.left_encoder = wpilib.Encoder(0,1)
+        self.right_encoder = wpilib.Encoder(2,3)
 
     def robotPeriodic(self):
 
@@ -56,15 +59,27 @@ class MyRobot(TimedRobot):
 
         self.updateDashboardPeriodic()
 
-        self.left.set(self.joystick0.getY())
-        self.right.set(self.joystick1.getY())
+        left_power = self.joystick0.getY()
+        right_power = self.joystick1.getY()
+
+        self.left.set(left_power)
+        self.right.set(right_power * -1)
+
+    def get_ticks(self):
+        left_ticks = (self.left_encoder.getDistance())/255
+        right_ticks = (self.right_encoder.getDistance())/-127
+        ticks = (left_ticks +right_ticks)/2 
+        self.distance = ticks * 4 *3.14
+        return self.distance
 
     def autonomousInit(self):
         pass
 
     def updateDashboardPeriodic(self):
-        SmartDashboard.putNumber("NavX Raw", self.navx.getYaw())
-        SmartDashboard.putNumber("NavX Clean", self.estimate)
+        #SmartDashboard.putNumber("NavX Raw", self.navx.getYaw())
+        #SmartDashboard.putNumber("NavX Clean", self.estimate)
+        SmartDashboard.putNumber("Average Encoder Raw", self.get_ticks())
+        SmartDashboard.putNumber("Encoder Clean", self.estimate)
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)

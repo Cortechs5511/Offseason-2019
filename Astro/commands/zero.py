@@ -8,18 +8,15 @@ class Zero(InstantCommand):
 
     def __init__(self):
         super().__init__('Zero')
-<<<<<<< HEAD:Astro/commands/zero.py
         robot = self.getRobot()
         self.cargoMech = robot.cargoMech
         self.hatchMech = robot.hatchMech
         self.requires(robot.cargoMech)
         self.requires(robot.hatchMech)
-=======
         #self.cargoMech = self.getRobot().cargoMech
         #self.cargoMech = self.getRobot().hatchMech
         #self.requires(self.getRobot().cargoMech)
         #self.requires(self.getRobot().hatchMech)
->>>>>>> Ramsetes:Astro/commands/Zero.py
 
     def initialize(self):
         #self.cargoMech.zero()
