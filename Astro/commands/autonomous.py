@@ -34,8 +34,11 @@ def dashboardPeriodic():
 
 
 '''command to deliver hatch to front post'''
-def autoFrontHath():
-    cg = CommandGroup('frontHatch')
-    cg.addSequential(WaitCommand(3))
-    cg.addSequential(EjectToggle())
-    return cg
+class AutoFrontHatch(CommandGroup):
+    def __init__(self):
+        super().__init__("AutoFrontHatch")
+        self.addSequential(DriveStraightCombined(distance=154/12.0, angle=0, timeout=5))
+        self.addSequential(WaitCommand(3))
+        self.addSequential(EjectToggle())
+        self.addSequential(WaitCommand(.5))
+
