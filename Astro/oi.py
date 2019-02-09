@@ -29,7 +29,7 @@ def getJoystick(num):
     can read values from them later.
     '''
     #CHANGE
-    if wpilib.robotBase.isSimulation():
+    if wpilib.RobotBase.isSimulation():
         joystick0 = Joystick(1)
         joystick1 = Joystick(2)
         xbox = Xbox(0)
