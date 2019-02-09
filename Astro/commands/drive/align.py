@@ -29,7 +29,7 @@ class Align(TimedCommand):
         if(y<-3): self.name = "AlignLeft"
         elif(y>3): self.name= "AlignRight"
         else: self.name = "AlignBack"
-        print(self.name)
+        #print(self.name)
 
         super(Align, self).start()
 

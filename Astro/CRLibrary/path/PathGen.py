@@ -49,7 +49,7 @@ def getTraj(name, model, period):
         return [left,right,modifier]
 
 def showPath(left,right,modifier):
-    if(True):
+    if(False):
         if wpilib.RobotBase.isSimulation():
             from pyfrc.sim import get_user_renderer
             renderer = get_user_renderer()

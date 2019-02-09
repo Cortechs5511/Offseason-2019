@@ -96,9 +96,9 @@ class MyRobot(CommandBasedRobot):
         self.curr = 0
 
         #[x,y] = self.limelight.getPathXY()
-        [x,y] = [-10, -7]
-        #self.DrivePath.start(0, 0)
-        self.Align.start(x,y)
+        [x,y] = [-10, 0]
+        self.DrivePath.start(0, 0)
+        #self.Align.start(x,y)
 
         '''
         self.autoMode = "TestPath" #self.autoMode = "DriveStraight"
