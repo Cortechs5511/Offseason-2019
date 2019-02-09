@@ -22,6 +22,8 @@ from CRLibrary.path import odometry as od
 from CRLibrary.path import Path
 from CRLibrary.util import units as units
 
+from subsystems import ContinuousSensor
+
 class Drive(Subsystem):
 
     mode = ""
@@ -128,7 +130,7 @@ class Drive(Subsystem):
 
         self.Path = Path.Path(self, self.model, self.od, self.getDistance)
 
-        self.ContSensor = ContinuousSensor.ContinuousSensor(self.navx.getYaw)
+        self.contSensor = ContinuousSensor.ContinuousSensor(self.navx.getYaw)
 
     def __getDistance__(self):
         return self.getAvgDistance()
@@ -237,11 +239,12 @@ class Drive(Subsystem):
         self.leftVal = self.leftEncoder.get()
         self.rightVal = self.rightEncoder.get()
         #self.navxVal = self.navx.getYaw()
-        self.ContSensor.updateList()
+        self.contSensor.update()
+        self.navxVal = self.contSensor.returnValue()
         #self.navxVal = 0
 
     def getAngle(self):
-        return self.ContSensor.returnValue()
+        return self.contSensor.returnValue()
 
     def getRaw(self):
         return [self.leftVal, self.rightVal]

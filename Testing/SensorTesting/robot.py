@@ -53,7 +53,7 @@ from commands.autonomous import RightSwitchMiddle
 from commands.autonomous import LeftSwitchMiddle2Cube
 from commands.autonomous import RightSwitchMiddle2Cube
 
-from subsystems import Wrist, Intake, Lift, Drive, Limelight
+from subsystems import Wrist, Intake, Lift, Drive, Limelight, ContinuousSensor
 
 from CRLibrary.path import odometry as od
 
@@ -98,6 +98,8 @@ class MyRobot(CommandBasedRobot):
         self.wrist = Wrist.Wrist(self)
         self.intake = Intake.Intake(self)
         self.limelight = Limelight.Limelight(self)
+        self.sensors = ContinuousSensor.ContinuousSensor(self)
+        self.navx = navx.ahrs.AHRS(0)
 
         self.timer = wpilib.Timer()
         self.timer.start()
@@ -183,6 +185,7 @@ class MyRobot(CommandBasedRobot):
         '''
 
     def updateDashboardInit(self):
+        pass
         #'''Subsystems'''
         #SmartDashboard.putData("Drive", self.drive)
         #SmartDashboard.putData("Intake", self.intake)
@@ -215,14 +218,14 @@ class MyRobot(CommandBasedRobot):
         #'''Additional UpdateDashboard Functions'''
         #Sequences.UpdateDashboard()
         #autonomous.UpdateDashboard()
-        pass
 
     def updateDashboardPeriodic(self):
         #current = self.drive.getOutputCurrent()+self.intake.getOutputCurrent()+self.wrist.getOutputCurrent()+self.lift.getOutputCurrent()
         #SmartDashboard.putNumber("Total_Amps",current)
 
         #SmartDashboard.putBoolean("Mech_Safety", (self.lift.lift.get() > 0.2 and self.wrist.getAngle() < math.pi/12))
-
+        SmartDashboard.putNumber("NavX Raw", self.navx.getYaw())
+        SmartDashboard.putNumber("NavX Clean", self.drive.getAngle())
         '''Additional UpdateDashboard Functions'''
         #self.drive.UpdateDashboard()
         #self.lift.UpdateDashboard()
