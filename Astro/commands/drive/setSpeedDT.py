@@ -29,20 +29,28 @@ class SetSpeedDT(TimedCommand):
         left = -self.Joystick0.getY()
         right = -self.Joystick1.getY()
         flip = self.DT.isFlipped()
-
+#half-speed
         if self.robot.readDriverRightButton(3):
             left = left / 2
             right = right / 2
-
+# brakes
         if self.robot.readDriverLeftButton(3):
-            left = left / 100
-            right = right / 100
+            left = left / 1000
+            right = right / 1000
 
-    
+# TURBO MODE POTENTIAL DANGER ONLY USE IN DIRE INSTANCES
+     #  if self.robot.readDriverLeftButton(4):
+      #     left = left*1000
+       #    right = right*1000
+        
+#double speed maybe useful 
+        if self.robot.readDriverLeftButton(5):
+            left = left*2
+            right = right*2
+
 
         if (abs(left)<0.025) and (abs(right)<0.025):
 
-        if (abs(left)<0.025) or (abs(right)<0.025):
 
             gain = SmartDashboard.getNumber("gain",1)
             #diff drive is messed up
