@@ -129,7 +129,7 @@ class Climber(Subsystem):
     def lockLift(self):
         """locks the lift mechanism so the robot will NOT go up"""
         self.climberLock.set(wpilib.DoubleSolenoid.Value.kReverse)
-    def unlockLift
+    def unlockLift(self):
         """unlocks the lift mechanism so the robot will go up"""
         self.climberLock.set(wpilib.DoubleSolenoid.Value.kForward)
 
