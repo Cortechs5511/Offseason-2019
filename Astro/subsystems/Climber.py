@@ -5,7 +5,7 @@ from wpilib.command.subsystem import Subsystem
 from wpilib.command import Command
 import wpilib.encoder
 import ctre
-import robotMap
+import map
 from commands.climber.liftRobot import LiftRobot
 from commands.climber.lowerRobot import LowerRobot
 from commands.climber.setSpeedWheel import SetSpeedWheel
@@ -23,16 +23,16 @@ class Climber(Subsystem):
         super().__init__('Climber')
         self.robot = Robot
         self.debug = True
-        self.backLift = ctre.WPI_TalonSRX(robotMap.backLift)
-        self.frontLift = ctre.WPI_TalonSRX(robotMap.frontLift)
+        self.backLift = ctre.WPI_TalonSRX(map.backLift)
+        self.frontLift = ctre.WPI_TalonSRX(map.frontLift)
         """ self.wheelRight = ctre.WPI_VictorSPX(2)"""
-        self.wheelLeft = ctre.WPI_VictorSPX(robotMap.wheelLeft)
-        self.wheelRight = ctre.WPI_VictorSPX(robotMap.wheelRight)
+        self.wheelLeft = ctre.WPI_VictorSPX(map.wheelLeft)
+        self.wheelRight = ctre.WPI_VictorSPX(map.wheelRight)
         self.backLift.setName("Climber" , "BackLift")
         self.frontLift.setName("Climber" , "FrontLift")
         self.wheelLeft.setName("Climber" , "Wheels")
 
-        self.climberLock = wpilib.DoubleSolenoid(robotMap.climberLock1 , robotMap.climberLock2)
+        self.climberLock = wpilib.DoubleSolenoid(map.climberLock1 , map.climberLock2)
         self.climberLock.setName("Climber" , "Lock")
 
 
