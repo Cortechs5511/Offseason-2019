@@ -60,7 +60,7 @@ class SetSpeedDT(TimedCommand):
             if flip == True:
                 self.DT.tankDrive (-right * self.maxspeed ,-left * self.maxspeed)
             else:
-        self.DT.tankDrive(left * self.maxspeed ,right * self.maxspeed)
+                self.DT.tankDrive(left * self.maxspeed ,right * self.maxspeed)
 
 
     def interrupted(self):

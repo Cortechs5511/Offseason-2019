@@ -10,7 +10,7 @@ class MyRobot(wpilib.TimedRobot):
     #declares the motors in existence
     def robotInit(self):
         self.piston = wpilib.DoubleSolenoid(0,1)
-
+        self.operator = wpilib.Joystick(0)
     def teleopInit(self):
         self.count = 0
 
@@ -33,36 +33,39 @@ class MyRobot(wpilib.TimedRobot):
 
         self.piston.set(state)
         sd.putNumber("Piston",state)
-    '''def teleopPeriodic(self):
-
-        ticks = (self.left_encoder.getDistance())*255
-        sd.putNumber("Ticks",ticks)
-        self.count+= 1
-        sd.putNumber("Count",self.count)
-
-        left = self.rightJoystick.getRawAxis(1)
-        right = self.leftJoystick.getRawAxis(1)
-        if abs(left) < 0:
-            left = 0
-        if abs(right) < 0:
-            "right = 0
-        left = left*0.2
-        right = right*0.2
-        self.drive(left, right) '''
 
 
 
-    '''def Leftdrivecontrol(self, leftPower):
-        sd.putNumber("leftspeed", leftPower)
-        self.Leftdrive1.set(leftPower)
-        self.Leftdrive2.set(leftPower)
 
-    def Rightdrivecontrol(self, rightPower):
-        sd.putNumber("rightspeed", rightPower)
-        self.Rightdrive1.set(rightPower)
-        self.Rightdrive2.set(rightPower)
+        """ Adds subsystem specific commands. """
+        """if self.debug:
+            SmartDashboard.putData("Eject Hatch", EjectHatch())
+            SmartDashboard.putData("Hatch Mech", self)
+            SmartDashboard.putData("Ejector Toggle" , EjectToggle())
+        self.retractEjector()
+        r = self.robot
+        b : wpilib.buttons.JoystickButton = r.operatorButton(3)
+        b.whenPressed(EjectHatch())
+        b : wpilib.buttons.JoystickButton = r.operatorButton(5)
+        b.whenPressed(EjectToggle())
+        b : wpilib.buttons.JoystickButton = r.operatorButton(6)
+        b.whenPressed(SlideToggle())'''"""
 
-    def drive(self, leftPower,rightPower):
+    def teleopPeriodic(self):
+
+        state1 = self.piston.get()
+        
+        if self.operator.getButton(1):
+            state1 = wpilib.DoubleSolenoid.Value.kForward
+        elif self.operator.getButton(2):
+            state1 = wpilib.DoubleSolenoid.Value.kReverse
+
+        self.piston.set(state1)
+        sd.putNumber("Piston",state1)
+
+
+
+    '''def drive(self, leftPower,rightPower):
         self.Leftdrivecontrol(leftPower)
         self.Rightdrivecontrol(rightPower)'''
 

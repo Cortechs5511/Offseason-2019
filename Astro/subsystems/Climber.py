@@ -125,6 +125,14 @@ class Climber(Subsystem):
         self.wheelLeft.set(-0.75)
         self.wheelRight.set(-0.75)
 
+   
+    def lockLift(self):
+        """locks the lift mechanism so the robot will NOT go up"""
+        self.climberLock.set(wpilib.DoubleSolenoid.Value.kReverse)
+    def unlockLift
+        """unlocks the lift mechanism so the robot will go up"""
+        self.climberLock.set(wpilib.DoubleSolenoid.Value.kForward)
+
     #stopping and disable
     def stopFront(self):
         self.frontLift.set(0)
