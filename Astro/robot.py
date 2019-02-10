@@ -20,7 +20,11 @@ from commands.autonomous import AutoFrontHatch
 from commands.drive.autonCheck import AutonCheck
 from commands.drive.drivePath import DrivePath
 <<<<<<< HEAD
+<<<<<<< HEAD
 from commands.drive.rotateAuton import autonRotation
+=======
+
+>>>>>>> 946923f2f5185bbb531e0555e7b36fcbbff3ee5d
 =======
 
 >>>>>>> 946923f2f5185bbb531e0555e7b36fcbbff3ee5d
@@ -79,6 +83,7 @@ class MyRobot(CommandBasedRobot):
         # if(self.dashboard): self.updateDashboardInit()
         self.updateDashboardInit()
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.TestPath = TestPath(self.follower)
         self.DriveStraight = DriveStraight()
         self.DrivePath = DrivePath(name="Test", follower="Ramsetes")
@@ -90,6 +95,8 @@ class MyRobot(CommandBasedRobot):
         self.autonChooser.addOption("AutonRotation", autonRotation())
         SmartDashboard.putData("AutonChooser", self.autonChooser)
 =======
+=======
+>>>>>>> 946923f2f5185bbb531e0555e7b36fcbbff3ee5d
 
 
 
@@ -105,6 +112,9 @@ class MyRobot(CommandBasedRobot):
         super().teleopPeriodic()
         self.loop_timer.measure()
 
+<<<<<<< HEAD
+>>>>>>> 946923f2f5185bbb531e0555e7b36fcbbff3ee5d
+=======
 >>>>>>> 946923f2f5185bbb531e0555e7b36fcbbff3ee5d
     def robotPeriodic(self):
         #self.drive.odMain.display()

@@ -37,10 +37,13 @@ class SetSpeedDT(TimedCommand):
             left = left / 100
             right = right / 100
 <<<<<<< HEAD
+<<<<<<< HEAD
     
 
         if (abs(left)<0.025) and (abs(right)<0.025):
 =======
+=======
+>>>>>>> 946923f2f5185bbb531e0555e7b36fcbbff3ee5d
 
         if (abs(left)<0.025) or (abs(right)<0.025):
 >>>>>>> 946923f2f5185bbb531e0555e7b36fcbbff3ee5d
