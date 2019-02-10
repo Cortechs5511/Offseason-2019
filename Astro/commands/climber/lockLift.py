@@ -1,22 +1,29 @@
 from wpilib.command import Command
 
-class FrontClimb(Command):
+class LockLift(Command):
     def __init__(self):
-        super().__init__('setSpeedWheel')
+        super().__init__('LockLift')
         robot = self.getRobot()
         self.climber = robot.climber
         self.requires(self.climber)
     def initialize(self):
-        pass
+        self.climber.lockLift()
 
     def execute(self):
         pass
 
     def interrupted(self):
-        self.climber.stopFront()
+        pass
 
     def end(self):
-        self.climber.stopFront()
+        pass
+
 
     def isFinished(self):
-        return True
+
+        if self.timeSinceInitialized() >= 0.25:
+            return True
+        else:
+            return False
+
+        

@@ -9,6 +9,8 @@ import map
 from commands.climber.liftRobot import LiftRobot
 from commands.climber.lowerRobot import LowerRobot
 from commands.climber.setSpeedWheel import SetSpeedWheel
+from commands.climber.unlockLift import UnLockLift
+from commands.climber.lockLift import LockLift
 # TODO DETERMINE CONVERSION!!!!
 TICKS_TO_INCHES = 1.0
 MAX_EXTEND = 12.0
@@ -35,25 +37,32 @@ class Climber(Subsystem):
 
 
 
-    def dashboardInit(self):
-        #if self.debug == True:
-        #    SmartDashboard.putData(self)
-        SmartDashboard.putData("Lift Robot", LiftRobot())
+ 
+     
     def subsystemInit(self):
         r = self.robot
+        if self.debug == True:
+        #    SmartDashboard.putData(self)
+            SmartDashboard.putData("Lift Robot", LiftRobot())
+            SmartDashboard.putData("Lock Lift" , LockLift())
+            SmartDashboard.putData("Unlock Lift" , UnLockLift())
 
+
+        #wheels
         climberWheelsForward : wpilib.buttons.JoystickButton = r.driverLeftButton(7)
         climberWheelsForward.whileHeld(SetSpeedWheel(1))
 
-
+        #wheels
         climberWheelsBackward : wpilib.buttons.JoystickButton = r.driverLeftButton(8)
         climberWheelsBackward.whileHeld(SetSpeedWheel(-1))
 
 
+
+        #Lift
         leftLiftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(9)
         leftLiftButton.whileHeld(LiftRobot())
 
-
+        #lift
         rightLiftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(10)
         rightLiftButton.whileHeld(LowerRobot())
 
@@ -96,26 +105,36 @@ class Climber(Subsystem):
         """ Basic lift function for lifting robot.
         @param lift - Positive values make lift go down(extend)
         """
-        if lift > 0 and self.getHeightFront()>=MAX_EXTEND:
+        if not self.isUnlocked():
+            self.frontLift.set(0)
+            return 
+        """ if lift > 0 and self.getHeightFront()>=MAX_EXTEND:
             self.frontLift.set(0)
         elif lift < 0 and self.getHeightFront() < 0:
             self.frontLift.set(0)
         else:
-            self.frontLift.set(lift)
+            self.frontLift.set(lift) """
+
+        #To Do Remove this after testing, add saftey back
+        self.frontLift.set(lift)
+
 
     def liftBack(self,lift):
         """ Basic lift function for lifting robot.
         @param lift - Positive values make lift go down
         """
-        if  lift > 0 and self.getHeightBack()>=MAX_EXTEND:
+        if not self.isUnlocked():
+            self.backLift.set(0)
+            return 
+        ''' if  lift > 0 and self.getHeightBack()>=MAX_EXTEND:
             self.backLift.set(0)
 
         elif lift < 0 and self.getHeightBack()<0:
             self.backLift.set(0)
         else:
-            self.backLift.set(lift)
-
-
+            self.backLift.set(lift)'''
+        #to do: remove comments after testing
+        self.backLift.set(lift)
     #wheel speed
     def wheelForward(self):
         self.wheelLeft.set(0.75)
@@ -125,13 +144,23 @@ class Climber(Subsystem):
         self.wheelLeft.set(-0.75)
         self.wheelRight.set(-0.75)
 
-   
+
     def lockLift(self):
         """locks the lift mechanism so the robot will NOT go up"""
+        self.stopBack()
+        self.stopFront()
         self.climberLock.set(wpilib.DoubleSolenoid.Value.kReverse)
     def unlockLift(self):
         """unlocks the lift mechanism so the robot will go up"""
         self.climberLock.set(wpilib.DoubleSolenoid.Value.kForward)
+    def isUnlocked(self):
+        """checks if the climber is unlocked on SD"""
+        if self.climberLock.get() == wpilib.DoubleSolenoid.Value.kForward:
+            return True
+        else:
+            return False
+
+
 
     #stopping and disable
     def stopFront(self):
@@ -151,3 +180,4 @@ class Climber(Subsystem):
           if self.debug == True:
             SmartDashboard.putNumber("Ticks on front", self.getHeightFront())
             SmartDashboard.putNumber("Ticks on back", self.getHeightBack())
+            SmartDashboard.putBoolean("Is Locked" , self.isUnlocked())

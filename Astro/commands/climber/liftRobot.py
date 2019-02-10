@@ -5,7 +5,7 @@ class LiftRobot(Command):
         super().__init__('liftRobot')
         robot = self.getRobot()
         self.climber = robot.climber
-
+        self.requires(self.climber)
     def initialize(self):
         pass
 
