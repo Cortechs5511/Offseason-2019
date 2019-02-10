@@ -7,6 +7,7 @@ from wpilib.command import Command
 from commands.hatch.ejectToggle import EjectToggle
 from commands.hatch.ejectHatch import EjectHatch
 from commands.hatch.slideToggle import SlideToggle
+import map
 
 class HatchMech(Subsystem):
     def __init__(self, Robot):
@@ -16,8 +17,8 @@ class HatchMech(Subsystem):
         self.robot = Robot
 
         #Normally the ejectPiston would be on solenoid 1, but was changed to see if slide worked.
-        self.ejectPiston = wpilib.Solenoid(1)
-        self.ejectPistonSlide = wpilib.Solenoid(0)
+        self.ejectPiston = wpilib.Solenoid(map.hatchKick)
+        self.ejectPistonSlide = wpilib.Solenoid(map.hatchSlide)
         self.ejectPiston.setName("Hatch" , "Ejector")
         self.ejectPistonSlide.setName("Hatch" , "Slider")
 

@@ -7,7 +7,7 @@ from wpilib.command import TimedCommand
 
 class RelativeTurn(TimedCommand):
 
-    def __init__(self, angle = 0, timeout = 0):
+    def __init__(self, angle = 90, timeout = 0):
         super().__init__('RelativeTurn', timeoutInSeconds = timeout)
         self.requires(self.getRobot().drive)
         self.DT = self.getRobot().drive
@@ -15,15 +15,15 @@ class RelativeTurn(TimedCommand):
 
     def initialize(self):
         StartAngle = self.DT.getAngle()
-        self.EndAngle = StartAngle + self.angle  
+        self.EndAngle = StartAngle + self.angle
         self.DT.setMode('Direct')
 
     def execute(self):
         self.DT.tankDrive(-0.25 , 0.25)
- 
+
     def isFinished(self):
         CurrentAngle = self.DT.getAngle()
-        if CurrentAngle == self.EndAngle:
+        if CurrentAngle >= self.EndAngle:
             return True
         else: return False
 

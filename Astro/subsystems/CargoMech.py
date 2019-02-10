@@ -8,6 +8,7 @@ import ctre
 
 from commands.cargo.wristIntake import WristIntake
 from commands.cargo.wristMove import WristMove
+import map
 
 class CargoMech(Subsystem):
 
@@ -19,8 +20,8 @@ class CargoMech(Subsystem):
         self.robot = Robot
 
         #fix
-        self.motorIntake = ctre.WPI_TalonSRX(0)
-        self.motorWrist = ctre.WPI_TalonSRX(1)
+        self.motorIntake = ctre.WPI_TalonSRX(map.intake)
+        self.motorWrist = ctre.WPI_TalonSRX(map.wrist)
 
     def intake(self):
         ''' Intake the balls (turn wheels inward) '''
@@ -51,6 +52,7 @@ class CargoMech(Subsystem):
             SmartDashboard.putData("Wrist down",WristMove('wrist down',-1))
             SmartDashboard.putData("Stop wrist",WristMove('stop wrist',0))
 
+    def subsystemInit(self):
         r = self.robot
         wristUp : wpilib.buttons.JoystickButton = r.operatorButton(4)
         wristUp.whileActive(WristMove('wrist up',1))

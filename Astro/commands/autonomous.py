@@ -14,6 +14,7 @@ from commands.drive.setSpeedDT import SetSpeedDT
 from commands.drive.turnAngle import TurnAngle
 from commands.hatch.ejectToggle import EjectToggle
 import commands.sequences as seq
+from commands.drive.rotateAuton import autonRotation
 
 class TestPath(CommandGroup):
     def __init__(self, follower="PathFinder"):
@@ -37,6 +38,7 @@ def dashboardPeriodic():
 class AutoFrontHatch(CommandGroup):
     def __init__(self):
         super().__init__("AutoFrontHatch")
+        self.addSequential(autonRotation(90))
         self.addSequential(DriveStraightCombined(distance=154/12.0, angle=0, timeout=5))
         self.addSequential(WaitCommand(3))
         self.addSequential(EjectToggle())

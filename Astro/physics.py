@@ -11,18 +11,18 @@ class PhysicsEngine(object):
         self.controller = controller
         self.position = 0
 
-        self.DistPerPulseL = 4/12 * math.pi / 255
-        self.DistPerPulseR = -4/12 * math.pi / 255
+        self.DistPerPulseL = 6/12 * math.pi / 256
+        self.DistPerPulseR = -6/12 * math.pi / 256
 
         # Change these parameters to fit your robot!
         self.drivetrain = tankmodel.TankModel.theory(
             motor_cfgs.MOTOR_CFG_MINI_CIM,  # motor configuration
-            140*units.lbs,                  # robot mass
+            60*units.lbs,                  # robot mass
             9.44,                           # drivetrain gear ratio
             3,                              # motors per side
-            (28/12)*units.feet,             # robot wheelbase
-            (35/12)*units.feet,             # robot width
-            (35/12)*units.feet,             # robot length
+            (20/12)*units.feet,             # robot wheelbase
+            (30/12)*units.feet,             # robot width
+            (30/12)*units.feet,             # robot length
             (6/12)*units.feet               # wheel diameter
         )
 
@@ -30,7 +30,7 @@ class PhysicsEngine(object):
 
         self.controller.add_device_gyro_channel('navxmxp_spi_4_angle')
 
-        self.deadZone=0.10
+        self.deadZone=0.20
 
     def update_sim(self, hal_data, now, timeDiff):
         # Simulate the drivetrain

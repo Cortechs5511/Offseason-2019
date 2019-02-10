@@ -2,8 +2,6 @@ import math
 import ctre
 from ctre import WPI_TalonSRX as Talon
 from ctre import WPI_VictorSPX as Victor
-
-
 import navx
 from subsystems.Limelight import Limelight
 import wpilib
@@ -30,6 +28,8 @@ from CRLibrary.path import odometry as od
 from CRLibrary.path import Path
 from CRLibrary.util import units as units
 
+import map
+
 class Drive(Subsystem):
 
     mode = ""
@@ -48,34 +48,33 @@ class Drive(Subsystem):
     leftVal = 0
     rightVal = 0
 
-    measuredCorrection = 9.74/9.25
-    leftConv = 5.75/12 * math.pi / 256 * measuredCorrection
-    rightConv = -5.75/12 * math.pi / 256 * measuredCorrection
+    leftConv = 6/12 * math.pi / 256
+    rightConv = -6/12 * math.pi / 256
 
     def __init__(self, robot):
         super().__init__('Drive')
-     
-        self.flipped = False 
-        self.robot = robot 
+
+        self.flipped = False
+        self.robot = robot
         self.debug = True
 
         timeout = 0
 
         self.accel = wpilib.BuiltInAccelerometer()
 
-        TalonLeft = Talon(10)
-        TalonRight = Talon(20)
+        TalonLeft = Talon(map.driveLeft1)
+        TalonRight = Talon(map.driveRight1)
         TalonLeft.setSafetyEnabled(False)
         TalonRight.setSafetyEnabled(False)
 
         if not wpilib.RobotBase.isSimulation():
-            VictorLeft1 = Victor(11)
-            VictorLeft2 = Victor(12)
+            VictorLeft1 = Victor(map.driveLeft2)
+            VictorLeft2 = Victor(map.driveLeft3)
             VictorLeft1.follow(TalonLeft)
             VictorLeft2.follow(TalonLeft)
 
-            VictorRight1 = Victor(21)
-            VictorRight2 = Victor(22)
+            VictorRight1 = Victor(map.driveRight2)
+            VictorRight2 = Victor(map.driveRight3)
             VictorRight1.follow(TalonRight)
             VictorRight2.follow(TalonRight)
 
@@ -111,11 +110,11 @@ class Drive(Subsystem):
 
         self.navx = navx.ahrs.AHRS.create_spi()
 
-        self.leftEncoder = wpilib.Encoder(0,1)
+        self.leftEncoder = wpilib.Encoder(map.leftEncoder[0], map.leftEncoder[1])
         self.leftEncoder.setDistancePerPulse(self.leftConv)
         self.leftEncoder.setSamplesToAverage(10)
 
-        self.rightEncoder = wpilib.Encoder(2,3)
+        self.rightEncoder = wpilib.Encoder(map.rightEncoder[0], map.rightEncoder[1])
         self.rightEncoder.setDistancePerPulse(self.rightConv)
         self.rightEncoder.setSamplesToAverage(10)
 
@@ -145,8 +144,12 @@ class Drive(Subsystem):
         self.odTemp = od.Odometer(self.robot.period)
 
         #Incorrect until redone
-        transmission = DCMotor.DCMotorTransmission(8.3, 2.22, 1.10)
-        self.model = dDrive.DifferentialDrive(64, 10, 0, units.inchesToMeters(3.0), units.inchesToMeters(14), transmission, transmission)
+        if wpilib.RobotBase.isSimulation():
+            Ltransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.08)
+            Rtransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.08)
+        Ltransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.08)
+        Rtransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.2)
+        self.model = dDrive.DifferentialDrive(29, 1.83, 0, units.inchesToMeters(3.0), units.inchesToMeters(14), Ltransmission, Rtransmission)
         self.maxVel = self.maxSpeed*self.model.getMaxAbsVelocity(0, 0, 12)
         self.Path = Path.Path(self, self.model, self.odTemp, self.getDistance)
 
@@ -214,6 +217,7 @@ class Drive(Subsystem):
 
     def tankDrive(self,left=0,right=0):
         self.updateSensors()
+
         if(self.mode=="Distance"): [left,right] = [self.distPID,self.distPID]
         elif(self.mode=="Angle"): [left,right] = [self.anglePID,-self.anglePID]
         elif(self.mode=="Combined"): [left,right] = [self.distPID+self.anglePID,self.distPID-self.anglePID]
@@ -229,23 +233,23 @@ class Drive(Subsystem):
     def __tankDrive__(self,left,right):
         self.left.set(left)
         self.right.set(right)
-        print([left, right])
         self.updateOdometry()
 
     def updateOdometry(self):
-        '''vel = self.getVelocity()
+        vel = self.getVelocity()
         self.odMain.update(vel[0], vel[1], self.getAngle())
         self.odTemp.update(vel[0], vel[1], self.getAngle())
-        self.prevDist = self.getDistance()'''
-        pass
+        self.prevDist = self.getDistance()
 
     def getOutputCurrent(self):
         return (self.right.getOutputCurrent()+self.left.getOutputCurrent())*3
 
     def updateSensors(self):
-        #self.leftVal = self.leftEncoder.get()
-        #self.rightVal = self.rightEncoder.get()
-        self.navxVal = -(self.navx.getYaw())
+        self.leftVal = self.leftEncoder.get()
+        self.rightVal = self.rightEncoder.get()
+        self.navxVal = self.navx.getYaw()
+
+        #if wpilib.RobotBase.isSimulation(): self.navxVal*=-1
 
     def getAngle(self):
         return self.navxVal
@@ -260,8 +264,10 @@ class Drive(Subsystem):
         return (self.getDistance()[0]+self.getDistance()[1])/2
 
     def getVelocity(self):
-        velocity = [self.robot.frequency*(self.getDistance()[0]-self.prevDist[0]),self.robot.frequency*(self.getDistance()[1]-self.prevDist[1])]
-        self.prevDist = self.getDistance()
+        dist = self.getDistance()
+        velocity = [self.robot.frequency*(dist[0]-self.prevDist[0]),self.robot.frequency*(dist[1]-self.prevDist[1])]
+        self.prevDist = dist
+
         return velocity
 
     '''
@@ -274,9 +280,11 @@ class Drive(Subsystem):
 
     def getAvgAbsVelocity(self):
         return (abs(self.getVelocity()[0])+abs(self.getVelocity()[1]))/2
+
     def isFlipped(self):
         #indicates if front or back needs to be reversed while driving
         return (self.flipped)
+
     def zeroEncoders(self):
         self.leftEncoder.reset()
         self.rightEncoder.reset()
@@ -299,8 +307,11 @@ class Drive(Subsystem):
     def dashboardInit(self):
         SmartDashboard.putData("Flipped drive", FlipButton())
         SmartDashboard.putData("Measure", Measured())
+
+        '''This doesn't belong here - Abhijit'''
         b = self.robot.driverRightButton(2)
         b.whenPressed(FlipButton())
+
         if(self.debug==False): return
         SmartDashboard.putData("autonCheck Frw", AutonCheck(9.75))
         SmartDashboard.putData("autonCheck Bkwd", AutonCheck(-9.75))
@@ -309,11 +320,12 @@ class Drive(Subsystem):
         SmartDashboard.putData("DT_DriveStraightCombined", DriveStraightCombined())
         SmartDashboard.putData("DT_DriveStraightDistance", DriveStraightDistance())
         SmartDashboard.putData("DT_DriveStraightTime", DriveStraightTime())
-        SmartDashboard.putData("DT_DriveVision", DriveVision())
+        #SmartDashboard.putData("DT_DriveVision", DriveVision())
         SmartDashboard.putData("DT_SetFixedDT", SetFixedDT())
         SmartDashboard.putData("DT_SetSpeedDT", SetSpeedDT())
         SmartDashboard.putData("DT_TurnAngle", TurnAngle(90))
         SmartDashboard.putData("DT_RelativeTurn", RelativeTurn(90))
+
     def dashboardPeriodic(self):
         SmartDashboard.putBoolean("Driving Reverse", self.flipped)
 
@@ -341,13 +353,13 @@ class Drive(Subsystem):
         ''' Returns true if acceleration is greater than bumpInt (0.4) '''
         self.accelX = self.accel.getX()
         self.accelY = self.accel.getY()
+
         if self.debug:
             SmartDashboard.putNumber("X", self.accelX)
             SmartDashboard.putNumber("Y", self.accelY)
-        if abs(self.accelX) >= bumpInt or abs(self.accelY) >= bumpInt:
-            return True
-        else:
-            return False
+
+        if abs(self.accelX) >= bumpInt or abs(self.accelY) >= bumpInt: return True
+        return False
 
 class FlipButton(Command):
     def __init__(self):
@@ -363,30 +375,3 @@ class FlipButton(Command):
 
     def isFinished(self):
         return True
- 
-""" class HumanDrive(Command):
-
-    def __init__(self):
-        super().__init__('driveMech')
-        self.robot = self.getRobot()
-        self.driveMech = self.robot.driveMech
-        self.requires(self.driveMech)
-
-    def initialize(self):
-        pass
-
-    def execute(self):
-        if self.driveMech.flipped:
-            oldLeft = leftSpeed
-            leftSpeed = -rightSpeed
-            rightSpeed = -oldLeft
-        self.driveMech.drive(leftSpeed, rightSpeed)
-
-    def interrupted(self):
-        self.end()
-
-    def end(self):
-        self.driveMech.stopDrive()
-
-    def isFinished(self):
-        return False """
