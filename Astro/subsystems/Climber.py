@@ -15,8 +15,6 @@ MAX_EXTEND = 12.0
 
 
 
-
-
 class Climber(Subsystem):
     def __init__(self, Robot):
         """ Create all physical parts used by subsystem. """
@@ -30,8 +28,8 @@ class Climber(Subsystem):
         self.wheelRight = ctre.WPI_VictorSPX(map.wheelRight)
         self.backLift.setName("Climber" , "BackLift")
         self.frontLift.setName("Climber" , "FrontLift")
-        self.wheelLeft.setName("Climber" , "Wheels")
-
+        self.wheelLeft.setName("Climber" , "Left Wheels")
+        self.wheelRight.setName("Climber", "Right Wheels")
         self.climberLock = wpilib.DoubleSolenoid(map.climberLock1 , map.climberLock2)
         self.climberLock.setName("Climber" , "Lock")
 
@@ -52,12 +50,12 @@ class Climber(Subsystem):
         climberWheelsBackward.whileHeld(SetSpeedWheel(-1))
 
 
-        liftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(9)
-        liftButton.whileHeld(LiftRobot())
+        leftLiftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(9)
+        leftLiftButton.whileHeld(LiftRobot())
 
 
-        liftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(10)
-        liftButton.whileHeld(LowerRobot())
+        rightLiftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(10)
+        rightLiftButton.whileHeld(LowerRobot())
 
 
 
@@ -134,6 +132,7 @@ class Climber(Subsystem):
         self.backLift.set(0)
     def stopDrive(self):
         self.wheelLeft.set(0)
+        self.wheelRight.set(0)
     def disable(self):
         self.stopFront()
         self.stopBack()
