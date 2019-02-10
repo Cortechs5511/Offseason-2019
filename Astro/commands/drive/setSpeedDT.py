@@ -38,10 +38,6 @@ class SetSpeedDT(TimedCommand):
             left = left / 1000
             right = right / 1000
 
-# TURBO MODE POTENTIAL DANGER ONLY USE IN DIRE INSTANCES
-     #  if self.robot.readDriverLeftButton(4):
-      #     left = left*1000
-       #    right = right*1000
         
 #double speed maybe useful 
         if self.robot.readDriverLeftButton(5):
