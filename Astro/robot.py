@@ -19,15 +19,8 @@ from commands.autonomous import DriveStraight
 from commands.autonomous import AutoFrontHatch
 from commands.drive.autonCheck import AutonCheck
 from commands.drive.drivePath import DrivePath
-<<<<<<< HEAD
-<<<<<<< HEAD
 from commands.drive.rotateAuton import autonRotation
-=======
 
->>>>>>> 946923f2f5185bbb531e0555e7b36fcbbff3ee5d
-=======
-
->>>>>>> 946923f2f5185bbb531e0555e7b36fcbbff3ee5d
 from wpilib.sendablechooser import SendableChooser
 
 from subsystems import HatchMech
@@ -82,8 +75,6 @@ class MyRobot(CommandBasedRobot):
 
         # if(self.dashboard): self.updateDashboardInit()
         self.updateDashboardInit()
-<<<<<<< HEAD
-<<<<<<< HEAD
         self.TestPath = TestPath(self.follower)
         self.DriveStraight = DriveStraight()
         self.DrivePath = DrivePath(name="Test", follower="Ramsetes")
@@ -94,11 +85,6 @@ class MyRobot(CommandBasedRobot):
         self.autonChooser.addOption("DrivePath", DrivePath())
         self.autonChooser.addOption("AutonRotation", autonRotation())
         SmartDashboard.putData("AutonChooser", self.autonChooser)
-=======
-=======
->>>>>>> 946923f2f5185bbb531e0555e7b36fcbbff3ee5d
-
-
 
         self.hatchMech.subsystemInit()
         self.cargoMech.subsystemInit()
@@ -112,10 +98,6 @@ class MyRobot(CommandBasedRobot):
         super().teleopPeriodic()
         self.loop_timer.measure()
 
-<<<<<<< HEAD
->>>>>>> 946923f2f5185bbb531e0555e7b36fcbbff3ee5d
-=======
->>>>>>> 946923f2f5185bbb531e0555e7b36fcbbff3ee5d
     def robotPeriodic(self):
         #self.drive.odMain.display()
         self.drive.odTemp.display()
@@ -161,7 +143,7 @@ class MyRobot(CommandBasedRobot):
     def telopInit(self):
         auton: Command = self.autonChooser.getSelected()
         auton.cancel()
-        
+
     def disabledInit(self):
         self.drive.disable()
         self.hatchMech.disable()
@@ -201,9 +183,6 @@ class MyRobot(CommandBasedRobot):
     def readDriverLeftButton(self,id):
         """ Return button value from left joystick """
         return self.joystick0.getRawButton(id)
-
-
-
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)
