@@ -8,7 +8,7 @@ import ctre
 
 from commands.cargo.wristIntake import WristIntake
 from commands.cargo.wristMove import WristMove
-import robotMap
+import map
 
 class CargoMech(Subsystem):
 
@@ -20,8 +20,8 @@ class CargoMech(Subsystem):
         self.robot = Robot
 
         #fix
-        self.motorIntake = ctre.WPI_TalonSRX(robotMap.intake)
-        self.motorWrist = ctre.WPI_TalonSRX(robotMap.wrist)
+        self.motorIntake = ctre.WPI_TalonSRX(map.intake)
+        self.motorWrist = ctre.WPI_TalonSRX(map.wrist)
 
     def intake(self):
         ''' Intake the balls (turn wheels inward) '''

@@ -28,7 +28,7 @@ from CRLibrary.path import odometry as od
 from CRLibrary.path import Path
 from CRLibrary.util import units as units
 
-import robotMap
+import map
 
 class Drive(Subsystem):
 
@@ -62,19 +62,19 @@ class Drive(Subsystem):
 
         self.accel = wpilib.BuiltInAccelerometer()
 
-        TalonLeft = Talon(robotMap.driveLeft1)
-        TalonRight = Talon(robotMap.driveRight1)
+        TalonLeft = Talon(map.driveLeft1)
+        TalonRight = Talon(map.driveRight1)
         TalonLeft.setSafetyEnabled(False)
         TalonRight.setSafetyEnabled(False)
 
         if not wpilib.RobotBase.isSimulation():
-            VictorLeft1 = Victor(robotMap.driveLeft2)
-            VictorLeft2 = Victor(robotMap.driveLeft3)
+            VictorLeft1 = Victor(map.driveLeft2)
+            VictorLeft2 = Victor(map.driveLeft3)
             VictorLeft1.follow(TalonLeft)
             VictorLeft2.follow(TalonLeft)
 
-            VictorRight1 = Victor(robotMap.driveRight2)
-            VictorRight2 = Victor(robotMap.driveRight3)
+            VictorRight1 = Victor(map.driveRight2)
+            VictorRight2 = Victor(map.driveRight3)
             VictorRight1.follow(TalonRight)
             VictorRight2.follow(TalonRight)
 
@@ -110,11 +110,11 @@ class Drive(Subsystem):
 
         self.navx = navx.ahrs.AHRS.create_spi()
 
-        self.leftEncoder = wpilib.Encoder(robotMap.leftEncoder[0], robotMap.leftEncoder[1])
+        self.leftEncoder = wpilib.Encoder(map.leftEncoder[0], map.leftEncoder[1])
         self.leftEncoder.setDistancePerPulse(self.leftConv)
         self.leftEncoder.setSamplesToAverage(10)
 
-        self.rightEncoder = wpilib.Encoder(robotMap.rightEncoder[0], robotMap.rightEncoder[1])
+        self.rightEncoder = wpilib.Encoder(map.rightEncoder[0], map.rightEncoder[1])
         self.rightEncoder.setDistancePerPulse(self.rightConv)
         self.rightEncoder.setSamplesToAverage(10)
 

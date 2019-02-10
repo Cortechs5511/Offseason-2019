@@ -12,14 +12,15 @@ class Odometer():
         return self.period
 
     def update(self, leftV, rightV, angleIn):
-        factor = 1.002
+        fudge = 1.000
+        self.rightVel = rightV * fudge
+        self.leftVel = leftV * fudge
+
         speed = ((leftV + rightV))/2
         self.x += speed * self.period * math.cos(math.pi/180*angleIn)
         self.y += speed * self.period * math.sin(math.pi/180*angleIn)
         #Can be updated to assume constant curvature as opposed to constant velocity (see Tyler's book)
         self.angle = angleIn
-        self.rightVel = rightV * factor
-        self.leftVel = leftV * factor
 
     def getLeftVelocity(self): return self.leftVel
     def getRightVelocity(self): return self.rightVel

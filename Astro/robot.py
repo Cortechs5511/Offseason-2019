@@ -72,12 +72,11 @@ class MyRobot(CommandBasedRobot):
        # if(self.dashboard): self.updateDashboardInit()
         self.updateDashboardInit()
 
-
-
         self.hatchMech.subsystemInit()
         self.cargoMech.subsystemInit()
         self.climber.subsystemInit()
-    
+
+        self.DrivePath = DrivePath(name="AlignBack", follower="Ramsetes")
 
     def teleopInit(self):
         self.loop_timer = looptimer.LoopTimer(self.logger)
