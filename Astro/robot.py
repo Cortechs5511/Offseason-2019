@@ -92,12 +92,12 @@ class MyRobot(CommandBasedRobot):
         self.climber.subsystemInit()
 
 
-    def teleopInit(self):
-        self.loop_timer = looptimer.LoopTimer(self.logger)
+    # def teleopInit(self):
+    #     self.loop_timer = looptimer.LoopTimer(self.logger)
 
-    def teleopPeriodic(self):
-        super().teleopPeriodic()
-        self.loop_timer.measure()
+    # def teleopPeriodic(self):
+    #     super().teleopPeriodic()
+    #     self.loop_timer.measure()
 
     def robotPeriodic(self):
         #self.drive.odMain.display()

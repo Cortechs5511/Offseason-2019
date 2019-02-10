@@ -29,24 +29,25 @@ class SetSpeedDT(TimedCommand):
         left = -self.Joystick0.getY()
         right = -self.Joystick1.getY()
         flip = self.DT.isFlipped()
-        '''if self.robot.readDriverRightButton(3):
+#half-speed
+        if self.robot.readDriverRightButton(3):
             left = left / 2
             right = right / 2
-
+# brakes
         if self.robot.readDriverLeftButton(3):
-            left = left / 100
-            right = right / 100
-<<<<<<< HEAD
-<<<<<<< HEAD
-    
+            left = left / 1000
+            right = right / 1000
+
+        
+#double speed maybe useful 
+        if self.robot.readDriverLeftButton(5):
+            left = left*2
+            right = right*2
+
 
         if (abs(left)<0.025) and (abs(right)<0.025):
-=======
-=======
->>>>>>> 946923f2f5185bbb531e0555e7b36fcbbff3ee5d
 
-        if (abs(left)<0.025) or (abs(right)<0.025):
->>>>>>> 946923f2f5185bbb531e0555e7b36fcbbff3ee5d
+
             gain = SmartDashboard.getNumber("gain",1)
             #diff drive is messed up
             power = -(self.robot.operatorAxis(1))
@@ -58,8 +59,8 @@ class SetSpeedDT(TimedCommand):
         else:
             if flip == True:
                 self.DT.tankDrive (-right * self.maxspeed ,-left * self.maxspeed)
-            else:'''
-        self.DT.tankDrive(left * self.maxspeed ,right * self.maxspeed)
+            else:
+                self.DT.tankDrive(left * self.maxspeed ,right * self.maxspeed)
 
 
     def interrupted(self):
