@@ -8,7 +8,7 @@ import wpilib.buttons
 from wpilib.command import Command
 from commandbased import CommandBasedRobot
 
-from commands import Zero
+from commands import zero as Zero
 
 from commands import autonomous
 from commands.autonomous import TestPath
