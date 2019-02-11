@@ -5,6 +5,7 @@ from wpilib.command.subsystem import Subsystem
 from wpilib.command import Command
 import wpilib.encoder
 import ctre
+import map
 from commands.climber.liftRobot import LiftRobot
 from commands.climber.lowerRobot import LowerRobot
 from commands.climber.setSpeedWheel import SetSpeedWheel
@@ -14,29 +15,33 @@ MAX_EXTEND = 12.0
 
 
 
-
-
 class Climber(Subsystem):
     def __init__(self, Robot):
         """ Create all physical parts used by subsystem. """
         super().__init__('Climber')
         self.robot = Robot
         self.debug = True
-        self.backLift = ctre.WPI_TalonSRX(40)
-        self.frontLift = ctre.WPI_TalonSRX(41)
-        """ self.backWheel1 = ctre.WPI_VictorSPX(2)"""
-        self.backWheel2 = ctre.WPI_VictorSPX(3)
-#        self.backWheel1.follow(self.backWheel2) 
+        self.backLift = ctre.WPI_TalonSRX(map.backLift)
+        self.frontLift = ctre.WPI_TalonSRX(map.frontLift)
+        """ self.wheelRight = ctre.WPI_VictorSPX(2)"""
+        self.wheelLeft = ctre.WPI_VictorSPX(map.wheelLeft)
+        self.wheelRight = ctre.WPI_VictorSPX(map.wheelRight)
         self.backLift.setName("Climber" , "BackLift")
         self.frontLift.setName("Climber" , "FrontLift")
-        self.backWheel2.setName("Climber" , "Wheels")
+        self.wheelLeft.setName("Climber" , "Left Wheels")
+        self.wheelRight.setName("Climber", "Right Wheels")
+        self.climberLock = wpilib.DoubleSolenoid(map.climberLock1 , map.climberLock2)
+        self.climberLock.setName("Climber" , "Lock")
+
 
 
     def dashboardInit(self):
         #if self.debug == True:
         #    SmartDashboard.putData(self)
         SmartDashboard.putData("Lift Robot", LiftRobot())
+    def subsystemInit(self):
         r = self.robot
+
         climberWheelsForward : wpilib.buttons.JoystickButton = r.driverLeftButton(7)
         climberWheelsForward.whileHeld(SetSpeedWheel(1))
 
@@ -45,15 +50,15 @@ class Climber(Subsystem):
         climberWheelsBackward.whileHeld(SetSpeedWheel(-1))
 
 
-        liftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(9)
-        liftButton.whileHeld(LiftRobot())
+        leftLiftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(9)
+        leftLiftButton.whileHeld(LiftRobot())
 
-        
-        liftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(10)
-        liftButton.whileHeld(LowerRobot())
 
-     
- 
+        rightLiftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(10)
+        rightLiftButton.whileHeld(LowerRobot())
+
+
+
 
     def getPitch(self):
         return self.robot.drive.pitch
@@ -84,7 +89,7 @@ class Climber(Subsystem):
 
     def isFullyExtendedBoth(self):
         """tells us if both front and back are fully extended, so it can stop"""
-        return self.isFullyExtendedFront() and self.isFullyExtendedBack() 
+        return self.isFullyExtendedFront() and self.isFullyExtendedBack()
 
     #functions for lift
     def liftFront(self,lift):
@@ -104,7 +109,7 @@ class Climber(Subsystem):
         """
         if  lift > 0 and self.getHeightBack()>=MAX_EXTEND:
             self.backLift.set(0)
-           
+
         elif lift < 0 and self.getHeightBack()<0:
             self.backLift.set(0)
         else:
@@ -113,9 +118,20 @@ class Climber(Subsystem):
 
     #wheel speed
     def wheelForward(self):
-        self.backWheel2.set(0.75)
+        self.wheelLeft.set(0.75)
+        self.wheelRight.set(0.75)
+
     def wheelBack(self):
-        self.backWheel2.set(-0.75)
+        self.wheelLeft.set(-0.75)
+        self.wheelRight.set(-0.75)
+
+   
+    def lockLift(self):
+        """locks the lift mechanism so the robot will NOT go up"""
+        self.climberLock.set(wpilib.DoubleSolenoid.Value.kReverse)
+    def unlockLift(self):
+        """unlocks the lift mechanism so the robot will go up"""
+        self.climberLock.set(wpilib.DoubleSolenoid.Value.kForward)
 
     #stopping and disable
     def stopFront(self):
@@ -123,13 +139,14 @@ class Climber(Subsystem):
     def stopBack(self):
         self.backLift.set(0)
     def stopDrive(self):
-        self.backWheel2.set(0)
+        self.wheelLeft.set(0)
+        self.wheelRight.set(0)
     def disable(self):
         self.stopFront()
         self.stopBack()
         self.stopDrive()
 
-    
+
     def dashboardPeriodic(self):
           if self.debug == True:
             SmartDashboard.putNumber("Ticks on front", self.getHeightFront())

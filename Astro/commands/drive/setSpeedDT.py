@@ -6,7 +6,7 @@ import wpilib
 from wpilib.command import Command
 from wpilib.command import TimedCommand
 from wpilib import SmartDashboard
-from wpilib.drive.differentialdrive import DifferentialDrive 
+from wpilib.drive.differentialdrive import DifferentialDrive
 class SetSpeedDT(TimedCommand):
 
     def __init__(self, timeout = 0):
@@ -21,7 +21,7 @@ class SetSpeedDT(TimedCommand):
         self.maxspeed = 1.00 #In addition to normal reducing factor in Drive.py
         self.diffDrive = DifferentialDrive(self.DT.left,self.DT.right)
         self.diffDrive.setSafetyEnabled(False)
-        
+
     def initialize(self):
         self.DT.setDirect()
 
@@ -29,19 +29,25 @@ class SetSpeedDT(TimedCommand):
         left = -self.Joystick0.getY()
         right = -self.Joystick1.getY()
         flip = self.DT.isFlipped()
+#half-speed
         if self.robot.readDriverRightButton(3):
             left = left / 2
             right = right / 2
-        
+# brakes
         if self.robot.readDriverLeftButton(3):
-            left = left / 100
-            right = right / 100
-    
+            left = left / 1000
+            right = right / 1000
+
+        
+#double speed maybe useful 
+        if self.robot.readDriverLeftButton(5):
+            left = left*2
+            right = right*2
 
 
+        if (abs(left)<0.025) and (abs(right)<0.025):
 
 
-        if (abs(left)<0.025) or (abs(right)<0.025):
             gain = SmartDashboard.getNumber("gain",1)
             #diff drive is messed up
             power = -(self.robot.operatorAxis(1))
@@ -56,7 +62,7 @@ class SetSpeedDT(TimedCommand):
             else:
                 self.DT.tankDrive(left * self.maxspeed ,right * self.maxspeed)
 
-        
+
     def interrupted(self):
         self.end()
 

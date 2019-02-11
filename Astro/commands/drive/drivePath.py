@@ -24,13 +24,12 @@ class DrivePath(TimedCommand):
 
         self.Path = self.DT.Path
 
-    def start(self, x=0, y=0):
-        [self.startX, self.startY] = [x, y]
-        super(DrivePath, self).start()
-
     def initialize(self):
+        #[x,y] = self.limelight.getPathXY()
+        [self.startX,self.startY] = [-10, 0]
         self.Path.reset(x = self.startX, y = self.startY, angle = 0)
         self.DT.setPath(name = self.name, follower = self.follower)
+        self.distStart = self.DT.getDistance()
 
     def execute(self):
         self.DT.tankDrive()
@@ -44,3 +43,5 @@ class DrivePath(TimedCommand):
     def end(self):
         self.DT.tankDrive(0,0)
         self.Path.disablePID()
+        distEnd = self.DT.getDistance()
+        print("DistanceLeft: " , distEnd[0] - self.distStart[0],"DistanceRight: " , distEnd[1] - self.distStart[1])
