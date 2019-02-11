@@ -230,6 +230,9 @@ class Drive(Subsystem):
         right = min(abs(right),self.maxSpeed)*self.sign(right)
         self.__tankDrive__(left,right)
 
+        b = self.robot.driverRightButton(2)
+        b.whenPressed(FlipButton())
+
     def __tankDrive__(self,left,right):
         self.left.set(left)
         self.right.set(right)
@@ -309,8 +312,6 @@ class Drive(Subsystem):
         SmartDashboard.putData("Measure", Measured())
 
         '''This doesn't belong here - Abhijit'''
-        b = self.robot.driverRightButton(2)
-        b.whenPressed(FlipButton())
 
         if(self.debug==False): return
         SmartDashboard.putData("autonCheck Frw", AutonCheck(9.75))
