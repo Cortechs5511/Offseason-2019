@@ -13,75 +13,69 @@ from commands.climber.setSpeedWheel import SetSpeedWheel
 TICKS_TO_INCHES = 1.0
 MAX_EXTEND = 12.0
 
-
-
 class Climber(Subsystem):
     def __init__(self, Robot):
         """ Create all physical parts used by subsystem. """
         super().__init__('Climber')
         self.robot = Robot
         self.debug = True
+
         self.backLift = ctre.WPI_TalonSRX(map.backLift)
         self.frontLift = ctre.WPI_TalonSRX(map.frontLift)
-        """ self.wheelRight = ctre.WPI_VictorSPX(2)"""
         self.wheelLeft = ctre.WPI_VictorSPX(map.wheelLeft)
         self.wheelRight = ctre.WPI_VictorSPX(map.wheelRight)
+        self.climberLock = wpilib.DoubleSolenoid(map.climberLock1 , map.climberLock2)
+
         self.backLift.setName("Climber" , "BackLift")
         self.frontLift.setName("Climber" , "FrontLift")
-        self.wheelLeft.setName("Climber" , "Left Wheels")
-        self.wheelRight.setName("Climber", "Right Wheels")
-        self.climberLock = wpilib.DoubleSolenoid(map.climberLock1 , map.climberLock2)
+        self.wheelLeft.setName("Climber" , "Wheels")
         self.climberLock.setName("Climber" , "Lock")
 
-
-
     def dashboardInit(self):
-        #if self.debug == True:
-        #    SmartDashboard.putData(self)
         SmartDashboard.putData("Lift Robot", LiftRobot())
+
     def subsystemInit(self):
         r = self.robot
 
         climberWheelsForward : wpilib.buttons.JoystickButton = r.driverLeftButton(7)
         climberWheelsForward.whileHeld(SetSpeedWheel(1))
 
-
         climberWheelsBackward : wpilib.buttons.JoystickButton = r.driverLeftButton(8)
         climberWheelsBackward.whileHeld(SetSpeedWheel(-1))
 
+        liftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(9)
+        liftButton.whileHeld(LiftRobot())
 
-        leftLiftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(9)
-        leftLiftButton.whileHeld(LiftRobot())
-
-
-        rightLiftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(10)
-        rightLiftButton.whileHeld(LowerRobot())
-
-
-
+        liftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(10)
+        liftButton.whileHeld(LowerRobot())
 
     def getPitch(self):
         return self.robot.drive.pitch
-    #gets height
+
     def getHeightFront(self):
-        """this will return the height in inches from encoder
-            Pass height to SD
         """
+        this will return the height in inches from encoder
+        Pass height to SD
+        """
+
         ticks = self.frontLift.getQuadraturePosition()
         return ticks * TICKS_TO_INCHES
+
     def getHeightBack(self):
-        """this will return the height in inches from encoder
-            Pass height to SD
         """
+        this will return the height in inches from encoder
+        Pass height to SD
+        """
+
         ticks = self.backLift.getQuadraturePosition()
         return ticks * TICKS_TO_INCHES
 
-
     def isFullyExtendedFront(self):
-        """ tells us if the front is fully extended"""
+        """
+        tells us if the front is fully extended
+        """
 
         return self.getHeightFront() >= MAX_EXTEND
-
 
     def isFullyExtendedBack(self):
         """tells us if the back is fully extended, so it can stop"""
@@ -115,7 +109,6 @@ class Climber(Subsystem):
         else:
             self.backLift.set(lift)
 
-
     #wheel speed
     def wheelForward(self):
         self.wheelLeft.set(0.75)
@@ -125,14 +118,6 @@ class Climber(Subsystem):
         self.wheelLeft.set(-0.75)
         self.wheelRight.set(-0.75)
 
-   
-    def lockLift(self):
-        """locks the lift mechanism so the robot will NOT go up"""
-        self.climberLock.set(wpilib.DoubleSolenoid.Value.kReverse)
-    def unlockLift(self):
-        """unlocks the lift mechanism so the robot will go up"""
-        self.climberLock.set(wpilib.DoubleSolenoid.Value.kForward)
-
     #stopping and disable
     def stopFront(self):
         self.frontLift.set(0)
@@ -141,11 +126,11 @@ class Climber(Subsystem):
     def stopDrive(self):
         self.wheelLeft.set(0)
         self.wheelRight.set(0)
+
     def disable(self):
         self.stopFront()
         self.stopBack()
         self.stopDrive()
-
 
     def dashboardPeriodic(self):
           if self.debug == True:
