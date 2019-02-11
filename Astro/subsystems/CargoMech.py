@@ -52,9 +52,9 @@ class CargoMech(Subsystem):
             SmartDashboard.putData("Stop wrist",WristMove('stop wrist',0))
 
         r = self.robot
-        wristUp : wpilib.buttons.JoystickButton = r.operatorButton(4)
+        wristUp : wpilib.buttons.JoystickButton = r.operatorButton(1)
         wristUp.whileActive(WristMove('wrist up',1))
-        wristDown : wpilib.buttons.JoystickButton = r.operatorButton(1)
+        wristDown : wpilib.buttons.JoystickButton = r.operatorButton(4)
         wristDown.whileActive(WristMove('wrist down',-1))
         outtakeButton : wpilib.buttons.JoystickButton = r.operatorButton(5)
         outtakeButton.whileActive(WristIntake('outtake',-1))

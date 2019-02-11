@@ -55,9 +55,9 @@ class HatchMech(Subsystem):
         r = self.robot
         b : wpilib.buttons.JoystickButton = r.operatorButton(3)
         b.whenPressed(EjectHatch())
-        b : wpilib.buttons.JoystickButton = r.operatorButton(5)
+        b : wpilib.buttons.JoystickButton = r.operatorButton(7)
         b.whenPressed(EjectToggle())
-        b : wpilib.buttons.JoystickButton = r.operatorButton(6)
+        b : wpilib.buttons.JoystickButton = r.operatorButton(8)
         b.whenPressed(SlideToggle())
 
     def disable(self):
