@@ -24,12 +24,20 @@ class Climber(Subsystem):
         self.frontLift = ctre.WPI_TalonSRX(map.frontLift)
         self.wheelLeft = ctre.WPI_VictorSPX(map.wheelLeft)
         self.wheelRight = ctre.WPI_VictorSPX(map.wheelRight)
+
         self.climberLock = wpilib.DoubleSolenoid(map.climberLock1 , map.climberLock2)
+
+        self.backLift.setNeutralMode(2)
+        self.frontLift.setNeutralMode(2)
+        self.wheelLeft.setNeutralMode(2)
+        self.wheelRight.setNeutralMode(2)
 
         self.backLift.setName("Climber" , "BackLift")
         self.frontLift.setName("Climber" , "FrontLift")
         self.wheelLeft.setName("Climber" , "Wheels")
         self.climberLock.setName("Climber" , "Lock")
+
+        SmartDashboard.putNumber("Climber Speed", 0.25)
 
     def dashboardInit(self):
         SmartDashboard.putData("Lift Robot", LiftRobot())
@@ -121,8 +129,10 @@ class Climber(Subsystem):
     #stopping and disable
     def stopFront(self):
         self.frontLift.set(0)
+
     def stopBack(self):
         self.backLift.set(0)
+
     def stopDrive(self):
         self.wheelLeft.set(0)
         self.wheelRight.set(0)
@@ -133,6 +143,10 @@ class Climber(Subsystem):
         self.stopDrive()
 
     def dashboardPeriodic(self):
-          if self.debug == True:
+        if self.debug == True:
             SmartDashboard.putNumber("Ticks on front", self.getHeightFront())
             SmartDashboard.putNumber("Ticks on back", self.getHeightBack())
+
+    def returnClimbSpeed(self):
+        self.climbSpeed = SmartDashboard.getNumber("Climber Speed", 0.25)
+        return self.climbSpeed
