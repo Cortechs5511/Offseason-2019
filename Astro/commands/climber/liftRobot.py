@@ -8,7 +8,7 @@ class LiftRobot(Command):
 
     def initialize(self): pass
 
-    def execute(self): self.climber.lift(self.climber.climbSpeed)
+    def execute(self): self.climber.lift(self.climber.returnClimbSpeed())
 
     def interrupted(self): self.climber.stop()
 
