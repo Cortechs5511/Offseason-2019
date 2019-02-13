@@ -115,7 +115,7 @@ class MyRobot(CommandBasedRobot):
         self.drive.dashboardInit()
         #self.hatchMech.dashboardInit()
         #self.cargoMech.dashboardInit()
-        self.climber.dashboardInit()
+        #self.climber.dashboardInit()
         #self.limelight.dashboardInit()
 
         #sequences.dashboardInit()

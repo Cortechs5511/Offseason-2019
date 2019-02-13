@@ -72,6 +72,18 @@ class Climber(Subsystem):
         liftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(10)
         liftButton.whileHeld(LowerRobot())
 
+        climberFrontUp : wpilib.buttons.JoystickButton = r.driverLeftButton(13)
+        climberFrontUp.whileHeld(FrontClimb(True))
+
+        climberFrontDown : wpilib.buttons.JoystickButton = r.driverLeftButton(14)
+        climberFrontDown.whileHeld(FrontClimb(False))
+
+        climberBackUp : wpilib.buttons.JoystickButton = r.driverLeftButton(12)
+        climberBackUp.whileHeld(BackClimb(True))
+
+        climberBackDown : wpilib.buttons.JoystickButton = r.driverLeftButton(15)
+        climberBackDown.whileHeld(BackClimb(True))
+
     def getPitch(self):
         return self.robot.drive.pitch #negate here if pitch is backwards of expected
 
@@ -144,14 +156,18 @@ class Climber(Subsystem):
         self.stopDrive()
 
     def dashboardInit(self):
-        SmartDashboard.putNumber("ClimberSpeed", self.climbSpeed)
+        SmartDashboard.putNumber("ClimberSpeed", 0.25)
         SmartDashboard.putData("Lift Robot", LiftRobot())
         SmartDashboard.putData("Lower Robot", LowerRobot())
 
-    def dashboardPeriodic(self):
+    def periodic(self):
         self.climbSpeed = SmartDashboard.getNumber("ClimberSpeed", self.climbSpeed)
 
         if self.debug == True:
             SmartDashboard.putNumber("Pitch", self.getPitch())
             SmartDashboard.putNumber("FrontTicks", self.getHeightFront())
             SmartDashboard.putNumber("BackTicks", self.getHeightBack())
+
+    def returnClimbSpeed(self):
+        self.cs = SmartDashboard.getNumber("ClimberSpeed", 0.25)
+        return self.cs
