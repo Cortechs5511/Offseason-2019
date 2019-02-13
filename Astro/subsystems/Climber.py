@@ -106,7 +106,7 @@ class Climber(Subsystem):
 
         if lift > 0 and self.getHeightFront()>=self.MAX_EXTEND: self.stopFront()
         elif lift < 0 and self.getHeightFront() < 0: self.stopFront()
-        elif self.getPitch()>self.MAX_PITCH: self.stopFront()
+        elif lift/abs(lift)*self.getPitch()>self.MAX_PITCH: self.stopFront()
         else: self.frontLift.set(lift)
 
     def liftBack(self,lift):
@@ -115,7 +115,7 @@ class Climber(Subsystem):
 
         if  lift > 0 and self.getHeightBack()>=self.MAX_EXTEND: self.stopBack()
         elif lift < 0 and self.getHeightBack()<0: self.stopBack()
-        elif self.getPitch()<-self.MAX_PITCH: self.stopBack()
+        elif lift/abs(lift)*self.getPitch()<-self.MAX_PITCH: self.stopBack()
         else: self.backLift.set(lift)
 
     def lift(self, lift):

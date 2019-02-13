@@ -125,7 +125,7 @@ class MyRobot(CommandBasedRobot):
 
     def updateDashboardPeriodic(self):
         self.rate.execute()
-        #self.drive.dashboardPeriodic()
+        self.drive.dashboardPeriodic()
         #self.hatchMech.dashboardPeriodic()
         #self.cargoMech.dashboardPeriodic()
         self.climber.dashboardPeriodic()

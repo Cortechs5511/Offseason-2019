@@ -255,7 +255,7 @@ class Drive(Subsystem):
     def getRaw(self): return [self.leftVal, self.rightVal]
     def getDistance(self): return [self.leftVal*self.leftConv, self.rightVal*self.rightConv]
     def getAvgDistance(self): return (self.getDistance()[0]+self.getDistance()[1])/2
-
+    def getPitch(self): return self.pitch
     def getVelocity(self):
         dist = self.getDistance()
         velocity = [self.robot.frequency*(dist[0]-self.prevDist[0]),self.robot.frequency*(dist[1]-self.prevDist[1])]
@@ -288,6 +288,7 @@ class Drive(Subsystem):
         SmartDashboard.putData("Flipped drive", FlipButton())
         SmartDashboard.putData("Measure", Measured())
 
+
         if(self.debug==False): return
         SmartDashboard.putData("autonCheck Frw", AutonCheck(10))
         SmartDashboard.putData("autonCheck Bkwd", AutonCheck(-10))
@@ -304,9 +305,10 @@ class Drive(Subsystem):
         SmartDashboard.putData("DT_TurnAngle", TurnAngle(90))
         SmartDashboard.putData("DT_RelativeTurn", RelativeTurn(90))
 
+
     def dashboardPeriodic(self):
         SmartDashboard.putBoolean("Driving Reverse", self.flipped)
-
+        SmartDashboard.putNumber("Pitch2", self.getPitch())
         if(self.debug==False): return
         SmartDashboard.putNumber("Left Counts", self.leftEncoder.get())
         SmartDashboard.putNumber("Left Distance", self.leftEncoder.getDistance())
