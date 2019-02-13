@@ -11,6 +11,8 @@ from ctre import WPI_VictorSPX as Victor
 from commands.climber.liftRobot import LiftRobot
 from commands.climber.lowerRobot import LowerRobot
 from commands.climber.setSpeedWheel import SetSpeedWheel
+from commands.climber.frontClimb import FrontClimb
+from commands.climber.backClimb import BackClimb
 
 import map
 

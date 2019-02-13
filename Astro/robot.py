@@ -128,7 +128,7 @@ class MyRobot(CommandBasedRobot):
         self.drive.dashboardPeriodic()
         #self.hatchMech.dashboardPeriodic()
         #self.cargoMech.dashboardPeriodic()
-        self.climber.dashboardPeriodic()
+        #self.climber.dashboardPeriodic()
         #self.limelight.dashboardPeriodic()
 
         #sequences.dashboardPeriodic()
