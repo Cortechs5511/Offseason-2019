@@ -20,7 +20,7 @@ class Climber(Subsystem):
     TICKS_TO_INCHES = 1.0 #inches/tick
     MAX_EXTEND = 12.0 #inches
 
-    MAX_PITCH = 15 #degrees
+    MAX_PITCH = 5 #degrees
 
     climbSpeed = 0.25
 
@@ -29,7 +29,8 @@ class Climber(Subsystem):
 
         self.robot = robot
         self.debug = True
-        self.timeout = 0
+
+        timeout = 0
 
         self.backLift = Talon(map.backLift)
         self.frontLift = Talon(map.frontLift)
@@ -37,7 +38,7 @@ class Climber(Subsystem):
         self.wheelRight = Victor(map.wheelRight)
 
         self.wheelRight.follow(self.wheelLeft)
-        self.wheels = self.wheelRight
+        self.wheels = self.wheelLeft
 
         self.backLift.setNeutralMode(2)
         self.frontLift.setNeutralMode(2)
@@ -72,7 +73,7 @@ class Climber(Subsystem):
         liftButton.whileHeld(LowerRobot())
 
     def getPitch(self):
-        return self.robot.drive.pitch
+        return self.robot.drive.pitch #negate here if pitch is backwards of expected
 
     def getHeightFront(self):
         """ this will return the height in inches from encoder """

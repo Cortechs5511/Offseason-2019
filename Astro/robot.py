@@ -67,8 +67,7 @@ class MyRobot(CommandBasedRobot):
         self.rate = rate.DebugRate()
         self.rate.initialize()
 
-       # if(self.dashboard): self.updateDashboardInit()
-        self.updateDashboardInit()
+        if self.dashboard: self.updateDashboardInit()
 
         self.hatchMech.subsystemInit()
         self.cargoMech.subsystemInit()
@@ -116,7 +115,7 @@ class MyRobot(CommandBasedRobot):
         self.drive.dashboardInit()
         #self.hatchMech.dashboardInit()
         #self.cargoMech.dashboardInit()
-        #self.climber.dashboardInit()
+        self.climber.dashboardInit()
         #self.limelight.dashboardInit()
 
         #sequences.dashboardInit()
@@ -144,7 +143,6 @@ class MyRobot(CommandBasedRobot):
     def disabledPeriodic(self):
         self.disabledInit()
 
-    #I think the below should go in oi.py somehow, but I'm lazy tonight - Abhijit
 
     def driverLeftButton(self, id):
         """ Return a button off of the left driver joystick that we want to map a command to. """
@@ -163,20 +161,19 @@ class MyRobot(CommandBasedRobot):
         #id is axis channel for taking value of axis
         return self.xbox.getRawAxis(id)
         #wpilib.joystick.setAxisChannel(self.xbox, id)
-    def readOperatorButton(self,id):
-        """ Return button value """
-        return self.xbox.getRawButton(id)
 
-    def readDriverRightButton(self,id):
-        """ Return button value from right joystick """
-        return self.joystick1.getRawButton(id)
 
     def readDriverLeftButton(self,id):
         """ Return button value from left joystick """
         return self.joystick0.getRawButton(id)
 
+    def readDriverRightButton(self,id):
+        """ Return button value from right joystick """
+        return self.joystick1.getRawButton(id)
 
-
+    def readOperatorButton(self,id):
+        """ Return button value """
+        return self.xbox.getRawButton(id)
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)

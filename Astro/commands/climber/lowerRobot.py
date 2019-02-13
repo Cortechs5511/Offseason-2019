@@ -8,7 +8,7 @@ class LowerRobot(Command):
 
     def initialize(self): pass
 
-    def execute(self): self.climber.lift(-self.climber.climberSpeed)
+    def execute(self): self.climber.lift(-self.climber.climbSpeed)
 
     def interrupted(self): self.climber.stop()
 

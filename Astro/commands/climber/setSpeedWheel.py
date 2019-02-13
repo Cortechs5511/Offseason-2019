@@ -1,11 +1,11 @@
 from wpilib.command import Command
 
 class SetSpeedWheel(Command):
-    
+
     def __init__(self,power):
         super().__init__('SetSpeedWheel')
 
-        robot = self.getRobot()
+        self.climber = self.getRobot().climber
         self.requires(self.climber)
 
         self.power = power
@@ -13,8 +13,8 @@ class SetSpeedWheel(Command):
     def initialize(self): pass
 
     def execute(self):
-        if self.power == 1: robot.climber.wheelForward()
-        if self.power == -1: robot.climber.wheelBack()
+        if self.power == 1: self.climber.wheelForward()
+        if self.power == -1: self.climber.wheelBack()
 
     def interrupted(self): self.end()
 
