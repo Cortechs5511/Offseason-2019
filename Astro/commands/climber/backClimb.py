@@ -6,20 +6,14 @@ class BackClimb(Command):
         self.robot = self.getRobot()
         self.climber = self.robot.climber
 
-    def initialize(self):
-        pass
+    def initialize(self): pass
 
     def execute(self):
-        if self.robot.readDriverLeftButton(14):
-            self.climber.liftBack(self.climber.returnClimbSpeed())
-        elif self.robot.readDriverLeftButton(15):
-            self.climber.liftBack(-1 * self.climber.returnClimbSpeed())
+        if self.robot.readDriverLeftButton(14): self.climber.liftBack(self.climber.climberSpeed)
+        elif self.robot.readDriverLeftButton(15): self.climber.liftBack(-1 * self.climber.climberSpeed)
 
-    def interrupted(self):
-        self.climber.stopBack()
+    def interrupted(self): self.climber.stopBack()
 
-    def end(self):
-        self.climber.stopBack()
+    def end(self): self.climber.stopBack()
 
-    def isFinished(self):
-        return True
+    def isFinished(self): return True

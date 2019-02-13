@@ -6,20 +6,14 @@ class FrontClimb(Command):
         self.robot = self.getRobot()
         self.climber = self.robot.climber
 
-    def initialize(self):
-        pass
+    def initialize(self): pass
 
     def execute(self):
-        if self.robot.readDriverLeftButton(13):
-            self.climber.liftFront(self.climber.returnClimbSpeed())
-        elif self.robot.readDriverLeftButton(12):
-            self.climber.liftFront(-1 * self.climber.returnClimbSpeed())
+        if self.robot.readDriverLeftButton(13): self.climber.liftFront(self.climber.climberSpeed)
+        elif self.robot.readDriverLeftButton(12): self.climber.liftFront(-1 * self.climber.climberSpeed)
 
-    def interrupted(self):
-        self.climber.stopFront()
+    def interrupted(self): self.climber.stopFront()
 
-    def end(self):
-        self.climber.stopFront()
+    def end(self): self.climber.stopFront()
 
-    def isFinished(self):
-        return True
+    def isFinished(self): return True

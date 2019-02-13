@@ -14,11 +14,15 @@ from commands.climber.setSpeedWheel import SetSpeedWheel
 
 import map
 
-# TODO DETERMINE CONVERSION!!!!
-TICKS_TO_INCHES = 1.0
-MAX_EXTEND = 12.0
-
 class Climber(Subsystem):
+
+    # TODO DETERMINE CONVERSION!!!!
+    TICKS_TO_INCHES = 1.0 #inches/tick
+    MAX_EXTEND = 12.0 #inches
+
+    MAX_PITCH = 15 #degrees
+
+    climbSpeed = 0.25
 
     def __init__(self, robot):
         super().__init__('Climber')
@@ -31,7 +35,9 @@ class Climber(Subsystem):
         self.frontLift = Talon(map.frontLift)
         self.wheelLeft = Victor(map.wheelLeft)
         self.wheelRight = Victor(map.wheelRight)
+
         self.wheelRight.follow(self.wheelLeft)
+        self.wheels = self.wheelRight
 
         self.backLift.setNeutralMode(2)
         self.frontLift.setNeutralMode(2)
@@ -49,11 +55,6 @@ class Climber(Subsystem):
 
             motor.configVoltageCompSaturation(9,timeout) #Sets saturation value
             motor.enableVoltageCompensation(True) #Compensates for lower voltages
-
-        SmartDashboard.putNumber("Climber Speed", 0.25)
-
-    def dashboardInit(self):
-        SmartDashboard.putData("Lift Robot", LiftRobot())
 
     def subsystemInit(self):
         r = self.robot
@@ -75,21 +76,23 @@ class Climber(Subsystem):
 
     def getHeightFront(self):
         """ this will return the height in inches from encoder """
-        ticks = self.frontLift.getQuadraturePosition()
-        return ticks * TICKS_TO_INCHES
+        #ticks = self.frontLift.getQuadraturePosition()
+        #return ticks * self.TICKS_TO_INCHES
+        return 0 #temp
 
     def getHeightBack(self):
         """ this will return the height in inches from encoder """
-        ticks = self.backLift.getQuadraturePosition()
-        return ticks * TICKS_TO_INCHES
+        #ticks = self.backLift.getQuadraturePosition()
+        #return ticks * self.TICKS_TO_INCHES
+        return 0 #temp
 
     def isFullyExtendedFront(self):
         """ tells us if the front is fully extended """
-        return self.getHeightFront() >= MAX_EXTEND
+        return self.getHeightFront() >= self.MAX_EXTEND
 
     def isFullyExtendedBack(self):
         """ tells us if the back is fully extended, so it can stop """
-        return self.getHeightBack() >= MAX_EXTEND
+        return self.getHeightBack() >= self.MAX_EXTEND
 
     def isFullyExtendedBoth(self):
         """ tells us if both front and back are fully extended, so it can stop """
@@ -100,48 +103,54 @@ class Climber(Subsystem):
         """ Basic lift function for lifting robot.
         @param lift - Positive values make lift go down(extend) """
 
-        if lift > 0 and self.getHeightFront()>=MAX_EXTEND: self.frontLift.set(0)
-        elif lift < 0 and self.getHeightFront() < 0: self.frontLift.set(0)
+        if lift > 0 and self.getHeightFront()>=self.MAX_EXTEND: self.stopFront()
+        elif lift < 0 and self.getHeightFront() < 0: self.stopFront()
+        elif self.getPitch()>self.MAX_PITCH: self.stopFront()
         else: self.frontLift.set(lift)
 
     def liftBack(self,lift):
         """ Basic lift function for lifting robot.
         @param lift - Positive values make lift go down """
 
-        if  lift > 0 and self.getHeightBack()>=MAX_EXTEND: self.backLift.set(0)
-        elif lift < 0 and self.getHeightBack()<0: self.backLift.set(0)
+        if  lift > 0 and self.getHeightBack()>=self.MAX_EXTEND: self.stopBack()
+        elif lift < 0 and self.getHeightBack()<0: self.stopBack()
+        elif self.getPitch()<-self.MAX_PITCH: self.stopBack()
         else: self.backLift.set(lift)
 
+    def lift(self, lift):
+        """ Basic lift function for lifting robot.
+        @param lift - Positive values make lift go down(extend) """
+
+        self.liftFront(lift)
+        self.liftBack(lift)
+
     #wheel speed
-    def wheelForward(self):
-        self.wheelLeft.set(0.75)
-        self.wheelRight.set(0.75)
+    def wheelForward(self): self.wheels.set(0.75)
+    def wheelBack(self): self.wheels.set(-0.75)
 
-    def wheelBack(self):
-        self.wheelLeft.set(-0.75)
-        self.wheelRight.set(-0.75)
+    def stopFront(self): self.frontLift.set(0)
+    def stopBack(self): self.backLift.set(0)
 
-    #stopping and disable
-    def stopFront(self):
-        self.frontLift.set(0)
+    def stop(self):
+        self.stopFront()
+        self.stopBack()
 
-    def stopBack(self):
-        self.backLift.set(0)
-
-    def stopDrive(self):
-        self.wheelLeft.set(0)
-        self.wheelRight.set(0)
+    def stopDrive(self): self.wheels.set(0)
 
     def disable(self):
         self.stopFront()
         self.stopBack()
         self.stopDrive()
 
-    def dashboardPeriodic(self):
-        if self.debug == True:
-            SmartDashboard.putNumber("Ticks on front", self.getHeightFront())
-            SmartDashboard.putNumber("Ticks on back", self.getHeightBack())
+    def dashboardInit(self):
+        SmartDashboard.putNumber("ClimberSpeed", self.climbSpeed)
+        SmartDashboard.putData("Lift Robot", LiftRobot())
+        SmartDashboard.putData("Lower Robot", LowerRobot())
 
-    def returnClimbSpeed(self):
-        self.climbSpeed = SmartDashboard.getNumber("Climber Speed", 0.25)
-        return self.climbSpeed
+    def dashboardPeriodic(self):
+        self.climbSpeed = SmartDashboard.getNumber("ClimberSpeed", self.climbSpeed)
+
+        if self.debug == True:
+            SmartDashboard.putNumber("Pitch", self.getPitch())
+            SmartDashboard.putNumber("FrontTicks", self.getHeightFront())
+            SmartDashboard.putNumber("BackTicks", self.getHeightBack())
