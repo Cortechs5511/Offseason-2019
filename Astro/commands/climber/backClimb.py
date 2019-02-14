@@ -5,6 +5,7 @@ class BackClimb(Command):
         super().__init__('setSpeedWheel')
         self.robot = self.getRobot()
         self.climber = self.robot.climber
+        self.requires(self.climber)
         self.up = up
 
     def initialize(self): pass
@@ -17,4 +18,4 @@ class BackClimb(Command):
 
     def end(self): self.climber.stopBack()
 
-    def isFinished(self): return True
+    def isFinished(self): return self.climber.isFullyExtendedBoth()

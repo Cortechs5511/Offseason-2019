@@ -22,7 +22,7 @@ class Climber(Subsystem):
     TICKS_TO_INCHES = 1.0 #inches/tick
     MAX_EXTEND = 12.0 #inches
 
-    MAX_PITCH = 5 #degrees
+    #MAX_PITCH = 5 #degrees
 
     climbSpeed = 0.25
 
@@ -59,6 +59,8 @@ class Climber(Subsystem):
             motor.configVoltageCompSaturation(9,timeout) #Sets saturation value
             motor.enableVoltageCompensation(True) #Compensates for lower voltages
 
+        self.MAX_PITCH = self.returnTolerance()
+
     def subsystemInit(self):
         r = self.robot
 
@@ -84,10 +86,13 @@ class Climber(Subsystem):
         climberBackUp.whileHeld(BackClimb(True))
 
         climberBackDown : wpilib.buttons.JoystickButton = r.driverLeftButton(15)
-        climberBackDown.whileHeld(BackClimb(True))
+        climberBackDown.whileHeld(BackClimb(False))
 
     def getPitch(self):
         return self.robot.drive.pitch #negate here if pitch is backwards of expected
+
+    def getRoll(self):
+        return self.robot.drive.roll
 
     def getHeightFront(self):
         """ this will return the height in inches from encoder """
@@ -114,22 +119,22 @@ class Climber(Subsystem):
         return self.isFullyExtendedFront() and self.isFullyExtendedBack()
 
     #functions for lift
-    def liftFront(self,lift):
+    def liftFront(self, lift):
         """ Basic lift function for lifting robot.
         @param lift - Positive values make lift go down(extend) """
 
         if lift > 0 and self.getHeightFront()>=self.MAX_EXTEND: self.stopFront()
         elif lift < 0 and self.getHeightFront() < 0: self.stopFront()
-        elif lift/abs(lift)*self.getPitch()>self.MAX_PITCH: self.stopFront()
+        elif lift/abs(lift)*self.getRoll()>self.MAX_PITCH: self.stopFront()
         else: self.frontLift.set(lift)
 
-    def liftBack(self,lift):
+    def liftBack(self, lift):
         """ Basic lift function for lifting robot.
         @param lift - Positive values make lift go down """
 
         if  lift > 0 and self.getHeightBack()>=self.MAX_EXTEND: self.stopBack()
         elif lift < 0 and self.getHeightBack()<0: self.stopBack()
-        elif lift/abs(lift)*self.getPitch()<-self.MAX_PITCH: self.stopBack()
+        elif lift/abs(lift)*self.getRoll()<-self.MAX_PITCH: self.stopBack()
         else: self.backLift.set(lift)
 
     def lift(self, lift):
@@ -140,8 +145,8 @@ class Climber(Subsystem):
         self.liftBack(lift)
 
     #wheel speed
-    def wheelForward(self): self.wheels.set(0.75)
-    def wheelBack(self): self.wheels.set(-0.75)
+    def wheelForward(self): self.wheels.set(self.returnClimbSpeed())
+    def wheelBack(self): self.wheels.set(-1 * self.returnClimbSpeed())
 
     def stopFront(self): self.frontLift.set(0)
     def stopBack(self): self.backLift.set(0)
@@ -158,18 +163,21 @@ class Climber(Subsystem):
         self.stopDrive()
 
     def dashboardInit(self):
-        SmartDashboard.putNumber("ClimberSpeed", 0.25)
+        SmartDashboard.putNumber("ClimberSpeed", 0.75)
+        SmartDashboard.putNumber("Tolerance", 2)
         SmartDashboard.putData("Lift Robot", LiftRobot())
         SmartDashboard.putData("Lower Robot", LowerRobot())
 
-    def periodic(self):
-        self.climbSpeed = SmartDashboard.getNumber("ClimberSpeed", self.climbSpeed)
-
+    def dashboardPeriodic(self):
         if self.debug == True:
             SmartDashboard.putNumber("Pitch", self.getPitch())
             SmartDashboard.putNumber("FrontTicks", self.getHeightFront())
             SmartDashboard.putNumber("BackTicks", self.getHeightBack())
 
     def returnClimbSpeed(self):
-        self.cs = SmartDashboard.getNumber("ClimberSpeed", 0.25)
-        return self.cs
+        self.climbSpeed = SmartDashboard.getNumber("ClimberSpeed", 0.75)
+        return self.climbSpeed
+
+    def returnTolerance(self):
+        self.tolerance = SmartDashboard.getNumber("Tolerance", 2)
+        return self.tolerance

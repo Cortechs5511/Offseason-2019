@@ -255,6 +255,7 @@ class Drive(Subsystem):
         self.roll = self.navx.getRoll()
 
     def getAngle(self): return self.yaw
+    def getRoll(self): return self.roll
     def getRaw(self): return [self.leftVal, self.rightVal]
     def getDistance(self): return [self.leftVal*self.leftConv, self.rightVal*self.rightConv]
     def getAvgDistance(self): return (self.getDistance()[0]+self.getDistance()[1])/2
@@ -311,7 +312,7 @@ class Drive(Subsystem):
 
     def dashboardPeriodic(self):
         SmartDashboard.putBoolean("Driving Reverse", self.flipped)
-        SmartDashboard.putNumber("Pitch2", self.getPitch())
+        SmartDashboard.putNumber("Roll", self.getRoll())
         if(self.debug==False): return
         SmartDashboard.putNumber("Left Counts", self.leftEncoder.get())
         SmartDashboard.putNumber("Left Distance", self.leftEncoder.getDistance())
