@@ -156,6 +156,9 @@ class Drive(Subsystem):
         self.maxVel = self.maxSpeed*self.model.getMaxAbsVelocity(0, 0, 12)
         self.Path = Path.Path(self, self.model, self.odTemp, self.getDistance)
 
+    def periodic(self):
+        self.updateSensors()
+
     def __getDistance__(self): return self.getAvgDistance()
     def __setDistance__(self,output): self.distPID = output
 
