@@ -11,8 +11,8 @@ class BackClimb(Command):
     def initialize(self): pass
 
     def execute(self):
-        if self.up == True: self.climber.liftBack(self.climber.returnClimbSpeed())
-        elif self.up == False: self.climber.liftBack(-1 * self.climber.returnClimbSpeed())
+        if self.up == True: self.climber.liftBack(self.climber.returnClimbSpeed(), False)
+        elif self.up == False: self.climber.liftBack(-1 * self.climber.returnClimbSpeed(), False)
 
     def interrupted(self): self.climber.stopBack()
 

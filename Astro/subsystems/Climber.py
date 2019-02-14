@@ -119,22 +119,22 @@ class Climber(Subsystem):
         return self.isFullyExtendedFront() and self.isFullyExtendedBack()
 
     #functions for lift
-    def liftFront(self, lift):
+    def liftFront(self, lift, tol=True):
         """ Basic lift function for lifting robot.
         @param lift - Positive values make lift go down(extend) """
 
         if lift > 0 and self.getHeightFront()>=self.MAX_EXTEND: self.stopFront()
         elif lift < 0 and self.getHeightFront() < 0: self.stopFront()
-        elif lift/abs(lift)*self.getRoll()>self.MAX_PITCH: self.stopFront()
-        else: self.frontLift.set(lift)
+        elif tol and lift/abs(lift)*self.getRoll()>self.MAX_PITCH: self.stopFront()
+        else: self.frontLift.set(1.1*lift)
 
-    def liftBack(self, lift):
+    def liftBack(self, lift, tol=True):
         """ Basic lift function for lifting robot.
         @param lift - Positive values make lift go down """
 
         if  lift > 0 and self.getHeightBack()>=self.MAX_EXTEND: self.stopBack()
         elif lift < 0 and self.getHeightBack()<0: self.stopBack()
-        elif lift/abs(lift)*self.getRoll()<-self.MAX_PITCH: self.stopBack()
+        elif tol and lift/abs(lift)*self.getRoll()<-self.MAX_PITCH: self.stopBack()
         else: self.backLift.set(lift)
 
     def lift(self, lift):
@@ -163,7 +163,7 @@ class Climber(Subsystem):
         self.stopDrive()
 
     def dashboardInit(self):
-        SmartDashboard.putNumber("ClimberSpeed", 0.75)
+        SmartDashboard.putNumber("ClimberSpeed", 1)
         SmartDashboard.putNumber("Tolerance", 2)
         SmartDashboard.putData("Lift Robot", LiftRobot())
         SmartDashboard.putData("Lower Robot", LowerRobot())
@@ -175,7 +175,7 @@ class Climber(Subsystem):
             SmartDashboard.putNumber("BackTicks", self.getHeightBack())
 
     def returnClimbSpeed(self):
-        self.climbSpeed = SmartDashboard.getNumber("ClimberSpeed", 0.75)
+        self.climbSpeed = SmartDashboard.getNumber("ClimberSpeed", 0.9)
         return self.climbSpeed
 
     def returnTolerance(self):
