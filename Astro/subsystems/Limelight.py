@@ -30,6 +30,7 @@ class Limelight():
         self.tvert = self.table.getNumber('tvert',1000)
         self.tlong = self.table.getNumber('tlong',1000)
         self.tshort = self.table.getNumber('tshort',1000)
+        #self.camTran = self.table.getNumberArray('camtran',None)
 
     def get(self):
         return [self.tv, self.tx, self.ty, self.ta]
@@ -50,8 +51,7 @@ class Limelight():
 
     def getDistance(self):
         """returns distance in inches from limelight to target"""
-
-        taBox = (self.thor * self.tvert)/(320**2) #box area as percentage of whole
+        taBox = (self.thor * self.tvert)/(720*960) #box area as percentage of whole
         if(taBox==None or taBox<=0): return -1
         const = 4 * math.tan(0.471)*math.tan(0.3576)
         return math.sqrt((self.abox)/(const*taBox))
@@ -74,10 +74,10 @@ class Limelight():
         pass
 
     def dashboardPeriodic(self):
-        SmartDashboard.putNumber("xError", self.getPathXY()[0])
-        SmartDashboard.putNumber("yError", self.getPathXY()[1])
+        SmartDashboard.putNumber("xError", self.getXError())
+        SmartDashboard.putNumber("yError", self.getYError())
         SmartDashboard.putNumber("Distance",self.getDistance())
-
+        SmartDashboard.putNumber("thor", self.thor)
         SmartDashboard.putNumber("Angle1", self.tx)
         SmartDashboard.putNumber("Angle2", self.getAngle2())
         SmartDashboard.putNumber("NavXAngle", self.robot.drive.getAngle())
