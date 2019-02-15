@@ -6,13 +6,19 @@ class LiftRobot(Command):
         robot = self.getRobot()
         self.climber = robot.climber
         self.requires(self.climber)
+    def initialize(self):
+        pass
 
-    def initialize(self): pass
+    def execute(self):
+        self.climber.liftFront(0.25)
+        self.climber.liftBack(0.25)
 
-    def execute(self): self.climber.lift(self.climber.returnClimbSpeed())
+    def interrupted(self):
+        self.climber.stopFront()
+        self.climber.stopBack()
 
-    def interrupted(self): self.climber.stop()
-
-    def end(self): self.interrupted()
-
-    def isFinished(self): return self.climber.isFullyExtendedBoth()
+    def end(self):
+      
+        self.interrupted()
+    def isFinished(self):
+        return self.climber.isFullyExtendedBoth()

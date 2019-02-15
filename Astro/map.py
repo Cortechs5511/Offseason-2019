@@ -1,13 +1,13 @@
 #Can ID
-driveLeft1 = 10
-driveLeft2 = 11
-driveLeft3 = 12
-driveRight1 = 20
-driveRight2 = 21
-driveRight3 = 22
+driveLeft1 =10
+driveLeft2 =11
+driveLeft3 =12
+driveRight1 =20
+driveRight2 =21
+driveRight3 =22
 
-intake = 30
 wrist = 31
+intake = 30
 
 frontLift = 40
 backLift = 41
