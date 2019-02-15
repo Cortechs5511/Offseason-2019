@@ -24,7 +24,6 @@ class Climber(Subsystem):
         self.robot = Robot
         self.debug = True
 <<<<<<< HEAD
-<<<<<<< HEAD
 
         timeout = 0
 
@@ -60,8 +59,6 @@ class Climber(Subsystem):
         self.MAX_PITCH = self.returnTolerance()
 
 =======
-=======
->>>>>>> parent of d6acef0... Merge branch 'master' of https://github.com/Cortechs5511/DeepSpace
         self.backLift = ctre.WPI_TalonSRX(map.backLift)
         self.frontLift = ctre.WPI_TalonSRX(map.frontLift)
         """ self.wheelRight = ctre.WPI_VictorSPX(2)"""
@@ -78,9 +75,6 @@ class Climber(Subsystem):
 
  
      
-<<<<<<< HEAD
->>>>>>> parent of d6acef0... Merge branch 'master' of https://github.com/Cortechs5511/DeepSpace
-=======
 >>>>>>> parent of d6acef0... Merge branch 'master' of https://github.com/Cortechs5511/DeepSpace
     def subsystemInit(self):
         r = self.robot
@@ -99,7 +93,6 @@ class Climber(Subsystem):
         climberWheelsBackward : wpilib.buttons.JoystickButton = r.driverLeftButton(8)
         climberWheelsBackward.whileHeld(SetSpeedWheel(-1))
 
-<<<<<<< HEAD
 
 
         #Lift
@@ -112,20 +105,6 @@ class Climber(Subsystem):
 
 
 
-=======
-
-
-        #Lift
-        leftLiftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(9)
-        leftLiftButton.whileHeld(LiftRobot())
-
-        #lift
-        rightLiftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(10)
-        rightLiftButton.whileHeld(LowerRobot())
-
-
-
->>>>>>> parent of d6acef0... Merge branch 'master' of https://github.com/Cortechs5511/DeepSpace
 
     def getPitch(self):
         return self.robot.drive.pitch
@@ -146,7 +125,6 @@ class Climber(Subsystem):
 
     def isFullyExtendedFront(self):
 <<<<<<< HEAD
-<<<<<<< HEAD
         """ tells us if the front is fully extended """
         #return self.getHeightFront() >= self.MAX_EXTEND
         #return self.switchTopFront.get()
@@ -161,12 +139,6 @@ class Climber(Subsystem):
     def isFullyUnextendedFront(self):
         #return self.switchBottomFront.get()
         return False
-=======
-        """ tells us if the front is fully extended"""
-
-        return self.getHeightFront() >= MAX_EXTEND
-
->>>>>>> parent of d6acef0... Merge branch 'master' of https://github.com/Cortechs5511/DeepSpace
 =======
         """ tells us if the front is fully extended"""
 
