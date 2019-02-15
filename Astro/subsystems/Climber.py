@@ -38,9 +38,9 @@ class Climber(Subsystem):
         self.frontLift = Talon(map.frontLift)
         self.wheelLeft = Victor(map.wheelLeft)
         self.wheelRight = Victor(map.wheelRight)
-        self.switchTopFront = wpilib.DigitalInput(4)
-        self.switchBottomFront = wpilib.DigitalInput(5)
-        self.switchTopBack = wpilib.DigitalInput(6)
+        self.switchTopFront = wpilib.DigitalInput(7)
+        self.switchBottomFront = wpilib.DigitalInput(8)
+        self.switchTopBack = wpilib.DigitalInput(9)
         #self.switchBottomBack = wpilib.DigitalInput(3)
 
         self.wheelRight.follow(self.wheelLeft)
@@ -120,15 +120,18 @@ class Climber(Subsystem):
     def isFullyExtendedFront(self):
         """ tells us if the front is fully extended """
         #return self.getHeightFront() >= self.MAX_EXTEND
-        return self.switchTopFront.get()
+        #return self.switchTopFront.get()
+        return False
 
     def isFullyExtendedBack(self):
         """ tells us if the back is fully extended, so it can stop """
         #return self.getHeightBack() >= self.MAX_EXTEND
-        return self.switchTopBack.get()
+        #return self.switchTopBack.get()
+        return False
 
     def isFullyUnextendedFront(self):
-        return self.switchBottomFront.get()
+        #return self.switchBottomFront.get()
+        return False
 
     def isFullyUnextendedBack(self):
         #return self.switchBottomBack.get()
