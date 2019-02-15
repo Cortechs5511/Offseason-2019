@@ -38,9 +38,9 @@ class Climber(Subsystem):
         self.frontLift = Talon(map.frontLift)
         self.wheelLeft = Victor(map.wheelLeft)
         self.wheelRight = Victor(map.wheelRight)
-        self.switchTopFront = wpilib.DigitalInput(4)
-        self.switchBottomFront = wpilib.DigitalInput(5)
-        self.switchTopBack = wpilib.DigitalInput(6)
+        self.switchTopFront = wpilib.DigitalInput(7)
+        self.switchBottomFront = wpilib.DigitalInput(8)
+        self.switchTopBack = wpilib.DigitalInput(9)
         #self.switchBottomBack = wpilib.DigitalInput(3)
 
         self.wheelRight.follow(self.wheelLeft)
@@ -127,10 +127,10 @@ class Climber(Subsystem):
         #return self.getHeightBack() >= self.MAX_EXTEND
         return self.switchTopBack.get()
 
-    def isFullyUnextendedFront(self):
+    def isFullyRetractedFront(self):
         return self.switchBottomFront.get()
 
-    def isFullyUnextendedBack(self):
+    def isFullyRetractedBack(self):
         #return self.switchBottomBack.get()
         return False
 
@@ -144,7 +144,7 @@ class Climber(Subsystem):
         @param lift - Positive values make lift go down(extend) """
 
         if isFullyExtendedFront() and lift/abs(lift) == 1 : self.stopFront()
-        elif isFullyUnextendedFront() and lift/abs(lift) == -1 : self.stopFront()
+        elif isFullyRetractedFront() and lift/abs(lift) == -1 : self.stopFront()
         elif oppadjust and lift/abs(lift)*self.getRoll()>self.MAX_PITCH: self.liftBack(0.5)
         elif tol and lift/abs(lift)*self.getRoll()>self.MAX_PITCH: self.stopFront()
         else: self.frontLift.set(1.1*lift)
@@ -154,7 +154,7 @@ class Climber(Subsystem):
         @param lift - Positive values make lift go down """
 
         if isFullyExtendedBack() and lift/abs(lift) == 1 : self.stopBack()
-        elif isFullyUnextendedBack() and lift/abs(lift) == -1 : self.stopBack()
+        elif isFullyRetractedBack() and lift/abs(lift) == -1 : self.stopBack()
         elif tol and lift/abs(lift)*self.getRoll()<-self.MAX_PITCH: self.stopBack()
         else: self.backLift.set(lift)
 
@@ -191,6 +191,9 @@ class Climber(Subsystem):
 
     def dashboardPeriodic(self):
         if self.debug == True:
+            SmartDashboard.putBoolean("Sensor1",self.isFullyExtendedFront())
+            SmartDashboard.putBoolean("Sensor2",self.isFullyExtendedBack())
+            SmartDashboard.putBoolean("Sensor3",self.isFullyRetractedFront())
             SmartDashboard.putNumber("Pitch", self.getPitch())
             SmartDashboard.putNumber("FrontTicks", self.getHeightFront())
             SmartDashboard.putNumber("BackTicks", self.getHeightBack())
