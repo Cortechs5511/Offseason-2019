@@ -14,22 +14,15 @@ from commands.climber.lockLift import LockLift
 # TODO DETERMINE CONVERSION!!!!
 TICKS_TO_INCHES = 1.0
 MAX_EXTEND = 12.0
-<<<<<<< HEAD
 
 
 
-=======
-
-
-
->>>>>>> parent of d6acef0... Merge branch 'master' of https://github.com/Cortechs5511/DeepSpace
 class Climber(Subsystem):
     def __init__(self, Robot):
         """ Create all physical parts used by subsystem. """
         super().__init__('Climber')
         self.robot = Robot
         self.debug = True
-<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 
@@ -69,8 +62,6 @@ class Climber(Subsystem):
 =======
 =======
 >>>>>>> parent of d6acef0... Merge branch 'master' of https://github.com/Cortechs5511/DeepSpace
-=======
->>>>>>> parent of d6acef0... Merge branch 'master' of https://github.com/Cortechs5511/DeepSpace
         self.backLift = ctre.WPI_TalonSRX(map.backLift)
         self.frontLift = ctre.WPI_TalonSRX(map.frontLift)
         """ self.wheelRight = ctre.WPI_VictorSPX(2)"""
@@ -88,9 +79,6 @@ class Climber(Subsystem):
  
      
 <<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> parent of d6acef0... Merge branch 'master' of https://github.com/Cortechs5511/DeepSpace
-=======
 >>>>>>> parent of d6acef0... Merge branch 'master' of https://github.com/Cortechs5511/DeepSpace
 =======
 >>>>>>> parent of d6acef0... Merge branch 'master' of https://github.com/Cortechs5511/DeepSpace
@@ -112,9 +100,6 @@ class Climber(Subsystem):
         climberWheelsBackward.whileHeld(SetSpeedWheel(-1))
 
 <<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> parent of d6acef0... Merge branch 'master' of https://github.com/Cortechs5511/DeepSpace
 
 
         #Lift
@@ -127,7 +112,6 @@ class Climber(Subsystem):
 
 
 
-<<<<<<< HEAD
 =======
 
 
@@ -143,9 +127,6 @@ class Climber(Subsystem):
 
 >>>>>>> parent of d6acef0... Merge branch 'master' of https://github.com/Cortechs5511/DeepSpace
 
-=======
-
->>>>>>> parent of d6acef0... Merge branch 'master' of https://github.com/Cortechs5511/DeepSpace
     def getPitch(self):
         return self.robot.drive.pitch
     #gets height
@@ -164,7 +145,6 @@ class Climber(Subsystem):
 
 
     def isFullyExtendedFront(self):
-<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         """ tells us if the front is fully extended """
@@ -202,21 +182,6 @@ class Climber(Subsystem):
         """tells us if both front and back are fully extended, so it can stop"""
         return self.isFullyExtendedFront() and self.isFullyExtendedBack()
 
-=======
-        """ tells us if the front is fully extended"""
-
-        return self.getHeightFront() >= MAX_EXTEND
-
-
-    def isFullyExtendedBack(self):
-        """tells us if the back is fully extended, so it can stop"""
-        return self.getHeightBack() >= MAX_EXTEND
-
-    def isFullyExtendedBoth(self):
-        """tells us if both front and back are fully extended, so it can stop"""
-        return self.isFullyExtendedFront() and self.isFullyExtendedBack()
-
->>>>>>> parent of d6acef0... Merge branch 'master' of https://github.com/Cortechs5511/DeepSpace
     #functions for lift
     def liftFront(self,lift):
         """ Basic lift function for lifting robot.
