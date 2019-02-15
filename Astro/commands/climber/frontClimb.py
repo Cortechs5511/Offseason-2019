@@ -11,8 +11,15 @@ class FrontClimb(Command):
     def initialize(self): pass
 
     def execute(self):
-        if self.up == True: self.climber.liftFront(self.climber.returnClimbSpeed(), False)
+        tilt = self.climber.getRoll()
+        tol = self.climber.returnTolerance()
+        if self.up == True:
+            self.climber.liftFront(self.climber.returnClimbSpeed(), False)
         elif self.up == False: self.climber.liftFront(-1 * self.climber.returnClimbSpeed(), False)
+        if tilt > tol:
+            self.climber.liftBack(self.climber.returnClimbSpeed(), False)
+        elif tol < -tilt:
+            self.climber.liftBack(-1 * self.climber.returnClimbSpeed(), False)
 
     def interrupted(self): self.climber.stopFront()
 

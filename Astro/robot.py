@@ -53,6 +53,7 @@ class MyRobot(CommandBasedRobot):
         self.cargoMech = CargoMech.CargoMech(self)
         self.climber = Climber.Climber(self)
         self.drive = Drive.Drive(self)
+        self.compressor = wpilib.compressor(0)
 
         self.timer = wpilib.Timer()
         self.timer.start()
@@ -72,7 +73,6 @@ class MyRobot(CommandBasedRobot):
         self.hatchMech.subsystemInit()
         self.cargoMech.subsystemInit()
         self.climber.subsystemInit()
-
         self.DrivePath = DrivePath(name="AlignBack", follower="Ramsetes")
 
     def teleopInit(self):
@@ -124,6 +124,7 @@ class MyRobot(CommandBasedRobot):
         SmartDashboard.putData("Zero", Zero.Zero())
 
     def updateDashboardPeriodic(self):
+        SmartDashboard.putNumber("PresureSwicthValue",self.compressor.getPressureSwitchValue()
         self.rate.execute()
         self.drive.dashboardPeriodic()
         #self.hatchMech.dashboardPeriodic()

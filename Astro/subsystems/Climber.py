@@ -38,6 +38,10 @@ class Climber(Subsystem):
         self.frontLift = Talon(map.frontLift)
         self.wheelLeft = Victor(map.wheelLeft)
         self.wheelRight = Victor(map.wheelRight)
+        self.switchTopFront = wpilib.DigitalInput(4)
+        self.switchBottomFront = wpilib.DigitalInput(5)
+        self.switchTopBack = wpilib.DigitalInput(6)
+        #self.switchBottomBack = wpilib.DigitalInput(3)
 
         self.wheelRight.follow(self.wheelLeft)
         self.wheels = self.wheelLeft
@@ -108,23 +112,33 @@ class Climber(Subsystem):
 
     def isFullyExtendedFront(self):
         """ tells us if the front is fully extended """
-        return self.getHeightFront() >= self.MAX_EXTEND
+        #return self.getHeightFront() >= self.MAX_EXTEND
+        return self.switchTopFront.get()
 
     def isFullyExtendedBack(self):
         """ tells us if the back is fully extended, so it can stop """
-        return self.getHeightBack() >= self.MAX_EXTEND
+        #return self.getHeightBack() >= self.MAX_EXTEND
+        return self.switchTopBack.get()
+
+    def isFullyUnextendedFront(self):
+        return self.switchBottomFront.get()
+
+    def isFullyUnextendedBack(self):
+        #return self.switchBottomBack.get()
+        return False
 
     def isFullyExtendedBoth(self):
         """ tells us if both front and back are fully extended, so it can stop """
         return self.isFullyExtendedFront() and self.isFullyExtendedBack()
 
     #functions for lift
-    def liftFront(self, lift, tol=True):
+    def liftFront(self, lift, tol=True, oppadjust=False):
         """ Basic lift function for lifting robot.
         @param lift - Positive values make lift go down(extend) """
 
-        if lift > 0 and self.getHeightFront()>=self.MAX_EXTEND: self.stopFront()
-        elif lift < 0 and self.getHeightFront() < 0: self.stopFront()
+        if isFullyExtendedFront() and lift/abs(lift) == 1 : self.stopFront()
+        elif isFullyUnextendedFront() and lift/abs(lift) == -1 : self.stopFront()
+        elif oppadjust and lift/abs(lift)*self.getRoll()>self.MAX_PITCH: self.liftBack(0.5)
         elif tol and lift/abs(lift)*self.getRoll()>self.MAX_PITCH: self.stopFront()
         else: self.frontLift.set(1.1*lift)
 
@@ -132,8 +146,8 @@ class Climber(Subsystem):
         """ Basic lift function for lifting robot.
         @param lift - Positive values make lift go down """
 
-        if  lift > 0 and self.getHeightBack()>=self.MAX_EXTEND: self.stopBack()
-        elif lift < 0 and self.getHeightBack()<0: self.stopBack()
+        if isFullyExtendedBack() and lift/abs(lift) == 1 : self.stopBack()
+        elif isFullyUnextendedBack() and lift/abs(lift) == -1 : self.stopBack()
         elif tol and lift/abs(lift)*self.getRoll()<-self.MAX_PITCH: self.stopBack()
         else: self.backLift.set(lift)
 
