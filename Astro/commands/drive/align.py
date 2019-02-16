@@ -51,4 +51,4 @@ class Align(TimedCommand):
         self.DT.tankDrive(0,0)
         self.Path.disablePID()
         distEnd = self.DT.getDistance()
-        print("DistanceLeft: " , distEnd[0] - self.distStart[0],"DistanceRight: " , distEnd[1] - self.distStart[1])
+        #print("DistanceLeft: " , distEnd[0] - self.distStart[0],"DistanceRight: " , distEnd[1] - self.distStart[1])

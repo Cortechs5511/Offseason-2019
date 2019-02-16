@@ -11,8 +11,6 @@ from ctre import WPI_VictorSPX as Victor
 from commands.climber.liftRobot import LiftRobot
 from commands.climber.lowerRobot import LowerRobot
 from commands.climber.setSpeedWheel import SetSpeedWheel
-from commands.climber.frontClimb import FrontClimb
-from commands.climber.backClimb import BackClimb
 
 import map
 
@@ -22,7 +20,7 @@ class Climber(Subsystem):
     TICKS_TO_INCHES = 1.0 #inches/tick
     MAX_EXTEND = 12.0 #inches
 
-    #MAX_PITCH = 5 #degrees
+    #MAX_ROLL = 5 #degrees
 
     climbSpeed = 0.25
 
@@ -63,15 +61,10 @@ class Climber(Subsystem):
             motor.configVoltageCompSaturation(9,timeout) #Sets saturation value
             motor.enableVoltageCompensation(True) #Compensates for lower voltages
 
-        self.MAX_PITCH = self.returnTolerance()
+        self.MAX_ROLL = self.returnTolerance()
 
     def subsystemInit(self):
         r = self.robot
-        if self.debug == True:
-        #    SmartDashboard.putData(self)
-            SmartDashboard.putData("Lift Robot", LiftRobot())
-            SmartDashboard.putData("Lock Lift" , LockLift())
-            SmartDashboard.putData("Unlock Lift" , UnLockLift())
 
 
         #wheels
@@ -82,22 +75,22 @@ class Climber(Subsystem):
         climberWheelsBackward.whileHeld(SetSpeedWheel(-1))
 
         liftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(9)
-        liftButton.whileHeld(LiftRobot())
+        liftButton.whileHeld(LiftRobot("both"))
 
         liftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(10)
-        liftButton.whileHeld(LowerRobot())
+        liftButton.whileHeld(LowerRobot("both"))
 
         climberFrontUp : wpilib.buttons.JoystickButton = r.driverLeftButton(13)
-        climberFrontUp.whileHeld(FrontClimb(True))
+        climberFrontUp.whileHeld(LiftRobot("front"))
 
         climberFrontDown : wpilib.buttons.JoystickButton = r.driverLeftButton(14)
-        climberFrontDown.whileHeld(FrontClimb(False))
+        climberFrontDown.whileHeld(LowerRobot("front"))
 
         climberBackUp : wpilib.buttons.JoystickButton = r.driverLeftButton(12)
-        climberBackUp.whileHeld(BackClimb(True))
+        climberBackUp.whileHeld(LiftRobot("back"))
 
         climberBackDown : wpilib.buttons.JoystickButton = r.driverLeftButton(15)
-        climberBackDown.whileHeld(BackClimb(False))
+        climberBackDown.whileHeld(LowerRobot("back"))
 
     def getPitch(self):
         return self.robot.drive.pitch #negate here if pitch is backwards of expected
@@ -120,15 +113,18 @@ class Climber(Subsystem):
     def isFullyExtendedFront(self):
         """ tells us if the front is fully extended """
         #return self.getHeightFront() >= self.MAX_EXTEND
-        return self.switchTopFront.get()
+        #return self.switchTopFront.get()
+        return False
 
     def isFullyExtendedBack(self):
         """ tells us if the back is fully extended, so it can stop """
         #return self.getHeightBack() >= self.MAX_EXTEND
-        return self.switchTopBack.get()
+        #return self.switchTopBack.get()
+        return False
 
     def isFullyRetractedFront(self):
-        return self.switchBottomFront.get()
+        #return self.switchBottomFront.get()
+        return False
 
     def isFullyRetractedBack(self):
         #return self.switchBottomBack.get()
@@ -138,32 +134,43 @@ class Climber(Subsystem):
         """ tells us if both front and back are fully extended, so it can stop """
         return self.isFullyExtendedFront() and self.isFullyExtendedBack()
 
+    def isLeaning(self, direction):
+        '''true checking tip forward'''
+        if direction == True and self.getRoll() < -self.MAX_ROLL :
+            return True
+        elif direction == False and self.getRoll() > self.MAX_ROLL :
+            return True
+        else:
+            return False
+
     #functions for lift
-    def liftFront(self, lift, tol=True, oppadjust=False):
+    def liftFront(self, lift, single):
         """ Basic lift function for lifting robot.
         @param lift - Positive values make lift go down(extend) """
 
-        if isFullyExtendedFront() and lift/abs(lift) == 1 : self.stopFront()
-        elif isFullyRetractedFront() and lift/abs(lift) == -1 : self.stopFront()
-        elif oppadjust and lift/abs(lift)*self.getRoll()>self.MAX_PITCH: self.liftBack(0.5)
-        elif tol and lift/abs(lift)*self.getRoll()>self.MAX_PITCH: self.stopFront()
+        if self.isFullyExtendedFront() and lift/abs(lift) == 1 : self.stopFront()
+        elif self.isFullyRetractedFront() and lift/abs(lift) == -1 : self.stopFront()
+        elif single and self.isLeaning(False): self.backLift.set(0.5)
+        elif single and self.isLeaning(True): self.backLift.set(-0.5)
+        elif self.isLeaning(False): self.stopFront()
         else: self.frontLift.set(1.1*lift)
 
-    def liftBack(self, lift, tol=True):
+    def liftBack(self, lift, single):
         """ Basic lift function for lifting robot.
         @param lift - Positive values make lift go down """
 
-        if isFullyExtendedBack() and lift/abs(lift) == 1 : self.stopBack()
-        elif isFullyRetractedBack() and lift/abs(lift) == -1 : self.stopBack()
-        elif tol and lift/abs(lift)*self.getRoll()<-self.MAX_PITCH: self.stopBack()
+        if self.isFullyExtendedBack() and lift/abs(lift) == 1 : self.stopBack()
+        elif self.isFullyRetractedBack() and lift/abs(lift) == -1 : self.stopBack()
+        elif single and self.isLeaning(False): self.frontLift.set(0.5)
+        elif single and self.isLeaning(True): self.frontLift.set(-0.5)
+        elif self.isLeaning(True): self.stopBack()
         else: self.backLift.set(lift)
 
     def lift(self, lift):
         """ Basic lift function for lifting robot.
         @param lift - Positive values make lift go down(extend) """
-
-        self.liftFront(lift)
-        self.liftBack(lift)
+        self.liftFront(lift, False)
+        self.liftBack(lift, False)
 
     #wheel speed
     def wheelForward(self): self.wheels.set(self.returnClimbSpeed())
@@ -186,8 +193,8 @@ class Climber(Subsystem):
     def dashboardInit(self):
         SmartDashboard.putNumber("ClimberSpeed", 1)
         SmartDashboard.putNumber("Tolerance", 2)
-        SmartDashboard.putData("Lift Robot", LiftRobot())
-        SmartDashboard.putData("Lower Robot", LowerRobot())
+        SmartDashboard.putData("Lift Robot", LiftRobot("both"))
+        SmartDashboard.putData("Lower Robot", LowerRobot("both"))
 
     def dashboardPeriodic(self):
         if self.debug == True:
