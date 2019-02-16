@@ -1,7 +1,7 @@
 import wpilib
 from wpilib.command import Command
 from wpilib.command import TimedCommand
-
+from commands.cargo.wristintake import 
 class AutoClimb(TimedCommand):
 
     def __init__(self):
@@ -17,11 +17,7 @@ class AutoClimb(TimedCommand):
     def initialize(self):
 
     def execute(self):
-        self.climber.lift(0.9)
-        self.climber.wheelForward()
-        self.climber.lift(-0.4)
-        self.climber.liftFront(-0.9)
-
+       
     def isFinished(self):
 
     def interrupted(self):

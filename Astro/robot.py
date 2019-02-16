@@ -2,7 +2,6 @@ import math
 import wpilib
 import oi
 
-
 from wpilib import SmartDashboard
 import wpilib.buttons
 from wpilib.command import Command
