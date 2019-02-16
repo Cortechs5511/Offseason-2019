@@ -21,7 +21,6 @@ from commands.drive.setFixedDT import SetFixedDT
 from commands.drive.setSpeedDT import SetSpeedDT
 from commands.drive.turnAngle import TurnAngle
 from commands.drive.measured import Measured
-from commands.drive.autonCheck import AutonCheck
 from commands.drive.relativeTurn import RelativeTurn
 
 
