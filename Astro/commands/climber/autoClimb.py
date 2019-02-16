@@ -18,6 +18,8 @@ class AutoClimb(TimedCommand):
         pass
 
     def execute(self):
+        self.time = wpilib.time()
+        
         self.climber.lift(0.9)
         self.climber.wheelForward()
         self.climber.lift(-0.4)

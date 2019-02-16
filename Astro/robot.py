@@ -2,7 +2,6 @@ import math
 import wpilib
 import oi
 
-
 from wpilib import SmartDashboard
 import wpilib.buttons
 from wpilib.command import Command
@@ -28,6 +27,9 @@ from subsystems import CargoMech
 from subsystems import Climber
 from subsystems import Drive
 from subsystems import Limelight
+from commands import resetAll
+from commands import disableAll
+
 
 from CRLibrary.path import odometry as od
 

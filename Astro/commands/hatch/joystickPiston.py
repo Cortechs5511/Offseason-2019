@@ -12,7 +12,7 @@ class JoystickPiston(TimedCommand):
 
         self.Joystick0 = self.getRobot().joystick0
 
-    def exectute(self):
+    def execute(self):
         trig1 = self.Joystick0.getButton(3)
         trig2 = self.Joystick0.getButton(4)
         if trig1 == True and trig2 == False:

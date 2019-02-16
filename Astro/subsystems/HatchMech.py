@@ -71,4 +71,4 @@ class HatchMech(Subsystem):
     def dashboardPeriodic(self):
         if self.debug:
             SmartDashboard.putBoolean("EjectorOut", self.isEjectorOut())
-            SmartDashboard.putBoolean("SlideOut",self.isSlideIn ())
+            SmartDashboard.putBoolean("SlideOut",self.isSlideIn())
