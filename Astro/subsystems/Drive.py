@@ -64,7 +64,7 @@ class Drive(Subsystem):
 
         self.robot = robot
         self.flipped = False
-        self.debug = True
+        self.debug = False
 
         timeout = 0
 
@@ -115,7 +115,9 @@ class Drive(Subsystem):
         self.left = TalonLeft
         self.right = TalonRight
 
-        self.navx = navx.ahrs.AHRS.create_spi()
+        self.navx = navx.AHRS.create_spi()
+
+
 
         self.leftEncoder = wpilib.Encoder(map.leftEncoder[0], map.leftEncoder[1])
         self.leftEncoder.setDistancePerPulse(self.leftConv)
@@ -248,14 +250,21 @@ class Drive(Subsystem):
         return (self.right.getOutputCurrent()+self.left.getOutputCurrent())*3
 
     def updateSensors(self):
+        if self.navx == None:
+            self.yaw = 0
+            self.pitch = 0
+            self.roll = 0
+        else:
+            self.yaw = self.navx.getYaw()
+            self.pitch = self.navx.getPitch()
+            self.roll = self.navx.getRoll()
         self.leftVal = self.leftEncoder.get()
         self.rightVal = self.rightEncoder.get()
-        self.yaw = self.navx.getYaw()
-        self.pitch = self.navx.getPitch()
-        self.roll = self.navx.getRoll()
 
     def getAngle(self): return self.yaw
-    def getRoll(self): return self.roll
+    def getRoll(self):
+        '''LeaningForward - negative,LeaningBackward - Positive'''
+        return self.roll
     def getRaw(self): return [self.leftVal, self.rightVal]
     def getDistance(self): return [self.leftVal*self.leftConv, self.rightVal*self.rightConv]
     def getAvgDistance(self): return (self.getDistance()[0]+self.getDistance()[1])/2
@@ -276,7 +285,12 @@ class Drive(Subsystem):
         self.rightEncoder.reset()
         simComms.resetEncoders()
 
-    def zeroNavx(self): self.navx.zeroYaw()
+    def zeroNavx(self):
+        if self.navx == None:
+            pass
+        else:
+            self.navx.zeroYaw()
+
 
     def zero(self):
         self.zeroEncoders()
