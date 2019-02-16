@@ -16,7 +16,7 @@ class EjectHatch(Command):
 
 
     def isFinished(self):
-        return self.timeSinceInitialized()>3
+        return self.timeSinceInitialized()>0.25
 
     def interrupted(self):
         pass

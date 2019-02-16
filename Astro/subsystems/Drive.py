@@ -117,8 +117,6 @@ class Drive(Subsystem):
 
         self.navx = navx.AHRS.create_spi()
 
-
-
         self.leftEncoder = wpilib.Encoder(map.leftEncoder[0], map.leftEncoder[1])
         self.leftEncoder.setDistancePerPulse(self.leftConv)
         self.leftEncoder.setSamplesToAverage(10)

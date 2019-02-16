@@ -14,9 +14,13 @@ class SetSpeedDT(TimedCommand):
         self.robot = self.getRobot()
         self.requires(self.robot.drive)
         self.DT = self.robot.drive
-
-        self.Joystick0 = self.robot.joystick0
-        self.Joystick1 = self.robot.joystick1
+        invert = True
+        if invert == True:
+            self.Joystick0 = self.robot.joystick1
+            self.Joystick1 = self.robot.joystick0
+        else:
+            self.Joystick0 = self.robot.joystick0
+            self.Joystick1 = self.robot.joystick1
         SmartDashboard.putNumber("gain",1)
         self.maxspeed = 1.00 #In addition to normal reducing factor in Drive.py
         self.diffDrive = DifferentialDrive(self.DT.left,self.DT.right)
@@ -38,8 +42,8 @@ class SetSpeedDT(TimedCommand):
             left = left / 1000
             right = right / 1000
 
-        
-#double speed maybe useful 
+
+#double speed maybe useful
         if self.robot.readDriverLeftButton(5):
             left = left*2
             right = right*2

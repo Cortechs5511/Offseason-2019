@@ -15,6 +15,7 @@ class AutoClimb(TimedCommand):
 
 
     def initialize(self):
+        pass
 
     def execute(self):
         self.time = wpilib.time()
@@ -25,8 +26,10 @@ class AutoClimb(TimedCommand):
         self.climber.liftFront(-0.9)
 
     def isFinished(self):
-
+        pass
+        
     def interrupted(self):
         self.end()
 
     def end(self):
+        pass
