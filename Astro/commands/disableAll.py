@@ -1,5 +1,8 @@
 import wpilib
 from wpilib.command import Command
+
+from subsystems import all
+'''
 from commands.cargo.wristIntake.py import wristIntake
 from commands.cargo.wristMove.py import WristMove
 from commands.climber.autoClimb.py import autoClimb
@@ -24,23 +27,29 @@ from commands.hatch.ejectHatch.py import EjectHatch
 from commands.hatch.ejectToggle.py import EjectToggle 
 from commands.hatch.joystickPiston.py import JoystickPiston
 from commands.hatch.slideToggle.py import SlideToggle 
-
+'''
 
 class DisableAll(Command):
 
     def __init__(self):
         super().__init__('Disable All')
+    
 
-       self.requires(self.)
 
 
     def initialize(self):
-
+        pass
     def execute(self):
-       
+        
+        self.CargoMech.disable()
+        self.Climber.disable()
+        self.Drive.disable()
+        self.HatchMech.disable()
+
     def isFinished(self):
 
     def interrupted(self):
         self.end()
 
     def end(self):
+         
