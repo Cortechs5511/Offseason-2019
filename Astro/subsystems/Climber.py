@@ -34,6 +34,8 @@ class Climber(Subsystem):
 
         self.backLift = Talon(map.backLift)
         self.frontLift = Talon(map.frontLift)
+        self.frontLift.setInverted(True)
+        self.backLift.setInverted(True)
         self.wheelLeft = Victor(map.wheelLeft)
         self.wheelRight = Victor(map.wheelRight)
         self.switchTopFront = wpilib.DigitalInput(7)

@@ -54,9 +54,9 @@ class MyRobot(CommandBasedRobot):
 
         Command.getRobot = lambda x=0: self
 
-        self.limelight = Limelight.Limelight(self)
-        self.hatchMech = HatchMech.HatchMech(self)
-        self.cargoMech = CargoMech.CargoMech(self)
+        #self.limelight = Limelight.Limelight(self)
+        #self.hatchMech = HatchMech.HatchMech(self)
+        #self.cargoMech = CargoMech.CargoMech(self)
         self.climber = Climber.Climber(self)
         self.drive = Drive.Drive(self)
         self.compressor = wpilib.Compressor(0)
@@ -85,8 +85,8 @@ class MyRobot(CommandBasedRobot):
         self.autonChooser.addOption("AutonRotation", autonRotation())
         SmartDashboard.putData("AutonChooser", self.autonChooser)
 
-        self.hatchMech.subsystemInit()
-        self.cargoMech.subsystemInit()
+        #self.hatchMech.subsystemInit()
+        #self.cargoMech.subsystemInit()
         self.climber.subsystemInit()
 
 
@@ -114,8 +114,8 @@ class MyRobot(CommandBasedRobot):
 
     def updateDashboardInit(self):
         SmartDashboard.putData("Drive", self.drive)
-        SmartDashboard.putData("Hatch", self.hatchMech)
-        SmartDashboard.putData("Cargo", self.cargoMech)
+        #SmartDashboard.putData("Hatch", self.hatchMech)
+        #SmartDashboard.putData("Cargo", self.cargoMech)
         SmartDashboard.putData("Climber", self.climber)
         self.drive.dashboardInit()
         #self.hatchMech.dashboardInit()
@@ -131,10 +131,10 @@ class MyRobot(CommandBasedRobot):
     def updateDashboardPeriodic(self):
         SmartDashboard.putNumber("PressureSwitchValue", self.compressor.getPressureSwitchValue())
         self.rate.execute()
-        self.drive.dashboardPeriodic()
+        #self.drive.dashboardPeriodic()
         #self.hatchMech.dashboardPeriodic()
         #self.cargoMech.dashboardPeriodic()
-        self.climber.dashboardPeriodic()
+        #self.climber.dashboardPeriodic()
         #self.limelight.dashboardPeriodic()
 
         sequences.dashboardPeriodic()
@@ -146,8 +146,8 @@ class MyRobot(CommandBasedRobot):
 
     def disabledInit(self):
         self.drive.disable()
-        self.hatchMech.disable()
-        self.cargoMech.disable()
+        #self.hatchMech.disable()
+        #self.cargoMech.disable()
         self.climber.disable()
 
     def disabledPeriodic(self):

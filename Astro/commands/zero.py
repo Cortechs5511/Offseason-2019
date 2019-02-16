@@ -9,10 +9,10 @@ class Zero(InstantCommand):
     def __init__(self):
         super().__init__('Zero')
         robot = self.getRobot()
-        self.cargoMech = robot.cargoMech
-        self.hatchMech = robot.hatchMech
-        self.requires(robot.cargoMech)
-        self.requires(robot.hatchMech)
+        #self.cargoMech = robot.cargoMech
+        #self.hatchMech = robot.hatchMech
+        #self.requires(robot.cargoMech)
+        #self.requires(robot.hatchMech)
         #self.cargoMech = self.getRobot().cargoMech
         #self.cargoMech = self.getRobot().hatchMech
         #self.requires(self.getRobot().cargoMech)
