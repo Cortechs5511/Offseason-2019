@@ -1,3 +1,4 @@
+import wpilib  
 from wpilib.command import command
 
 
