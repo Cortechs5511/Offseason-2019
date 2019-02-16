@@ -27,6 +27,9 @@ from subsystems import CargoMech
 from subsystems import Climber
 from subsystems import Drive
 from subsystems import Limelight
+from commands import resetAll
+from commands import disableAll
+
 
 from CRLibrary.path import odometry as od
 
