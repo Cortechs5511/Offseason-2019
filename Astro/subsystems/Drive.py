@@ -21,6 +21,7 @@ from commands.drive.setFixedDT import SetFixedDT
 from commands.drive.setSpeedDT import SetSpeedDT
 from commands.drive.turnAngle import TurnAngle
 from commands.drive.measured import Measured
+from commands.drive.FlipButton import FlipButton
 #from commands.drive.relativeTurn import RelativeTurn
 
 
@@ -357,15 +358,3 @@ class Drive(Subsystem):
         if abs(self.accelX) >= bumpInt or abs(self.accelY) >= bumpInt: return True
         return False
 
-class FlipButton(Command):
-    def __init__(self):
-        super().__init__('Flip')
-        robot = self.getRobot()
-        self.drive = robot.drive
-
-    def initialize(self):
-        if self.drive.flipped: self.drive.flipped = False
-        else: self.drive.flipped = True
-
-    def isFinished(self):
-        return True
