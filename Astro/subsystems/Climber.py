@@ -11,6 +11,8 @@ from ctre import WPI_VictorSPX as Victor
 from commands.climber.liftRobot import LiftRobot
 from commands.climber.lowerRobot import LowerRobot
 from commands.climber.setSpeedWheel import SetSpeedWheel
+from commands.climber.autoClimb import AutoClimb
+from commands.disableAll import DisableAll
 
 import map
 
@@ -69,8 +71,8 @@ class Climber(Subsystem):
     def subsystemInit(self):
         r = self.robot
 
-        SmartDashboard.putData("Drive to Front", self.DriveToEdge("Front"))
-        SmartDashboard.putData("Drive to Back", self.DriveToEdge("Back"))
+        #SmartDashboard.putData("Drive to Front", self.DriveToEdge("Front"))
+        #SmartDashboard.putData("Drive to Back", self.DriveToEdge("Back"))
         #wheels
         climberWheelsForward : wpilib.buttons.JoystickButton = r.driverLeftButton(7)
         climberWheelsForward.whileHeld(SetSpeedWheel(1))
@@ -95,6 +97,12 @@ class Climber(Subsystem):
 
         climberBackDown : wpilib.buttons.JoystickButton = r.driverLeftButton(15)
         climberBackDown.whileHeld(LowerRobot("back"))
+
+        climberAuto : wpilib.buttons.JoystickButton = r.driverLeftButton(11)
+        climberAuto.whileHeld(AutoClimb())
+
+        allStop : wpilib.buttons.JoystickButton = r.driverLeftButton(16)
+        allStop.whileHeld(DisableAll())
 
     def getPitch(self):
         return self.robot.drive.pitch #negate here if pitch is backwards of expected
@@ -157,7 +165,7 @@ class Climber(Subsystem):
         if self.backsensor.getVoltage() < 1.5:
             return True
         else:
-            return False 
+            return False
     #functions for lift
     def liftFront(self, lift, single):
         """ Basic lift function for lifting robot.

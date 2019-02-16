@@ -8,7 +8,6 @@ from subsystems import Climber
 
 from commandbased import CommandBasedRobot
 
-
 class ResetAll(CommandBasedRobot):
 
     def __init__(self):
@@ -24,12 +23,15 @@ class ResetAll(CommandBasedRobot):
         self.HatchMech.retractEjector()
         self.HatchMech.slidein()
         self.Climber.lowerRobot()
+
     def isFinished(self):
         pass
+
     def interrupted(self):
         self.disable()
 
     def disable(self):
         pass
+
 if __name__ == "__main__":
     wpilib.run(MyRobot)

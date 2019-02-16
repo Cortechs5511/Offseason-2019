@@ -1,14 +1,15 @@
-from wpilib.command import command
+import wpilib
+from wpilib.command import Command
 
 class DriveToEdge(Command):
-     def __init__(self, Mode):
+    def __init__(self, Mode):
         super().__init__('liftRobot')
         robot = self.getRobot()
         self.climber = robot.climber
         self.requires(self.climber)
         self.mode = Mode
-    def initialize(self): 
-        pass 
+    def initialize(self):
+        pass
     def execute(self):
         if self.mode == "front":
             self.climber.setSpeedWheel(1)
@@ -25,25 +26,3 @@ class DriveToEdge(Command):
             return True
 
         return False
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
