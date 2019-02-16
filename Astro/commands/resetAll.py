@@ -17,8 +17,6 @@ class ResetAll(CommandBasedRobot):
         self.requires(self.getRobot().climber)
         self.DT = self.getRobot().drive
 
-
-
     def initialize(self):
         pass
     def execute(self):
@@ -27,11 +25,11 @@ class ResetAll(CommandBasedRobot):
         self.HatchMech.slidein()
         self.Climber.lowerRobot()
     def isFinished(self):
-        
+        pass
     def interrupted(self):
-        self.end()
+        self.disable()
 
-    def end(self):
-
+    def disable(self):
+        pass
 if __name__ == "__main__":
     wpilib.run(MyRobot)
