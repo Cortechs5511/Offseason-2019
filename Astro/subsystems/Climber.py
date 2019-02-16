@@ -31,7 +31,8 @@ class Climber(Subsystem):
         self.debug = True
 
         timeout = 0
-
+        self.frontsensor = wpilib.AnalogInput(0)
+        self.backsensor = wpilib.AnalogInput(1)
         self.backLift = Talon(map.backLift)
         self.frontLift = Talon(map.frontLift)
         self.frontLift.setInverted(True)
@@ -68,7 +69,8 @@ class Climber(Subsystem):
     def subsystemInit(self):
         r = self.robot
 
-
+        SmartDashboard.putData("Drive to Front", self.DriveToEdge("Front"))
+        SmartDashboard.putData("Drive to Back", self.DriveToEdge("Back"))
         #wheels
         climberWheelsForward : wpilib.buttons.JoystickButton = r.driverLeftButton(7)
         climberWheelsForward.whileHeld(SetSpeedWheel(1))
@@ -145,6 +147,17 @@ class Climber(Subsystem):
         else:
             return False
 
+    def isFrontOverGround(self):
+        if self.frontsensor.getVoltage() < 1.5:
+            return True
+        else:
+            return False
+
+    def isBackOverGround(self):
+        if self.backsensor.getVoltage() < 1.5:
+            return True
+        else:
+            return False 
     #functions for lift
     def liftFront(self, lift, single):
         """ Basic lift function for lifting robot.
