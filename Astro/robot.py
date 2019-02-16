@@ -27,8 +27,8 @@ from subsystems import CargoMech
 from subsystems import Climber
 from subsystems import Drive
 from subsystems import Limelight
-from commands.commands import resetAll
-from commands.commands import disableAll
+from commands import resetAll
+from commands import disableAll
 
 
 from CRLibrary.path import odometry as od
@@ -57,7 +57,7 @@ class MyRobot(CommandBasedRobot):
         Command.getRobot = lambda x=0: self
 
         #self.limelight = Limelight.Limelight(self)
-        #self.hatchMech = HatchMech.HatchMech(self)
+        self.hatchMech = HatchMech.HatchMech(self)
         #self.cargoMech = CargoMech.CargoMech(self)
         self.climber = Climber.Climber(self)
         self.drive = Drive.Drive(self)
@@ -87,7 +87,7 @@ class MyRobot(CommandBasedRobot):
         self.autonChooser.addOption("AutonRotation", autonRotation())
         SmartDashboard.putData("AutonChooser", self.autonChooser)
 
-        #self.hatchMech.subsystemInit()
+        self.hatchMech.subsystemInit()
         #self.cargoMech.subsystemInit()
         self.climber.subsystemInit()
 
@@ -148,7 +148,7 @@ class MyRobot(CommandBasedRobot):
 
     def disabledInit(self):
         self.drive.disable()
-        #self.hatchMech.disable()
+        self.hatchMech.disable()
         #self.cargoMech.disable()
         self.climber.disable()
 

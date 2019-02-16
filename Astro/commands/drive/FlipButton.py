@@ -1,5 +1,5 @@
-import wpilib  
-from wpilib.command import command
+import wpilib
+from wpilib.command import Command
 
 
 class FlipButton(Command):

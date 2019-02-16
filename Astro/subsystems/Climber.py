@@ -152,8 +152,9 @@ class Climber(Subsystem):
 
         if self.isFullyExtendedFront() and lift/abs(lift) == 1 : self.stopFront()
         elif self.isFullyRetractedFront() and lift/abs(lift) == -1 : self.stopFront()
-        elif single and self.isLeaning(False): self.backLift.set(0.5)
-        elif single and self.isLeaning(True): self.backLift.set(-0.5)
+        #elif single and self.isLeaning(False): self.backLift.set(0.5)
+        #elif single and self.isLeaning(True): self.backLift.set(-0.5)
+        elif single: self.backLift.set(lift)
         elif self.isLeaning(False): self.stopFront()
         else: self.frontLift.set(1.1*lift)
 
@@ -163,8 +164,9 @@ class Climber(Subsystem):
 
         if self.isFullyExtendedBack() and lift/abs(lift) == 1 : self.stopBack()
         elif self.isFullyRetractedBack() and lift/abs(lift) == -1 : self.stopBack()
-        elif single and self.isLeaning(False): self.frontLift.set(0.5)
-        elif single and self.isLeaning(True): self.frontLift.set(-0.5)
+        #elif single and self.isLeaning(False): self.frontLift.set(0.5)
+        #elif single and self.isLeaning(True): self.frontLift.set(-0.5)
+        elif single: self.frontLift.set(lift)
         elif self.isLeaning(True): self.stopBack()
         else: self.backLift.set(lift)
 
