@@ -10,7 +10,7 @@ import wpilib
 from wpilib import SmartDashboard
 from wpilib.command.subsystem import Subsystem
 from wpilib.command import Command
-
+from subsystems.disableAll import DisableAll 
 from commands.drive.diffDrive import DiffDrive
 from commands.drive.drivePath import DrivePath
 from commands.drive.driveStraightCombined import DriveStraightCombined
@@ -23,7 +23,7 @@ from commands.drive.turnAngle import TurnAngle
 from commands.drive.measured import Measured
 from commands.drive.FlipButton import FlipButton
 #from commands.drive.relativeTurn import RelativeTurn
-
+from commands.climber.autoClimb import AutoClimb
 
 from CRLibrary.physics import DCMotorTransmission as DCMotor
 from CRLibrary.physics import DifferentialDrive as dDrive
@@ -230,11 +230,19 @@ class Drive(Subsystem):
         right = min(abs(right),self.maxSpeed)*self.sign(right)
         self.__tankDrive__(left,right)
 
+        self.disableAll = self.robot.disableall.DisableAll
+
+        self.autoClimb = self.robot.autoClimb.AutoClimb
+
         b = self.robot.driverRightButton(2)
         b.whenPressed(FlipButton())
 
-        b7 = self.robot.driverRightButton(7)
-        b7.whenPressed(disableAll())
+        b7 = self.robot.driverLeftButton(16)
+        b7.whenPressed(self.disableAll())
+
+        c7 = self.robot.driverRightButton(8)
+        c7.whenPressed(self.autoClimb())
+
 
     def __tankDrive__(self,left,right):
         self.left.set(left)
@@ -323,8 +331,7 @@ class Drive(Subsystem):
 
         SmartDashboard.putData("DT_TurnAngle", TurnAngle(90))
         SmartDashboard.putData("DT_RelativeTurn", RelativeTurn(90))
-
-
+  
     def dashboardPeriodic(self):
         SmartDashboard.putBoolean("Driving Reverse", self.flipped)
         SmartDashboard.putNumber("Roll", self.getRoll())
@@ -347,6 +354,11 @@ class Drive(Subsystem):
         SmartDashboard.putNumber("DT_CountRight", self.getRaw()[1])
 
         SmartDashboard.putNumber("DriveAmps",self.getOutputCurrent())
+
+        SmartDashboard.putBoolean("Disable All", self.disableAll.getBoolean())
+        SmartDashboard.putBoolean("Auto Climb", self.autoClimb.getBoolean())
+    
+            
 
     def bumpCheck(self, bumpInt = 0.4):
         self.accelX = self.accel.getX()

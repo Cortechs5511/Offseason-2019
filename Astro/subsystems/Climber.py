@@ -12,7 +12,7 @@ from commands.climber.liftRobot import LiftRobot
 from commands.climber.lowerRobot import LowerRobot
 from commands.climber.setSpeedWheel import SetSpeedWheel
 from commands.climber.autoClimb import AutoClimb
-from commands.disableAll import DisableAll
+
 from commands.climber.driveToEdge import DriveToEdge
 
 import map
@@ -104,8 +104,7 @@ class Climber(Subsystem):
         climberAuto : wpilib.buttons.JoystickButton = r.driverLeftButton(11)
         climberAuto.whileHeld(AutoClimb())
 
-        allStop : wpilib.buttons.JoystickButton = r.driverLeftButton(16)
-        allStop.whileHeld(DisableAll())
+        
 
     def getPitch(self):
         return self.robot.drive.pitch #negate here if pitch is backwards of expected
