@@ -39,8 +39,9 @@ def getJoystick(num):
 
 def commands():
     #SmartDashboard.putData("bumpDrive", Bump())
-
+    
     joystick0 = getJoystick(0)
     joystick1 = getJoystick(1)
+    disableallButton = self.driverRightButton(2)
     xbox = getJoystick(2)
     return [joystick0, joystick1, xbox]

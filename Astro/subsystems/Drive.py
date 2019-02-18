@@ -233,6 +233,9 @@ class Drive(Subsystem):
         b = self.robot.driverRightButton(2)
         b.whenPressed(FlipButton())
 
+        b7 = self.robot.driverRightButton(7)
+        b7.whenPressed(disableAll())
+
     def __tankDrive__(self,left,right):
         self.left.set(left)
         self.right.set(right)
