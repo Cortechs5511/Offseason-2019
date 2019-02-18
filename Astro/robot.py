@@ -115,20 +115,20 @@ class MyRobot(CommandBasedRobot):
 
 
     def updateDashboardInit(self):
-        SmartDashboard.putData("Drive", self.drive)
+        #SmartDashboard.putData("Drive", self.drive)
         #SmartDashboard.putData("Hatch", self.hatchMech)
         #SmartDashboard.putData("Cargo", self.cargoMech)
-        SmartDashboard.putData("Climber", self.climber)
-        self.drive.dashboardInit()
+        #SmartDashboard.putData("Climber", self.climber)
+        #self.drive.dashboardInit()
         #self.hatchMech.dashboardInit()
         #self.cargoMech.dashboardInit()
-        self.climber.dashboardInit()
+        #self.climber.dashboardInit()
         #self.limelight.dashboardInit()
 
-        sequences.dashboardInit()
+        #sequences.dashboardInit()
         autonomous.dashboardInit()
 
-        SmartDashboard.putData("Zero", Zero())
+        #SmartDashboard.putData("Zero", Zero())
 
     def updateDashboardPeriodic(self):
         SmartDashboard.putNumber("PressureSwitchValue", self.compressor.getPressureSwitchValue())
@@ -139,7 +139,7 @@ class MyRobot(CommandBasedRobot):
         #self.climber.dashboardPeriodic()
         #self.limelight.dashboardPeriodic()
 
-        sequences.dashboardPeriodic()
+        #sequences.dashboardPeriodic()
         autonomous.dashboardPeriodic()
 
     def telopInit(self):
@@ -174,6 +174,7 @@ class MyRobot(CommandBasedRobot):
         #id is axis channel for taking value of axis
         return self.xbox.getRawAxis(id)
         #wpilib.joystick.setAxisChannel(self.xbox, id)
+
     def readOperatorButton(self,id):
         """ Return button value """
         return self.xbox.getRawButton(id)
