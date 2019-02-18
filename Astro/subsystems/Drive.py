@@ -1,16 +1,13 @@
 import math
-
 import ctre
 from ctre import WPI_TalonSRX as Talon
 from ctre import WPI_VictorSPX as Victor
-
 import navx
-
+from subsystems.Limelight import Limelight
 import wpilib
 from wpilib import SmartDashboard
 from wpilib.command.subsystem import Subsystem
 from wpilib.command import Command
-from subsystems.disableAll import DisableAll 
 from commands.drive.diffDrive import DiffDrive
 from commands.drive.drivePath import DrivePath
 from commands.drive.driveStraightCombined import DriveStraightCombined
@@ -21,18 +18,15 @@ from commands.drive.setFixedDT import SetFixedDT
 from commands.drive.setSpeedDT import SetSpeedDT
 from commands.drive.turnAngle import TurnAngle
 from commands.drive.measured import Measured
-from commands.drive.FlipButton import FlipButton
-#from commands.drive.relativeTurn import RelativeTurn
-from commands.climber.autoClimb import AutoClimb
+#from commands.drive.autonCheck import AutonCheck
+from commands.drive.relativeTurn import RelativeTurn
+from sim import simComms
 
 from CRLibrary.physics import DCMotorTransmission as DCMotor
 from CRLibrary.physics import DifferentialDrive as dDrive
 from CRLibrary.path import odometry as od
 from CRLibrary.path import Path
-from CRLibrary.util import units
-
-from subsystems.Limelight import Limelight
-from sim import simComms
+from CRLibrary.util import units as units
 
 import map
 
@@ -49,10 +43,8 @@ class Drive(Subsystem):
 
     model = None
 
-    yaw = 0
+    navxVal = 0
     pitch = 0
-    roll = 0
-
     leftVal = 0
     rightVal = 0
 
@@ -62,9 +54,9 @@ class Drive(Subsystem):
     def __init__(self, robot):
         super().__init__('Drive')
 
-        self.robot = robot
         self.flipped = False
-        self.debug = False
+        self.robot = robot
+        self.debug = True
 
         timeout = 0
 
@@ -72,9 +64,8 @@ class Drive(Subsystem):
 
         TalonLeft = Talon(map.driveLeft1)
         TalonRight = Talon(map.driveRight1)
-
-        TalonLeft.setInverted(False)
-        TalonRight.setInverted(True)
+        TalonLeft.setSafetyEnabled(False)
+        TalonRight.setSafetyEnabled(False)
 
         if not wpilib.RobotBase.isSimulation():
             VictorLeft1 = Victor(map.driveLeft2)
@@ -87,18 +78,16 @@ class Drive(Subsystem):
             VictorRight1.follow(TalonRight)
             VictorRight2.follow(TalonRight)
 
-            for motor in [VictorLeft1,VictorLeft2]:
-                motor.clearStickyFaults(timeout)
-                motor.setSafetyEnabled(False)
-                motor.setInverted(False)
-
-            for motor in [VictorRight1,VictorRight2]:
+            for motor in [VictorLeft1,VictorLeft2,VictorRight1,VictorRight2]:
                 motor.clearStickyFaults(timeout)
                 motor.setSafetyEnabled(False)
                 motor.setInverted(True)
+            VictorLeft1.setInverted(False)
+            VictorLeft2.setInverted(False)
 
 
         for motor in [TalonLeft,TalonRight]:
+            motor.setInverted(True)
             motor.setSafetyEnabled(False)
             motor.clearStickyFaults(timeout) #Clears sticky faults
 
@@ -115,7 +104,11 @@ class Drive(Subsystem):
         self.left = TalonLeft
         self.right = TalonRight
 
-        self.navx = navx.AHRS.create_spi()
+        TalonLeft.setInverted(False)
+        """ VictorLeft1.setInverted(True)
+        VictorLeft2.setInverted(True)"""
+
+        self.navx = navx.ahrs.AHRS.create_spi()
 
         self.leftEncoder = wpilib.Encoder(map.leftEncoder[0], map.leftEncoder[1])
         self.leftEncoder.setDistancePerPulse(self.leftConv)
@@ -150,20 +143,27 @@ class Drive(Subsystem):
         self.odMain = od.Odometer(self.robot.period)
         self.odTemp = od.Odometer(self.robot.period)
 
-        Ltrans = DCMotor.DCMotorTransmission(5.21, 4.14, 1.08)
-        Rtrans = DCMotor.DCMotorTransmission(5.21, 4.14, 1.2)
-        self.model = dDrive.DifferentialDrive(29, 1.83, 0, units.inchesToMeters(3.0), units.inchesToMeters(14), Ltrans, Rtrans)
+        #Incorrect until redone
+        if wpilib.RobotBase.isSimulation():
+            Ltransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.08)
+            Rtransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.08)
+        Ltransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.08)
+        Rtransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.2)
+        self.model = dDrive.DifferentialDrive(29, 1.83, 0, units.inchesToMeters(3.0), units.inchesToMeters(14), Ltransmission, Rtransmission)
         self.maxVel = self.maxSpeed*self.model.getMaxAbsVelocity(0, 0, 12)
         self.Path = Path.Path(self, self.model, self.odTemp, self.getDistance)
 
-    def periodic(self):
-        self.updateSensors()
+    def __getDistance__(self):
+        return self.getAvgDistance()
 
-    def __getDistance__(self): return self.getAvgDistance()
-    def __setDistance__(self,output): self.distPID = output
+    def __setDistance__(self,output):
+        self.distPID = output
 
-    def __getAngle__(self): return self.getAngle()
-    def __setAngle__(self,output): self.anglePID = output
+    def __getAngle__(self):
+        return self.getAngle()
+
+    def __setAngle__(self,output):
+        self.anglePID = output
 
     def setMode(self, mode, name=None, distance=0, angle=0):
         self.distPID = 0
@@ -228,21 +228,7 @@ class Drive(Subsystem):
 
         left = min(abs(left),self.maxSpeed)*self.sign(left)
         right = min(abs(right),self.maxSpeed)*self.sign(right)
-        self.__tankDrive__(left,right)
-
-        self.disableAll = self.robot.disableall.DisableAll
-
-        self.autoClimb = self.robot.autoClimb.AutoClimb
-
-        b = self.robot.driverRightButton(2)
-        b.whenPressed(FlipButton())
-
-        b7 = self.robot.driverLeftButton(16)
-        b7.whenPressed(self.disableAll())
-
-        c7 = self.robot.driverRightButton(8)
-        c7.whenPressed(self.autoClimb())
-
+        self.__tankDrive__(left, right)
 
     def __tankDrive__(self,left,right):
         self.left.set(left)
@@ -259,35 +245,45 @@ class Drive(Subsystem):
         return (self.right.getOutputCurrent()+self.left.getOutputCurrent())*3
 
     def updateSensors(self):
-        if self.navx == None:
-            self.yaw = 0
-            self.pitch = 0
-            self.roll = 0
-        else:
-            self.yaw = self.navx.getYaw()
-            self.pitch = self.navx.getPitch()
-            self.roll = self.navx.getRoll()
         self.leftVal = self.leftEncoder.get()
         self.rightVal = self.rightEncoder.get()
+        self.navxVal = self.navx.getYaw()
 
-    def getAngle(self): return self.yaw
-    def getRoll(self):
-        '''LeaningForward - negative,LeaningBackward - Positive'''
-        return self.roll
-    def getRaw(self): return [self.leftVal, self.rightVal]
-    def getDistance(self): return [self.leftVal*self.leftConv, self.rightVal*self.rightConv]
-    def getAvgDistance(self): return (self.getDistance()[0]+self.getDistance()[1])/2
-    def getPitch(self): return self.pitch
+        #if wpilib.RobotBase.isSimulation(): self.navxVal*=-1
+
+    def getAngle(self):
+        return self.navxVal
+
+    def getRaw(self):
+        return [self.leftVal, self.rightVal]
+
+    def getDistance(self):
+        return [self.leftVal*self.leftConv, self.rightVal*self.rightConv]
+
+    def getAvgDistance(self):
+        return (self.getDistance()[0]+self.getDistance()[1])/2
+
     def getVelocity(self):
         dist = self.getDistance()
         velocity = [self.robot.frequency*(dist[0]-self.prevDist[0]),self.robot.frequency*(dist[1]-self.prevDist[1])]
         self.prevDist = dist
+
         return velocity
 
-    def getAvgVelocity(self): return (self.getVelocity()[0]+self.getVelocity()[1])/2
-    def getAvgAbsVelocity(self): return (abs(self.getVelocity()[0])+abs(self.getVelocity()[1]))/2
+    '''
+    def getVelocity(self):
+        return [self.leftEncoder.getRate(), self.rightEncoder.getRate()] #Test if this works at meeting, does not work in sim
+    '''
 
-    def isFlipped(self): return self.flipped
+    def getAvgVelocity(self):
+        return (self.getVelocity()[0]+self.getVelocity()[1])/2
+
+    def getAvgAbsVelocity(self):
+        return (abs(self.getVelocity()[0])+abs(self.getVelocity()[1]))/2
+
+    def isFlipped(self):
+        #indicates if front or back needs to be reversed while driving
+        return (self.flipped)
 
     def zeroEncoders(self):
         self.leftEncoder.reset()
@@ -295,11 +291,8 @@ class Drive(Subsystem):
         simComms.resetEncoders()
 
     def zeroNavx(self):
-        if self.navx == None:
-            pass
-        else:
-            self.navx.zeroYaw()
-
+        self.navx.zeroYaw()
+        #pass
 
     def zero(self):
         self.zeroEncoders()
@@ -315,26 +308,27 @@ class Drive(Subsystem):
         SmartDashboard.putData("Flipped drive", FlipButton())
         SmartDashboard.putData("Measure", Measured())
 
+        '''This doesn't belong here - Abhijit'''
+        b = self.robot.driverRightButton(2)
+        b.whenPressed(FlipButton())
 
         if(self.debug==False): return
-        SmartDashboard.putData("autonCheck Frw", AutonCheck(10))
-        SmartDashboard.putData("autonCheck Bkwd", AutonCheck(-10))
-
+        SmartDashboard.putData("autonCheck Frw", AutonCheck(9.75))
+        SmartDashboard.putData("autonCheck Bkwd", AutonCheck(-9.75))
         SmartDashboard.putData("DT_DiffDrive", DiffDrive())
         SmartDashboard.putData("DT_DrivePath", DrivePath())
         SmartDashboard.putData("DT_DriveStraightCombined", DriveStraightCombined())
         SmartDashboard.putData("DT_DriveStraightDistance", DriveStraightDistance())
         SmartDashboard.putData("DT_DriveStraightTime", DriveStraightTime())
-
+        #SmartDashboard.putData("DT_DriveVision", DriveVision())
         SmartDashboard.putData("DT_SetFixedDT", SetFixedDT())
         SmartDashboard.putData("DT_SetSpeedDT", SetSpeedDT())
-
         SmartDashboard.putData("DT_TurnAngle", TurnAngle(90))
         SmartDashboard.putData("DT_RelativeTurn", RelativeTurn(90))
-  
+
     def dashboardPeriodic(self):
         SmartDashboard.putBoolean("Driving Reverse", self.flipped)
-        SmartDashboard.putNumber("Roll", self.getRoll())
+
         if(self.debug==False): return
         SmartDashboard.putNumber("Left Counts", self.leftEncoder.get())
         SmartDashboard.putNumber("Left Distance", self.leftEncoder.getDistance())
@@ -355,19 +349,29 @@ class Drive(Subsystem):
 
         SmartDashboard.putNumber("DriveAmps",self.getOutputCurrent())
 
-        SmartDashboard.putBoolean("Disable All", self.disableAll.getBoolean())
-        SmartDashboard.putBoolean("Auto Climb", self.autoClimb.getBoolean())
-    
-            
-
     def bumpCheck(self, bumpInt = 0.4):
+        ''' Returns true if acceleration is greater than bumpInt (0.4) '''
         self.accelX = self.accel.getX()
         self.accelY = self.accel.getY()
 
         if self.debug:
-            SmartDashboard.putNumber("AccelX", self.accelX)
-            SmartDashboard.putNumber("AccelY", self.accelY)
+            SmartDashboard.putNumber("X", self.accelX)
+            SmartDashboard.putNumber("Y", self.accelY)
 
         if abs(self.accelX) >= bumpInt or abs(self.accelY) >= bumpInt: return True
         return False
 
+class FlipButton(Command):
+    def __init__(self):
+        super().__init__('Flip')
+        robot = self.getRobot()
+        self.drive = robot.drive
+
+    def initialize(self):
+        if self.drive.flipped:
+            self.drive.flipped = False
+        else:
+            self.drive.flipped = True
+
+    def isFinished(self):
+        return True
