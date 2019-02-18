@@ -77,6 +77,7 @@ class MyRobot(CommandBasedRobot):
         self.climber.subsystemInit()
 
         self.DrivePath = DrivePath(name="AlignBack", follower="Ramsetes")
+        self.Align = Align(follower="Ramsetes", timeout = 300)
 
     def teleopInit(self):
         self.loop_timer = looptimer.LoopTimer(self.logger)
@@ -99,9 +100,9 @@ class MyRobot(CommandBasedRobot):
         self.curr = 0
 
         #[x,y] = self.limelight.getPathXY()
-        #[x,y] = [-10, 0]
-        self.DrivePath.start()
-        #self.Align.start(x,y)
+        [x,y] = [-59/12, 30.5/12]
+        #self.DrivePath.start()
+        self.Align.start(x,y)
 
         '''
         self.autoMode = "TestPath" #self.autoMode = "DriveStraight"
@@ -110,7 +111,7 @@ class MyRobot(CommandBasedRobot):
         '''
 
     def updateDashboardInit(self):
-        #SmartDashboard.putData("Drive", self.drive)
+        SmartDashboard.putData("Drive", self.drive)
         #SmartDashboard.putData("Hatch", self.hatchMech)
         #SmartDashboard.putData("Cargo", self.cargoMech)
         #SmartDashboard.putData("Climber", self.climber)
@@ -128,7 +129,7 @@ class MyRobot(CommandBasedRobot):
 
     def updateDashboardPeriodic(self):
         self.rate.execute()
-        #self.drive.dashboardPeriodic()
+        self.drive.dashboardPeriodic()
         #self.hatchMech.dashboardPeriodic()
         #self.cargoMech.dashboardPeriodic()
         #self.climber.dashboardPeriodic()

@@ -26,7 +26,7 @@ class DrivePath(TimedCommand):
 
     def initialize(self):
         #[x,y] = self.limelight.getPathXY()
-        [self.startX,self.startY] = [-10, 5]
+        [self.startX,self.startY] = [0, 0]
         self.Path.reset(x = self.startX, y = self.startY, angle = 0)
         self.DT.setPath(name = self.name, follower = self.follower)
         self.distStart = self.DT.getDistance()

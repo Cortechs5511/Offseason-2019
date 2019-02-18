@@ -10,8 +10,6 @@ from CRLibrary.path import odometry as od
 
 class Align(TimedCommand):
 
-    startX = 0
-    startY = 0
     name = ""
 
     def __init__(self, follower="PathFinder", timeout = 300):
@@ -23,11 +21,14 @@ class Align(TimedCommand):
         self.follower = follower
         self.Path = self.DT.Path
 
+        self.startX = 0
+        self.startY = 0
+
     def start(self, x=0, y=0):
         [self.startX, self.startY] = [x, y]
 
-        if(y<-3): self.name = "AlignLeft"
-        elif(y>3): self.name= "AlignRight"
+        if(y<-2): self.name = "AlignLeft"
+        elif(y>2): self.name= "AlignRight"
         else: self.name = "AlignBack"
         #print(self.name)
 
