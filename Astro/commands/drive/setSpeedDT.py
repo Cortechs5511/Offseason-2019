@@ -33,7 +33,7 @@ class SetSpeedDT(TimedCommand):
         left = -self.Joystick0.getY()
         right = -self.Joystick1.getY()
         flip = self.DT.isFlipped()
-#half-speed
+# half-speed
         if self.robot.readDriverRightButton(3):
             left = left / 2
             right = right / 2
@@ -42,6 +42,10 @@ class SetSpeedDT(TimedCommand):
             left = left / 1000
             right = right / 1000
 
+# both left and right go at power of left(perfectly straight drive)
+        if self.robot.readDriverLeftButton(15):
+            right = left
+ 
 
 #double speed maybe useful
         if self.robot.readDriverLeftButton(5):
