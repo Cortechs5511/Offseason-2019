@@ -66,6 +66,8 @@ class MyRobot(CommandBasedRobot):
         self.timer = wpilib.Timer()
         self.timer.start()
 
+        self.watch = wpilib.Watchdog(150, None)
+
         '''
         Since OI instantiates commands and commands need access to subsystems,
         OI must be initialized after subsystems.
