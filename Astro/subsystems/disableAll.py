@@ -1,6 +1,6 @@
 import wpilib
 from wpilib.command import Command
-
+import subsystems
 from subsystems import CargoMech, Climber, Drive, HatchMech, Limelight
 '''
 from commands.cargo.wristIntake.py import wristIntake
@@ -33,22 +33,27 @@ class DisableAll(Command):
 
     def __init__(self):
         super().__init__('Disable All')
+        self.robot = self.getRobot()
+        self.requires(self.robot.CargoMech)
+        self.requires(self.robot.Climber)
+        self.requires(self.robot.Drive)
+        self.requires(self.robot.HatchMech)
+
+        self.CargoMech = subsystems.CargoMech 
+        self.Climber = subsystems.Climber 
+        self.Drive = subsystems.Drive 
+        self.HatchMech = subsystems.HatchMech 
 
     def initialize(self):
         pass
 
     def execute(self):
 
-        self.CargoMech.disable()
-        self.Climber.disable()
-        self.Drive.disable()
-        self.HatchMech.disable()
+        self.CargoMech.stop()
+        self.Climber.stop()
+        self.Drive.stop()
+        self.HatchMech.stop()
 
+    
     def isFinished(self):
-        pass
-
-    def interrupted(self):
-        self.end()
-
-    def end(self):
-        pass
+        return True
