@@ -23,7 +23,7 @@ class Climber(Subsystem):
     TICKS_TO_INCHES = 1.0 #inches/tick
     MAX_EXTEND = 12.0 #inches
 
-    MAX_ANGLE = 5 #degrees
+    MAX_ANGLE = 3 #degrees
 
     climbSpeed = 0.9
     wheelSpeed = 0.7
@@ -47,10 +47,11 @@ class Climber(Subsystem):
         self.wheelRight = Talon(map.wheelRight)
         self.wheelLeft.setInverted(False)
         self.wheelRight.setInverted(True)
+        self.switchBottomBack = wpilib.DigitalInput(8)
         self.switchTopFront = wpilib.DigitalInput(7)
-        self.switchBottomFront = wpilib.DigitalInput(8)
+        self.switchBottomFront = wpilib.DigitalInput(6)
         self.switchTopBack = wpilib.DigitalInput(9)
-        #self.switchBottomBack = wpilib.DigitalInput(3)
+
 
         #self.wheelRight.follow(self.wheelLeft)
         #self.wheels = self.wheelLeft
@@ -103,8 +104,8 @@ class Climber(Subsystem):
         climberBackDown : wpilib.buttons.JoystickButton = r.driverLeftButton(15)
         climberBackDown.whileHeld(LowerRobot("back"))
 
-        climberAuto : wpilib.buttons.JoystickButton = r.driverLeftButton(11)
-        climberAuto.whileHeld(AutoClimb())
+        #climberAuto : wpilib.buttons.JoystickButton = r.driverLeftButton(11)
+        #climberAuto.whileHeld(AutoClimb())
 
 
 
@@ -130,32 +131,33 @@ class Climber(Subsystem):
     def isFullyExtendedFront(self):
         """ tells us if the front is fully extended """
         #return self.getHeightFront() >= self.MAX_EXTEND
-        #return self.switchTopFront.get()
-        return False
+        return not self.switchTopFront.get()
 
     def isFullyExtendedBack(self):
         """ tells us if the back is fully extended, so it can stop """
         #return self.getHeightBack() >= self.MAX_EXTEND
-        #return self.switchTopBack.get()
-        return False
+        return not self.switchTopBack.get()
 
     def isFullyRetractedFront(self):
-        #return self.switchBottomFront.get()
-        return False
+        return not self.switchBottomFront.get()
 
     def isFullyRetractedBack(self):
-        #return self.switchBottomBack.get()
-        return False
+        return not self.switchBottomBack.get()
+
 
     def isFullyExtendedBoth(self):
         """ tells us if both front and back are fully extended, so it can stop """
         return self.isFullyExtendedFront() and self.isFullyExtendedBack()
 
+    def isFullyRetractedBoth(self):
+        """ tells us if both front and back are fully extended, so it can stop """
+        return self.isFullyRetractedFront() and self.isFullyRetractedBack()
+
     def isLeaning(self, direction):
         '''true checking tip forward'''
-        if direction == True and self.getPitch() < -self.MAX_ANGLE :
+        if direction == True and self.getPitch()+1 < -self.MAX_ANGLE :
             return True
-        elif direction == False and self.getPitch() > self.MAX_ANGLE :
+        elif direction == False and self.getPitch()-1 > self.MAX_ANGLE :
             return True
         else:
             return False
@@ -172,7 +174,7 @@ class Climber(Subsystem):
         else:
             return False
     #functions for lift
-    def liftFront(self, lift, single):
+    def liftFront(self, lift, single=True):
         """ Basic lift function for lifting robot.
         @param lift - Positive values make lift go down(extend) """
 
@@ -185,7 +187,7 @@ class Climber(Subsystem):
         elif self.getPitch()<-self.MAX_ANGLE and lift<0: self.stopFront()
         else: self.frontLift.set(1.1*lift)
 
-    def liftBack(self, lift, single):
+    def liftBack(self, lift, single = True):
         """ Basic lift function for lifting robot.
         @param lift - Positive values make lift go down """
 
@@ -245,6 +247,7 @@ class Climber(Subsystem):
             SmartDashboard.putBoolean("Sensor1",self.isFullyExtendedFront())
             SmartDashboard.putBoolean("Sensor2",self.isFullyExtendedBack())
             SmartDashboard.putBoolean("Sensor3",self.isFullyRetractedFront())
+            SmartDashboard.putBoolean("Sensor4",self.isFullyRetractedBack())
             SmartDashboard.putNumber("Pitch", self.getPitch())
             SmartDashboard.putNumber("FrontTicks", self.getHeightFront())
             SmartDashboard.putNumber("BackTicks", self.getHeightBack())

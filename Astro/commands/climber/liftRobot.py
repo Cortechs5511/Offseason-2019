@@ -22,4 +22,8 @@ class LiftRobot(Command):
 
     def end(self): self.interrupted()
 
-    def isFinished(self): return self.climber.isFullyExtendedBoth()
+    def isFinished(self):
+        if self.mode == "both" : return self.climber.isFullyExtendedBoth()
+        elif self.mode == "front" : return self.climber.isFullyExtendedFront()
+        elif self.mode == "back" : return self.climber.isFullyExtendedBack()
+        else: return False

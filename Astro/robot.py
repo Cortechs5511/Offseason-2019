@@ -5,6 +5,7 @@ import oi
 from wpilib import SmartDashboard
 import wpilib.buttons
 from wpilib.command import Command
+from wpilib.command import CommandGroup
 from wpilib.command import WaitCommand
 from commandbased import CommandBasedRobot
 
@@ -32,6 +33,9 @@ from subsystems import disableAll
 
 
 from CRLibrary.path import odometry as od
+from commands.climber.autoClimb import AutoClimb
+from commands.climber.liftRobot import LiftRobot
+from commands.climber.driveToEdge import DriveToEdge
 
 
 import rate
@@ -93,6 +97,15 @@ class MyRobot(CommandBasedRobot):
         #self.cargoMech.subsystemInit()
         self.climber.subsystemInit()
         self.climber.dashboardInit()
+
+        climberAuto : wpilib.buttons.JoystickButton = self.driverLeftButton(11)
+        cg = CommandGroup("AutoClimb")
+        cg.addSequential(LiftRobot("both"))
+        cg.addSequential(DriveToEdge("front"))
+        cg.addSequential(LiftRobot("front"))
+        cg.addSequential(DriveToEdge("back"))
+        cg.addSequential(LiftRobot("back"))
+        climberAuto.whileHeld(cg)
 
 
     # def teleopInit(self):
