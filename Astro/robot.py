@@ -5,6 +5,7 @@ import oi
 from wpilib import SmartDashboard
 import wpilib.buttons
 from wpilib.command import Command
+from wpilib.command import CommandGroup
 from wpilib.command import WaitCommand
 from commandbased import CommandBasedRobot
 
@@ -28,10 +29,13 @@ from subsystems import Climber
 from subsystems import Drive
 from subsystems import Limelight
 from commands import resetAll
-from subsystems import disableAll 
+from subsystems import disableAll
 
 
 from CRLibrary.path import odometry as od
+from commands.climber.autoClimb import AutoClimb
+from commands.climber.liftRobot import LiftRobot
+from commands.climber.driveToEdge import DriveToEdge
 
 
 import rate
@@ -92,6 +96,16 @@ class MyRobot(CommandBasedRobot):
         self.hatchMech.subsystemInit()
         #self.cargoMech.subsystemInit()
         self.climber.subsystemInit()
+        self.climber.dashboardInit()
+
+        climberAuto : wpilib.buttons.JoystickButton = self.driverLeftButton(11)
+        cg = CommandGroup("AutoClimb")
+        cg.addSequential(LiftRobot("both"))
+        cg.addSequential(DriveToEdge("front"))
+        cg.addSequential(LiftRobot("front"))
+        cg.addSequential(DriveToEdge("back"))
+        cg.addSequential(LiftRobot("back"))
+        climberAuto.whileHeld(cg)
 
 
     # def teleopInit(self):
@@ -103,7 +117,7 @@ class MyRobot(CommandBasedRobot):
 
     def robotPeriodic(self):
         #self.drive.odMain.display()
-        self.drive.odTemp.display()
+        #self.drive.odTemp.display()
 
         #self.limelight.readLimelightData()
         if(self.dashboard): self.updateDashboardPeriodic()
@@ -138,7 +152,7 @@ class MyRobot(CommandBasedRobot):
         #self.drive.dashboardPeriodic()
         #self.hatchMech.dashboardPeriodic()
         #self.cargoMech.dashboardPeriodic()
-        #self.climber.dashboardPeriodic()
+        self.climber.dashboardPeriodic()
         #self.limelight.dashboardPeriodic()
 
         #sequences.dashboardPeriodic()
