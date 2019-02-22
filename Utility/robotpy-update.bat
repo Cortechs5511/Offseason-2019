@@ -6,7 +6,7 @@ rem via: py -3 installer.py install-robotpy
 rem
 
 rem Adjust these each release
-set ROBOTPY_VER=2019.1.0
+set ROBOTPY_VER=2019.1.2
 set ROBOTPY=%HOMEPATH%\Desktop\frc-2019\robotpy-%ROBOTPY_VER%
 
 rem Search for installation of python
