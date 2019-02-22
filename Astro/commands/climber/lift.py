@@ -1,4 +1,5 @@
 from wpilib.command import Command
+from wpilib.command import CommandGroup
 import subsystems
 
 class LiftCommand(Command):
@@ -10,12 +11,27 @@ class LiftCommand(Command):
         self.requires(self.climber)
         self.extendSpeed: float = self.climber.returnClimbSpeed()
         self.retractSpeed: float = -self.climbSpeed
+        # NOTE: We may not use it, but I think we want full control
+        # of the drive for all lift operations (we don't want operator
+        # messing with drive wheels)
+        self.drive: subsystems.Drive.Drive = robot.drive
+        self.requires(self.drive)
 
     def initialize(self):
         # Get climb power to use from dashboard (in case it was changed)
         self.climbSpeed = self.climber.returnClimbSpeed()
         # In case we decide to have different power for extend vs retract
         self.retractSpeed = -self.climbSpeed
+        # Stop main drive wheels 
+        self.drive.setDirect()
+        self.drive.tankDrive(0, 0)
+
+    def end(self):
+        """ Stops all leg and wheel motors when any climber command terminates. """
+        self.climber.disable()
+
+    def interrupted(self):
+      self.end()
 
     def getLean(self) -> float:
         """
@@ -86,12 +102,6 @@ class LiftCommand(Command):
           # Back in good range, turn motors off until something changes a lot
           self.climber.stopBack()
 
-    def interrupted(self):
-      self.climber.stop()
-
-    def end(self):
-      self.interrupted()
-
 
 class ExtendBothLegs(LiftCommand):
     """ Command that lifts the robot into the air by extending both legs. """
@@ -150,22 +160,33 @@ class DriveToFrontSensor(LiftCommand):
         self.climber.wheelForward()
         # Keep robot level with back legs while driving forward
         self.maintainBackLegs()
-        # Alternatively, keep robot legs fully extended while driving forward
-        #self.fullyExtendBothLegs()
+        # Should we also be driving main drive wheels?
+        # Maybe minimal power so climber wheels don't have to fight
+        self.drive.tankDrive(0.15, 0.15)
 
     def isFinished(self):
         return self.climber.isFrontOverGround()
 
 
-class DriveToBackSensor(LiftCommand):
+class DriveToBackSensor(DriveToFrontSensor):
     """ Command that drives forward until the back sensor is over ground. """
     def __init__(self):
-        super().__init__("DriveToFrontSensor")
-
-    def execute(self):
-        self.climber.wheelForward()
-        # Keep robot level with back legs while driving forward
-        self.maintainBackLegs()
+        super().__init__()
+        self.setName("DriveToBackSensor")
 
     def isFinished(self):
         return self.climber.isBackOverGround()
+
+
+class ClimbUp(CommandGroup):
+    """
+    Command that takes robot from facing podium all the way
+    so that it is on top the podium.
+    """
+    def __init__(self):
+        self.addSequential(ExtendBothLegs())
+        self.addSequential(DriveToFrontSensor())
+        self.addSequential(RetractFrontLegs())
+        self.addSequential(DriveToBackSensor())
+        self.addSequential(RetractBackLegs())
+        # TODO: Determine command to drive rest of way

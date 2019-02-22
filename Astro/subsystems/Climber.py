@@ -173,7 +173,6 @@ class Climber(Subsystem):
             return True
         else:
             return False
-
     #functions for lift
     def liftFront(self, lift, single=True):
         """ Basic lift function for lifting robot.
@@ -206,68 +205,6 @@ class Climber(Subsystem):
         @param lift - Positive values make lift go down(extend) """
         self.liftFront(lift, False)
         self.liftBack(lift, False)
-
-    def moveFrontLegs(self, lift, maxLean = 0):
-        """ Basic lift function for back legs.
-        @param lift - Power for leg motors - positive values make lift go down(extend)
-        @param maxLean - Maximum lean allowed before stopping. """
-
-        if lift == 0:
-          # They just want stop - done here
-          self.stopFront()
-          return
-
-        if maxLean <= 0:
-          # Use default value if not specified
-          maxLean = self.MAX_ROLL
-
-        lean = self.getRoll()
-
-        if lift > 0:
-          # They want to extend legs (robot go up)
-          if self.isFullyExtendedFront() : self.stopFront()
-          elif lean < maxLean:
-            # Tweak power based on lean
-            self.frontLift.set(lift)
-          else: self.stopFront()
-        else:
-          # They want legs to retract (robot go down)
-          if self.isFullyRetractedFront() : self.stopFront()
-          elif lean > -maxLean:
-            # Tweak power based lean
-            self.frontLift.set(lift)
-          else: self.stopFront()
-
-    def moveBackLegs(self, lift, maxLean = 0):
-        """ Basic lift function back legs.
-        @param lift - Power for leg motors - positive values make lift go down(extend)
-        @param maxLean - Maximum lean allowed before stopping. """
-
-        if lift == 0:
-          # They just want stop - done here
-          self.stopFront()
-          return
-
-        if maxLean <= 0:
-          # Use default value if not specified
-          maxLean = self.MAX_ROLL
-
-        lean = self.getRoll()
-
-        if lift > 0:
-          # They want to extend legs (robot go up)
-          if self.isFullyExtendedBack() : self.stopBack()
-          elif lean < maxLean:
-            # Tweak power based on lean
-            self.backLift.set(lift)
-          else: self.stopBack()
-        else:
-          # They want legs to retract (robot go down)
-          if self.isFullyRetractedBack() : self.stopBack()
-          elif lean > -maxLean:
-            # Tweak power based lean
-            self.backLift.set(lift)
-          else: self.stopBack()
 
     #wheel speed
     def wheelForward(self):
