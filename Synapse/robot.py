@@ -23,11 +23,11 @@ class MyRobot(wpilib.TimedRobot):
         self.Intake1.follow(self.Intake2)
 
         #lift motors
-        self.Lift1 = ctre.WPI_TalonSRX(30)
+        '''self.Lift1 = ctre.WPI_TalonSRX(30)
         self.Lift1.setNeutralMode(2)
         self.Lift2 = ctre.WPI_TalonSRX(31)
         self.Lift2.setNeutralMode(2)
-        self.Lift1.follow(self.Lift2)
+        self.Lift1.follow(self.Lift2)'''
 
         self.LeftDrive1 = ctre.WPI_TalonSRX(10)
         self.LeftDrive1.setInverted(True)
@@ -43,13 +43,13 @@ class MyRobot(wpilib.TimedRobot):
         self.LeftDrive2.follow(self.LeftDrive1)
     #rightdrive motors
         self.RightDrive1 = ctre.WPI_TalonSRX(20)
-        self.RightDrive1.setInverted(True)
+        self.RightDrive1.setInverted(False)
         self.RightDrive1.setNeutralMode(2)
         self.RightDrive2 = ctre.WPI_VictorSPX(21)
-        self.RightDrive2.setInverted(True)
+        self.RightDrive2.setInverted(False)
         self.RightDrive2.setNeutralMode(2)
         self.RightDrive3 = ctre.WPI_VictorSPX(22)
-        self.RightDrive3.setInverted(True)
+        self.RightDrive3.setInverted(False)
         self.RightDrive3.setNeutralMode(2)
     #sets motors to follow each other
         self.RightDrive3.follow(self.RightDrive1)
@@ -89,26 +89,18 @@ class MyRobot(wpilib.TimedRobot):
         liftButtonUp = (self.Controller1.getRawButton(4))
         liftButtonDown = (self.Controller1.getRawButton(1))
         #arcade tank toggle
-        if True:
-            self.mrbDrive(left, rotation)
-        elif self.tankMode == True:
-            self.drive(left, right)
-        else:
-            self.arcadeDrive(left,rotation)
-        #lift
+        #if True:
+            #self.mrbDrive(left, rotation)
+        #elif self.tankMode == True:
+            #self.drive(left, right)
+        #else:
+        self.arcadeDrive(left,rotation)
+        '''#lift
         self.lift(liftButtonUp,liftButtonDown)
 
-        self.intake(intakeButton > 0.5,outtakeButton > 0.5)
+        self.intake(intakeButton > 0.5,outtakeButton > 0.5)'''
 
 
-    def autonomousPeriodic(self):
-        #Count and time on SD
-        self.count += 1
-        sd.putNumber("count", self.count)
-        timeElapsed = self.autonTimer.get()
-        sd.putNumber("Timer",timeElapsed)
-        #runs forward function for 20 feet
-        #   self.forward(240,0.6)
 
 #support functions
     #gets distance for ticks and converts
@@ -129,18 +121,18 @@ class MyRobot(wpilib.TimedRobot):
             self.drive(remaining_distance*constant+0.25,remaining_distance*constant+0.25)
         else:
             self.drive(0,0)
-    
+
     #intake function
-    def intake(self,intakeIn,out):
+    '''def intake(self,intakeIn,out):
         if intakeIn and not out:
             self.Intake2.set(0.5)
         elif out and not intakeIn:
             self.Intake2.set(-0.5)
         else:
-            self.Intake2.set(0)
-    
+            self.Intake2.set(0)'''
+
     #lift function
-    def lift(self,up,down):
+    '''def lift(self,up,down):
         if up and not down:
             self.Lift2.set(-0.5)
         if down and not up:
@@ -148,7 +140,7 @@ class MyRobot(wpilib.TimedRobot):
         if down and up:
             self.Lift2.set(0)
         if (not down) and (not up):
-            self.Lift2.set(0)
+            self.Lift2.set(0)'''
 
     def mrbDrive(self, throttle, rotation):
         left = 0
@@ -171,7 +163,7 @@ class MyRobot(wpilib.TimedRobot):
             right = power * rotGain
 
         self.LeftDrive1.set(left)
-        self.RightDrive1.set(right)        
+        self.RightDrive1.set(right)
 
     #tank drive
     def drive(self, left, right):
@@ -188,18 +180,18 @@ class MyRobot(wpilib.TimedRobot):
     #arcade drive
     def arcadeDrive(self,left,rotation):
         #breakers
-        if abs(left) <0.1:
+        if abs(left) < 0.1:
             left = 0
-        left = left *0.65
+        left = left *0.254
         right = left
 
         if rotation <-0.1:
             #if the rotation is larger than 0.95, rotate in place
             #if rotation <-0.95:
-            right = right + (abs(rotation*0.3))
+            right = right + (abs(rotation*0.5))
         elif rotation > 0.1:
             #if the rotation is larger than 0.95, rotate in place
-            left = left + (1-abs(rotation*0.3))
+            left = left + (abs(rotation*0.5))
         #sets up powers
         self.LeftDrive1.set(left)
         self.RightDrive1.set(right)
