@@ -22,6 +22,7 @@ from commands.drive.setSpeedDT import SetSpeedDT
 from commands.drive.turnAngle import TurnAngle
 from commands.drive.measured import Measured
 from commands.drive.FlipButton import FlipButton
+from commands.hatch.autonShimmy import AutonShimmy 
 #from commands.drive.relativeTurn import RelativeTurn
 #from commands.climber.autoClimb import AutoClimb
 
@@ -240,8 +241,13 @@ class Drive(Subsystem):
 
         #self.autoClimb = self.robot.autoClimb.AutoClimb
 
+        self.autonShimmy = self.robot.autonShimmy.AutonShimmy 
+
         b = self.robot.driverRightButton(3)
         b.whenPressed(FlipButton())
+
+        s = self.robot.operatorButton(10)
+        s.whenPressed(self.autonShimmy())
 
         #b7 = self.robot.readOperatorButton(9)
         #b7.whenPressed(self.disableAll())
@@ -322,8 +328,7 @@ class Drive(Subsystem):
     def dashboardInit(self):
         SmartDashboard.putData("Flipped drive", FlipButton())
         SmartDashboard.putData("Measure", Measured())
-
-
+        
         if(self.debug==False): return
         SmartDashboard.putData("autonCheck Frw", AutonCheck(10))
         SmartDashboard.putData("autonCheck Bkwd", AutonCheck(-10))
@@ -378,3 +383,6 @@ class Drive(Subsystem):
 
         if abs(self.accelX) >= bumpInt or abs(self.accelY) >= bumpInt: return True
         return False
+
+
+
