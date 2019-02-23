@@ -45,7 +45,7 @@ class SetSpeedDT(TimedCommand):
 # both left and right go at power of left(perfectly straight drive)
         if self.robot.readDriverLeftButton(1):
             right = left
- 
+
 
         if (abs(left)<0.025) and (abs(right)<0.025):
 

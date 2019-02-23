@@ -11,9 +11,21 @@ class DriveStraightTime(TimedCommand):
         self.requires(self.getRobot().drive)
         self.DT = self.getRobot().drive
         self.speed = speed
+        self.driveTimer = wpilib.Timer()
+        self.driveTimer.start()
+
+    def initialize(self):
+        StartAngle = self.DT.getAngle()
+        self.DT.setMode("DriveStraight", name=None, distance=0, angle=StartAngle)
 
     def execute(self):
         self.DT.tankDrive(self.speed,self.speed)
+
+    def isFinished(self):
+        if self.driveTimer > self.timeoutInSeconds:
+            return True
+        else:
+            return False
 
     def interrupted(self):
         self.end()
