@@ -65,7 +65,7 @@ class Drive(Subsystem):
         self.robot = robot
         self.flipped = False
         self.debug = False
-
+        self.preferences = wpilib.Preferences.getInstance()
         timeout = 0
 
         self.accel = wpilib.BuiltInAccelerometer()
@@ -346,7 +346,7 @@ class Drive(Subsystem):
         SmartDashboard.putNumber("DT_DistanceLeft", self.getDistance()[0])
         SmartDashboard.putNumber("DT_DistanceRight", self.getDistance()[1])
         SmartDashboard.putNumber("DT_Angle", self.getAngle())
-
+        SmartDashboard.putNumber("practice", self.preferences.getBoolean("Practice", False))
         SmartDashboard.putNumber("DT_PowerLeft", self.left.get())
         SmartDashboard.putNumber("DT_PowerRight", self.right.get())
         SmartDashboard.putNumber("DT_VelocityLeft", self.getVelocity()[0])

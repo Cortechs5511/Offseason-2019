@@ -22,7 +22,7 @@ class CargoMech(Subsystem):
         #fix
         self.motorIntake = ctre.WPI_TalonSRX(map.intake)
         self.motorWrist = ctre.WPI_TalonSRX(map.wrist)
-
+        self.preferences = wpilib.Preferences.getInstance()
     def intake(self):
         ''' Intake the balls (turn wheels inward) '''
         self.motorIntake.set(0.5)
@@ -51,6 +51,7 @@ class CargoMech(Subsystem):
             SmartDashboard.putData("Wrist up",WristMove('wrist up',1))
             SmartDashboard.putData("Wrist down",WristMove('wrist down',-1))
             SmartDashboard.putData("Stop wrist",WristMove('stop wrist',0))
+            SmartDashboard.putNumber("Practice", self.preferences.putBoolean("Practice", False))
 
     def subsystemInit(self):
         r = self.robot

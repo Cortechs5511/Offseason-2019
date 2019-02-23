@@ -52,8 +52,7 @@ class Climber(Subsystem):
         self.switchBottomFront = wpilib.DigitalInput(6)
         self.switchTopBack = wpilib.DigitalInput(9)
 
-
-        #self.wheelRight.follow(self.wheelLeft)
+       
         #self.wheels = self.wheelLeft
 
         self.backLift.setNeutralMode(2)
