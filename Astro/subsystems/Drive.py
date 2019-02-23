@@ -22,7 +22,7 @@ from commands.drive.setSpeedDT import SetSpeedDT
 from commands.drive.turnAngle import TurnAngle
 from commands.drive.measured import Measured
 from commands.drive.FlipButton import FlipButton
-from commands.hatch.autonShimmy import AutonShimmy 
+from commands.hatch.autonShimmy import AutonShimmy
 #from commands.drive.relativeTurn import RelativeTurn
 #from commands.climber.autoClimb import AutoClimb
 
@@ -182,6 +182,10 @@ class Drive(Subsystem):
             self.angleController.setSetpoint(angle)
             self.distController.enable()
             self.angleController.enable()
+        elif(mode=="DriveStraight"):
+            self.angleController.setSetpoint(angle)
+            self.distController.disable()
+            self.angleController.enable()
         elif(mode=="Path"):
             self.distController.disable()
             self.angleController.disable()
@@ -194,7 +198,7 @@ class Drive(Subsystem):
             self.angleController.disable()
         self.mode = mode
 
-    
+
     def setDistance(self, distance): self.setMode("Distance",distance=distance)
     def setAngle(self, angle): self.setMode("Angle",angle=angle)
     def setCombined(self, distance, angle): self.setMode("Combined",distance=distance,angle=angle)
@@ -229,6 +233,7 @@ class Drive(Subsystem):
         elif(self.mode=="Angle"): [left,right] = [self.anglePID,-self.anglePID]
         elif(self.mode=="Combined"): [left,right] = [self.distPID+self.anglePID,self.distPID-self.anglePID]
         elif(self.mode=="Path"): [left, right] = self.Path.followPath()
+        elif(self.mode=="DriveStraight"): [left, right] = [left+self.anglePID, right-self.anglePID]
         elif(self.mode=="DiffDrive"): [left, right] = self.diffAssist(left, right)
         elif(self.mode=="Direct"): [left, right] = [left, right] #Add advanced math here
         else: [left, right] = [0,0]
@@ -241,7 +246,7 @@ class Drive(Subsystem):
 
         #self.autoClimb = self.robot.autoClimb.AutoClimb
 
-        self.autonShimmy = self.robot.autonShimmy.AutonShimmy 
+        self.autonShimmy = self.robot.autonShimmy.AutonShimmy
 
         b = self.robot.driverRightButton(3)
         b.whenPressed(FlipButton())
@@ -328,7 +333,7 @@ class Drive(Subsystem):
     def dashboardInit(self):
         SmartDashboard.putData("Flipped drive", FlipButton())
         SmartDashboard.putData("Measure", Measured())
-        
+
         if(self.debug==False): return
         SmartDashboard.putData("autonCheck Frw", AutonCheck(10))
         SmartDashboard.putData("autonCheck Bkwd", AutonCheck(-10))
@@ -383,6 +388,3 @@ class Drive(Subsystem):
 
         if abs(self.accelX) >= bumpInt or abs(self.accelY) >= bumpInt: return True
         return False
-
-
-
