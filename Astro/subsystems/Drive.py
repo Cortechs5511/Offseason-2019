@@ -193,6 +193,7 @@ class Drive(Subsystem):
             self.angleController.disable()
         self.mode = mode
 
+    
     def setDistance(self, distance): self.setMode("Distance",distance=distance)
     def setAngle(self, angle): self.setMode("Angle",angle=angle)
     def setCombined(self, distance, angle): self.setMode("Combined",distance=distance,angle=angle)
@@ -214,6 +215,11 @@ class Drive(Subsystem):
         wheelAcceleration = dDrive.WheelState(0, 0) #Add better math here later
         voltage = self.model.solveInverseDynamics_WS(wheelVelocity, wheelAcceleration).getVoltage()
         return [voltage[0]/12, voltage[1]/12]
+
+    def leftTwitch(self):
+        self.left.set(0.1)
+    def rightTwitch(self):
+        self.right.set(0.1)
 
     def tankDrive(self,left=0,right=0):
         self.updateSensors()
