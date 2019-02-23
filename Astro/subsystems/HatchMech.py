@@ -15,7 +15,7 @@ class HatchMech(Subsystem):
         super().__init__('Hatch')
         self.debug = True
         self.robot = Robot
-
+        self.preferences = wpilib.Preferences.getInstance()
         #Normally the ejectPiston would be on solenoid 1, but was changed to see if slide worked.
         self.ejectPiston = wpilib.Solenoid(map.hatchKick)
         self.ejectPistonSlide = wpilib.Solenoid(map.hatchSlide)
@@ -72,3 +72,4 @@ class HatchMech(Subsystem):
         if self.debug:
             SmartDashboard.putBoolean("EjectorOut", self.isEjectorOut())
             SmartDashboard.putBoolean("SlideOut",self.isSlideIn())
+            SmartDashboard.putNumber("practice", self.preferences.putBoolean("practice",False))
