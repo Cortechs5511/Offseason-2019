@@ -11,6 +11,8 @@ class MyRobot(wpilib.TimedRobot):
     def robotInit(self):
         self.piston = wpilib.DoubleSolenoid(0,1)
         self.operator = wpilib.Joystick(0)
+        self.preferences = wpilib.Preferences.getInstance()
+        
     def teleopInit(self):
         self.count = 0
 
@@ -33,7 +35,8 @@ class MyRobot(wpilib.TimedRobot):
 
         self.piston.set(state)
         sd.putNumber("Piston",state)
-
+        sd.putNumber("practice", self.preferences.getBoolean("practice" , False))
+        
 
 
 
