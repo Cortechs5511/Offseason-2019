@@ -246,13 +246,13 @@ class Drive(Subsystem):
 
         #self.autoClimb = self.robot.autoClimb.AutoClimb
 
-        self.autonShimmy = self.robot.autonShimmy.AutonShimmy
+        #self.autonShimmy = self.robot.autonShimmy.AutonShimmy
 
         b = self.robot.driverRightButton(3)
         b.whenPressed(FlipButton())
 
-        s = self.robot.operatorButton(10)
-        s.whenPressed(self.autonShimmy())
+        #s = self.robot.operatorButton(10)
+        #s.whenPressed(self.autonShimmy())
 
         #b7 = self.robot.readOperatorButton(9)
         #b7.whenPressed(self.disableAll())

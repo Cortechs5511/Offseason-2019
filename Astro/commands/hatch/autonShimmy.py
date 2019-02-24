@@ -11,7 +11,7 @@ class AutonShimmy(CommandGroup):
         self.Shimmy = self.shimmy.Shimmy
         self.requires(self.Shimmy)
         self.end = False
-        
+
     def execute(self):
 
         self.addSequential(self.Shimmy("Left"))
@@ -22,13 +22,10 @@ class AutonShimmy(CommandGroup):
         if self.end == True:
             return True
         else: return False
-    
+
     def end(self):
         self.drive.left.set(0)
         self.drive.right.set(0)
 
-    def interrupted(self:
+    def interrupted(self):
         self.end()
-
-
-    
