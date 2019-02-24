@@ -1,28 +1,29 @@
-import wpilib 
-from wpilib import command 
+import wpilib
+from wpilib.command import Command
+from wpilib.command import TimedCommand
 
-
-class Shimmy(Command):
-    def __init__(self, Mode):
-        super().__init__('Shimmy')
-
-        self.mode = Mode
+class Shimmy(TimedCommand):
+    def __init__(self, timeout=0):
+        super().__init__('Shimmy', timeoutInSeconds=timeout)
+        self.endTime = timeout
         self.drive = self.getRobot().drive
         self.requires(self.drive)
-        self.shimmyTimer = wpilib.Timer()
-        self.shimmyTimer.start()
+        self.mode = 0
 
-    def initialize(self): pass 
+    def initialize(self):
+        self.drive.setMode("Direct")
 
     def execute(self):
-        if self.mode == "Left":
-            self.drive.leftTwitch()
-
-        elif self.mode == "Right":
-            self.drive.rightTwitch()
+        print(self.timeSinceInitialized(), self.mode)
+        if (self.timeSinceInitialized()//0.5) % 2 == 1:
+            self.drive.tankDrive(0.5,0)
+            self.mode = 1
+        elif (self.timeSinceInitialized()//0.5) % 2 == 0:
+            self.drive.tankDrive(0,0.5)
+            self.mode = 2
 
     def isFinished(self):
-        if self.shimmyTimer > 3000:
+        if self.timeSinceInitialized() > self.endTime:
             return True
         else: return False
 
@@ -32,4 +33,3 @@ class Shimmy(Command):
 
     def interrupted(self):
         self.end()
-        
