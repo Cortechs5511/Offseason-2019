@@ -34,25 +34,25 @@ class DisableAll(Command):
     def __init__(self):
         super().__init__('Disable All')
         self.robot = self.getRobot()
-        self.requires(self.robot.CargoMech)
-        self.requires(self.robot.Climber)
-        self.requires(self.robot.Drive)
-        self.requires(self.robot.HatchMech)
+        self.requires(self.robot.cargoMech)
+        self.requires(self.robot.climber)
+        self.requires(self.robot.drive)
+        self.requires(self.robot.hatchMech)
 
-        self.CargoMech = subsystems.CargoMech 
-        self.Climber = subsystems.Climber 
-        self.Drive = subsystems.Drive 
-        self.HatchMech = subsystems.HatchMech 
+        self.CargoMech = self.robot.cargoMech 
+        self.Climber = self.robot.climber
+        self.Drive = self.robot.drive 
+        self.HatchMech = self.robot.hatchMech 
 
     def initialize(self):
         pass
 
     def execute(self):
 
-        self.CargoMech.stop()
-        self.Climber.stop()
-        self.Drive.stop()
-        self.HatchMech.stop()
+        self.CargoMech.disable()
+        self.Climber.stopDrive()
+        self.Drive.disable()
+        self.HatchMech.disable()
 
     
     def isFinished(self):

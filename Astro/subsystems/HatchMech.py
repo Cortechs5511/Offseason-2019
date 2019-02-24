@@ -7,6 +7,7 @@ from wpilib.command import Command
 from commands.hatch.ejectToggle import EjectToggle
 from commands.hatch.ejectHatch import EjectHatch
 from commands.hatch.slideToggle import SlideToggle
+from commands.hatch.shimmy import Shimmy
 import map
 
 class HatchMech(Subsystem):
@@ -20,7 +21,7 @@ class HatchMech(Subsystem):
         self.ejectPistonSlide = wpilib.Solenoid(map.hatchSlide)
         self.ejectPiston.setName("Hatch" , "Ejector")
         self.ejectPistonSlide.setName("Hatch" , "Slider")
-
+        
     def isEjectorOut(self):
         """ Returns True when ejector is sticking out. """
         return self.ejectPiston.get()
@@ -51,6 +52,7 @@ class HatchMech(Subsystem):
             SmartDashboard.putData("Eject Hatch", EjectHatch())
             SmartDashboard.putData("Hatch Mech", self)
             SmartDashboard.putData("Ejector Toggle" , EjectToggle())
+            SmartDashboard.putData("Shimmy", Shimmy(3))
         self.retractEjector()
         r = self.robot
         b : wpilib.buttons.JoystickButton = r.operatorButton(3)
@@ -71,3 +73,4 @@ class HatchMech(Subsystem):
         if self.debug:
             SmartDashboard.putBoolean("EjectorOut", self.isEjectorOut())
             SmartDashboard.putBoolean("SlideOut",self.isSlideIn())
+            SmartDashboard.putNumber("practice", self.preferences.putBoolean("practice",False))

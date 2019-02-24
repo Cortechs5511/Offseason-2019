@@ -65,38 +65,53 @@ class Drive(Subsystem):
 
         self.robot = robot
         self.flipped = False
-        self.debug = False
-        
+        self.debug = True
+        self.preferences = wpilib.Preferences.getInstance()
         timeout = 0
 
         self.accel = wpilib.BuiltInAccelerometer()
 
         TalonLeft = Talon(map.driveLeft1)
         TalonRight = Talon(map.driveRight1)
+        TalonLeft.setName("Drive", "Drive Left 1")
+        TalonRight.setName("Drive", "Drive Right 1")
 
-        TalonLeft.setInverted(True)
-        TalonRight.setInverted(False)
+        leftInverted = True
+        rightInverted = False
+        if map.robotID == map.AstroV1:
+            leftInverted = False
+            rightInverted = True
+        SmartDashboard.putBoolean("LeftInverted", leftInverted)
+        SmartDashboard.putNumber("RobotID" , map.robotID)
+
+
+        TalonLeft.setInverted(leftInverted)
+        TalonRight.setInverted(rightInverted)
 
         if not wpilib.RobotBase.isSimulation():
             VictorLeft1 = Victor(map.driveLeft2)
             VictorLeft2 = Victor(map.driveLeft3)
+            VictorLeft1.setName("Drive", "Drive Left 2")
+            VictorLeft2.setName("Drive", "Drive Left 3")
             VictorLeft1.follow(TalonLeft)
             VictorLeft2.follow(TalonLeft)
 
             VictorRight1 = Victor(map.driveRight2)
             VictorRight2 = Victor(map.driveRight3)
+            VictorRight1.setName("Drive", "Drive Right 2")
+            VictorRight2.setName("Drive", "Drive Right 3")
             VictorRight1.follow(TalonRight)
             VictorRight2.follow(TalonRight)
 
             for motor in [VictorLeft1,VictorLeft2]:
                 motor.clearStickyFaults(timeout)
                 motor.setSafetyEnabled(False)
-                motor.setInverted(True)
+                motor.setInverted(leftInverted)
 
             for motor in [VictorRight1,VictorRight2]:
                 motor.clearStickyFaults(timeout)
                 motor.setSafetyEnabled(False)
-                motor.setInverted(False)
+                motor.setInverted(rightInverted)
 
 
         for motor in [TalonLeft,TalonRight]:
@@ -119,10 +134,12 @@ class Drive(Subsystem):
         self.navx = navx.AHRS.create_spi()
 
         self.leftEncoder = wpilib.Encoder(map.leftEncoder[0], map.leftEncoder[1])
+        self.leftEncoder.setName("Drive", "Left Encoder")
         self.leftEncoder.setDistancePerPulse(self.leftConv)
         self.leftEncoder.setSamplesToAverage(10)
 
         self.rightEncoder = wpilib.Encoder(map.rightEncoder[0], map.rightEncoder[1])
+        self.rightEncoder.setName("Drive", "Right Encoder")
         self.rightEncoder.setDistancePerPulse(self.rightConv)
         self.rightEncoder.setSamplesToAverage(10)
 
@@ -156,6 +173,10 @@ class Drive(Subsystem):
         self.model = dDrive.DifferentialDrive(29, 1.83, 0, units.inchesToMeters(3.0), units.inchesToMeters(14), Ltrans, Rtrans)
         self.maxVel = self.maxSpeed*self.model.getMaxAbsVelocity(0, 0, 12)
         self.Path = Path.Path(self, self.model, self.odTemp, self.getDistance)
+
+    def subsystemInit(self):
+        driveStraightButton : wpilib.buttons.JoystickButton = r.driverLeftButton(1)
+        driveStraightButton.whileHeld(DriveStraightTime(0.5))
 
     def periodic(self):
         self.updateSensors()
@@ -221,11 +242,6 @@ class Drive(Subsystem):
         voltage = self.model.solveInverseDynamics_WS(wheelVelocity, wheelAcceleration).getVoltage()
         return [voltage[0]/12, voltage[1]/12]
 
-    def leftTwitch(self):
-        self.left.set(0.1)
-    def rightTwitch(self):
-        self.right.set(0.1)
-
     def tankDrive(self,left=0,right=0):
         self.updateSensors()
 
@@ -287,7 +303,8 @@ class Drive(Subsystem):
         self.leftVal = self.leftEncoder.get()
         self.rightVal = self.rightEncoder.get()
 
-    def getAngle(self): return self.yaw
+    def getAngle(self):
+        return (-1 * self.yaw)
 
     '''LeaningForward - negative,LeaningBackward - Positive'''
     def getRoll(self): return self.roll
@@ -335,20 +352,22 @@ class Drive(Subsystem):
         SmartDashboard.putData("Measure", Measured())
 
         if(self.debug==False): return
-        SmartDashboard.putData("autonCheck Frw", AutonCheck(10))
-        SmartDashboard.putData("autonCheck Bkwd", AutonCheck(-10))
+        #SmartDashboard.putData("autonCheck Frw", AutonCheck(10))
+        #SmartDashboard.putData("autonCheck Bkwd", AutonCheck(-10))
 
         SmartDashboard.putData("DT_DiffDrive", DiffDrive())
         SmartDashboard.putData("DT_DrivePath", DrivePath())
         SmartDashboard.putData("DT_DriveStraightCombined", DriveStraightCombined())
         SmartDashboard.putData("DT_DriveStraightDistance", DriveStraightDistance())
-        SmartDashboard.putData("DT_DriveStraightTime", DriveStraightTime())
+        SmartDashboard.putData("DT_DriveStraightTime", DriveStraightTime(0.5))
 
         SmartDashboard.putData("DT_SetFixedDT", SetFixedDT())
         SmartDashboard.putData("DT_SetSpeedDT", SetSpeedDT())
 
         SmartDashboard.putData("DT_TurnAngle", TurnAngle(90))
-        SmartDashboard.putData("DT_RelativeTurn", RelativeTurn(90))
+        #SmartDashboard.putData("DT_RelativeTurn", RelativeTurn(90))
+
+        SmartDashboard.putData("DriveStraightTime", DriveStraightTime(0.5))
 
     def dashboardPeriodic(self):
         SmartDashboard.putBoolean("Driving Reverse", self.flipped)
@@ -375,8 +394,6 @@ class Drive(Subsystem):
 
         #SmartDashboard.putBoolean("Disable All", self.disableAll.getBoolean())
         #SmartDashboard.putBoolean("Auto Climb", self.autoClimb.getBoolean())
-
-
 
     def bumpCheck(self, bumpInt = 0.4):
         self.accelX = self.accel.getX()

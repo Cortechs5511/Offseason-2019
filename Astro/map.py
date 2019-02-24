@@ -12,6 +12,7 @@ driveRight3 = 22
 intake = 30
 wrist = 31
 
+
 frontLift = 40
 backLift = 41
 
@@ -31,8 +32,19 @@ leftEncoder = (0,1)
 rightEncoder = (2,3)
 
 #sets the system preferences
+
+"""def getInt(Key , V): 
+    preferences = wpilib.Preferences.getInstance()
+    V = preferences.getInt(Key, V)
+    if preferences.containsKey(Key):
+        print ("found")
+        return preferences.getInt(Key , V )
+    print ("Not Found")
+    preferences.putInt(Key , V)
+    return V
+
 AstroV1 = 1
 AstroV2 = 2
 Synapse = 3
-preferences = wpilib.Preferences.getInstance()
-robotID = preferences.getInt("robotID" , AstroV2)
+
+robotID = getInt("robotID" , AstroV2)
