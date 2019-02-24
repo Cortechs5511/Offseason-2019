@@ -18,7 +18,6 @@ class Limelight():
         self.ta = 0
         self.ts = 0
         self.tl = 0
-        self.preferences = wpilib.Preferences.getInstance()
     def readLimelightData(self):
         self.tv = self.table.getNumber('tv',1000)
         self.tx = self.table.getNumber('tx',1000)
@@ -81,4 +80,4 @@ class Limelight():
         SmartDashboard.putNumber("Angle1", self.tx)
         SmartDashboard.putNumber("Angle2", self.getAngle2())
         SmartDashboard.putNumber("NavXAngle", self.robot.drive.getAngle())
-        SmartDashboard.putNumber("practice", self.preferences.putBoolean("practice",False))
+    

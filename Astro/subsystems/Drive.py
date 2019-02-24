@@ -66,7 +66,7 @@ class Drive(Subsystem):
         self.robot = robot
         self.flipped = False
         self.debug = False
-        self.preferences = wpilib.Preferences.getInstance()
+        
         timeout = 0
 
         self.accel = wpilib.BuiltInAccelerometer()
