@@ -62,7 +62,7 @@ class MyRobot(CommandBasedRobot):
 
         #self.limelight = Limelight.Limelight(self)
         self.hatchMech = HatchMech.HatchMech(self)
-        #self.cargoMech = CargoMech.CargoMech(self)
+        self.cargoMech = CargoMech.CargoMech(self)
         self.climber = Climber.Climber(self)
         self.drive = Drive.Drive(self)
         self.compressor = wpilib.Compressor(0)

@@ -20,7 +20,7 @@ class HatchMech(Subsystem):
         self.ejectPistonSlide = wpilib.Solenoid(map.hatchSlide)
         self.ejectPiston.setName("Hatch" , "Ejector")
         self.ejectPistonSlide.setName("Hatch" , "Slider")
-
+        
     def isEjectorOut(self):
         """ Returns True when ejector is sticking out. """
         return self.ejectPiston.get()

@@ -73,6 +73,8 @@ class Drive(Subsystem):
 
         TalonLeft = Talon(map.driveLeft1)
         TalonRight = Talon(map.driveRight1)
+        TalonLeft.setName("Drive", "Drive Left 1")
+        TalonRight.setName("Drive", "Drive Right 1")
 
         TalonLeft.setInverted(True)
         TalonRight.setInverted(False)
@@ -80,11 +82,15 @@ class Drive(Subsystem):
         if not wpilib.RobotBase.isSimulation():
             VictorLeft1 = Victor(map.driveLeft2)
             VictorLeft2 = Victor(map.driveLeft3)
+            VictorLeft1.setName("Drive", "Drive Left 2")
+            VictorLeft2.setName("Drive", "Drive Left 3")
             VictorLeft1.follow(TalonLeft)
             VictorLeft2.follow(TalonLeft)
 
             VictorRight1 = Victor(map.driveRight2)
             VictorRight2 = Victor(map.driveRight3)
+            VictorRight1.setName("Drive", "Drive Right 2")
+            VictorRight2.setName("Drive", "Drive Right 3")
             VictorRight1.follow(TalonRight)
             VictorRight2.follow(TalonRight)
 
@@ -119,10 +125,12 @@ class Drive(Subsystem):
         self.navx = navx.AHRS.create_spi()
 
         self.leftEncoder = wpilib.Encoder(map.leftEncoder[0], map.leftEncoder[1])
+        self.leftEncoder.setName("Drive", "Left Encoder")
         self.leftEncoder.setDistancePerPulse(self.leftConv)
         self.leftEncoder.setSamplesToAverage(10)
 
         self.rightEncoder = wpilib.Encoder(map.rightEncoder[0], map.rightEncoder[1])
+        self.rightEncoder.setName("Drive", "Right Encoder")
         self.rightEncoder.setDistancePerPulse(self.rightConv)
         self.rightEncoder.setSamplesToAverage(10)
 
