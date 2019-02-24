@@ -65,8 +65,8 @@ class Drive(Subsystem):
 
         self.robot = robot
         self.flipped = False
-        self.debug = False
-        
+        self.debug = True
+        self.preferences = wpilib.Preferences.getInstance()
         timeout = 0
 
         self.accel = wpilib.BuiltInAccelerometer()
@@ -165,6 +165,10 @@ class Drive(Subsystem):
         self.maxVel = self.maxSpeed*self.model.getMaxAbsVelocity(0, 0, 12)
         self.Path = Path.Path(self, self.model, self.odTemp, self.getDistance)
 
+    def subsystemInit(self):
+        driveStraightButton : wpilib.buttons.JoystickButton = r.driverLeftButton(1)
+        driveStraightButton.whileHeld(DriveStraightTime(0.5))
+
     def periodic(self):
         self.updateSensors()
 
@@ -229,11 +233,6 @@ class Drive(Subsystem):
         voltage = self.model.solveInverseDynamics_WS(wheelVelocity, wheelAcceleration).getVoltage()
         return [voltage[0]/12, voltage[1]/12]
 
-    def leftTwitch(self):
-        self.left.set(0.1)
-    def rightTwitch(self):
-        self.right.set(0.1)
-
     def tankDrive(self,left=0,right=0):
         self.updateSensors()
 
@@ -295,7 +294,8 @@ class Drive(Subsystem):
         self.leftVal = self.leftEncoder.get()
         self.rightVal = self.rightEncoder.get()
 
-    def getAngle(self): return self.yaw
+    def getAngle(self):
+        return (-1 * self.yaw)
 
     '''LeaningForward - negative,LeaningBackward - Positive'''
     def getRoll(self): return self.roll
@@ -343,20 +343,22 @@ class Drive(Subsystem):
         SmartDashboard.putData("Measure", Measured())
 
         if(self.debug==False): return
-        SmartDashboard.putData("autonCheck Frw", AutonCheck(10))
-        SmartDashboard.putData("autonCheck Bkwd", AutonCheck(-10))
+        #SmartDashboard.putData("autonCheck Frw", AutonCheck(10))
+        #SmartDashboard.putData("autonCheck Bkwd", AutonCheck(-10))
 
         SmartDashboard.putData("DT_DiffDrive", DiffDrive())
         SmartDashboard.putData("DT_DrivePath", DrivePath())
         SmartDashboard.putData("DT_DriveStraightCombined", DriveStraightCombined())
         SmartDashboard.putData("DT_DriveStraightDistance", DriveStraightDistance())
-        SmartDashboard.putData("DT_DriveStraightTime", DriveStraightTime())
+        SmartDashboard.putData("DT_DriveStraightTime", DriveStraightTime(0.5))
 
         SmartDashboard.putData("DT_SetFixedDT", SetFixedDT())
         SmartDashboard.putData("DT_SetSpeedDT", SetSpeedDT())
 
         SmartDashboard.putData("DT_TurnAngle", TurnAngle(90))
-        SmartDashboard.putData("DT_RelativeTurn", RelativeTurn(90))
+        #SmartDashboard.putData("DT_RelativeTurn", RelativeTurn(90))
+
+        SmartDashboard.putData("DriveStraightTime", DriveStraightTime(0.5))
 
     def dashboardPeriodic(self):
         SmartDashboard.putBoolean("Driving Reverse", self.flipped)
@@ -383,8 +385,6 @@ class Drive(Subsystem):
 
         #SmartDashboard.putBoolean("Disable All", self.disableAll.getBoolean())
         #SmartDashboard.putBoolean("Auto Climb", self.autoClimb.getBoolean())
-
-
 
     def bumpCheck(self, bumpInt = 0.4):
         self.accelX = self.accel.getX()

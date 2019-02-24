@@ -85,18 +85,18 @@ class MyRobot(CommandBasedRobot):
         self.updateDashboardInit()
         self.DriveStraight = DriveStraight()
         self.DrivePath = DrivePath(name="DriveStraight", follower="Ramsetes")
-        self.autonChooser = SendableChooser()
-        self.autonChooser.setDefaultOption("Do Nothing", WaitCommand(3))
+        #self.autonChooser = SendableChooser()
+        #self.autonChooser.setDefaultOption("Do Nothing", WaitCommand(3))
         #self.autonChooser.addOption("FrontHatch", AutoFrontHatch())
         #self.autonChooser.addOption("DriveAuton", AutonCheck(9.75))
-        self.autonChooser.addOption("DrivePath", DrivePath())
-        self.autonChooser.addOption("AutonRotation", autonRotation())
-        SmartDashboard.putData("AutonChooser", self.autonChooser)
+        #self.autonChooser.addOption("DrivePath", DrivePath())
+        #self.autonChooser.addOption("AutonRotation", autonRotation())
+        #SmartDashboard.putData("AutonChooser", self.autonChooser)
 
         self.hatchMech.subsystemInit()
         #self.cargoMech.subsystemInit()
         self.climber.subsystemInit()
-        self.climber.dashboardInit()
+        #self.climber.dashboardInit()
 
         climberAuto : wpilib.buttons.JoystickButton = self.driverLeftButton(11)
         cg = CommandGroup("AutoClimb")
@@ -127,16 +127,16 @@ class MyRobot(CommandBasedRobot):
         self.timer.reset()
         self.timer.start()
         self.curr = 0
-        self.autonChooser.getSelected().start()
+        #self.autonChooser.getSelected().start()
 
 
     def updateDashboardInit(self):
-        #SmartDashboard.putData("Drive", self.drive)
-        #SmartDashboard.putData("Hatch", self.hatchMech)
+        SmartDashboard.putData("Drive", self.drive)
+        SmartDashboard.putData("Hatch", self.hatchMech)
         #SmartDashboard.putData("Cargo", self.cargoMech)
         #SmartDashboard.putData("Climber", self.climber)
-        #self.drive.dashboardInit()
-        #self.hatchMech.dashboardInit()
+        self.drive.dashboardInit()
+        self.hatchMech.dashboardInit()
         #self.cargoMech.dashboardInit()
         #self.climber.dashboardInit()
         #self.limelight.dashboardInit()
@@ -148,8 +148,9 @@ class MyRobot(CommandBasedRobot):
 
     def updateDashboardPeriodic(self):
         SmartDashboard.putNumber("PressureSwitchValue", self.compressor.getPressureSwitchValue())
+        SmartDashboard.putNumber("Timer", self.timer.get())
         self.rate.execute()
-        #self.drive.dashboardPeriodic()
+        self.drive.dashboardPeriodic()
         #self.hatchMech.dashboardPeriodic()
         #self.cargoMech.dashboardPeriodic()
         self.climber.dashboardPeriodic()
@@ -159,8 +160,9 @@ class MyRobot(CommandBasedRobot):
         autonomous.dashboardPeriodic()
 
     def telopInit(self):
-        auton: Command = self.autonChooser.getSelected()
-        auton.cancel()
+        #auton: Command = self.autonChooser.getSelected()
+        #auton.cancel()
+        pass
 
     def disabledInit(self):
         self.drive.disable()
