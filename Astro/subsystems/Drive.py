@@ -74,8 +74,17 @@ class Drive(Subsystem):
         TalonLeft = Talon(map.driveLeft1)
         TalonRight = Talon(map.driveRight1)
 
-        TalonLeft.setInverted(True)
-        TalonRight.setInverted(False)
+        leftInverted = True
+        rightInverted = False
+        if map.robotID == map.AstroV1:
+            leftInverted = False
+            rightInverted = True
+        SmartDashboard.putBoolean("LeftInverted", leftInverted)
+        SmartDashboard.putNumber("RobotID" , map.robotID)
+
+
+        TalonLeft.setInverted(leftInverted)
+        TalonRight.setInverted(rightInverted)
 
         if not wpilib.RobotBase.isSimulation():
             VictorLeft1 = Victor(map.driveLeft2)
@@ -91,12 +100,12 @@ class Drive(Subsystem):
             for motor in [VictorLeft1,VictorLeft2]:
                 motor.clearStickyFaults(timeout)
                 motor.setSafetyEnabled(False)
-                motor.setInverted(True)
+                motor.setInverted(leftInverted)
 
             for motor in [VictorRight1,VictorRight2]:
                 motor.clearStickyFaults(timeout)
                 motor.setSafetyEnabled(False)
-                motor.setInverted(False)
+                motor.setInverted(rightInverted)
 
 
         for motor in [TalonLeft,TalonRight]:
