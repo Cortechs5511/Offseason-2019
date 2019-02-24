@@ -17,6 +17,12 @@ class CargoMech(Subsystem):
         #fix
         self.motorIntake = ctre.WPI_TalonSRX(map.intake)
         self.motorWrist = ctre.WPI_TalonSRX(map.wrist)
+<<<<<<< HEAD
+=======
+        self.motorIntake.setName("Cargo","Motor Intake")
+        self.motorWrist.setName("Cargo", "Motor Wrist")
+        
+>>>>>>> b4ab13c666025fe648767a75d599e27c2d0571bf
     def intake(self):
         ''' Intake the balls (turn wheels inward) '''
         self.motorIntake.set(0.5)
