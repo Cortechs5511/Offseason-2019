@@ -12,9 +12,10 @@ from commands.climber.liftRobot import LiftRobot
 from commands.climber.lowerRobot import LowerRobot
 from commands.climber.setSpeedWheel import SetSpeedWheel
 from commands.climber.autoClimb import AutoClimb
-
+from subsystems.disableAll import DisableAll
 from commands.climber.driveToEdge import DriveToEdge
 
+ 
 import map
 
 class Climber(Subsystem):
@@ -31,9 +32,9 @@ class Climber(Subsystem):
     def __init__(self, robot):
         super().__init__('Climber')
 
+        
         self.robot = robot
         self.debug = True
-
         self.DriveToEdge = DriveToEdge
 
         timeout = 0
@@ -41,17 +42,21 @@ class Climber(Subsystem):
         self.backsensor = wpilib.AnalogInput(1)
         self.backLift = Talon(map.backLift)
         self.frontLift = Talon(map.frontLift)
+        self.backLift.setName("Climber", "Back Lift")
+        self.frontLift.setName("Climber", "Front Lift")
         self.frontLift.setInverted(True)
         self.backLift.setInverted(True)
         self.wheelLeft = Talon(map.wheelLeft)
         self.wheelRight = Talon(map.wheelRight)
+        self.wheelLeft.setName("Climber", "Wheel Left")
+        self.wheelRight.setName("Climber", "Wheel Right")
         self.wheelLeft.setInverted(False)
         self.wheelRight.setInverted(True)
         self.switchBottomBack = wpilib.DigitalInput(8)
         self.switchTopFront = wpilib.DigitalInput(7)
         self.switchBottomFront = wpilib.DigitalInput(6)
         self.switchTopBack = wpilib.DigitalInput(9)
-
+     
        
         #self.wheels = self.wheelLeft
 
@@ -90,6 +95,9 @@ class Climber(Subsystem):
 
         liftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(10)
         liftButton.whileHeld(LowerRobot("both"))
+
+        disableAll : wpilib.buttons.JoystickButton = r.operatorButton(9)
+        disableAll.whenPressed(DisableAll())
 
         climberFrontUp : wpilib.buttons.JoystickButton = r.driverLeftButton(13)
         climberFrontUp.whileHeld(LiftRobot("front"))
