@@ -40,13 +40,12 @@ class Ramsetes():
 
         else:
             kV = [0.05, 0.0, 0.004, 0.0] #velocity
-            kA = [0.00001, 0.0, 0.00001, 0.0] #angle
-
-            self.kB = 0.01 #curvature
-            self.kZeta = 0.38 #dampening
+            kA = [0.01, 0.0, 0.0, 0.0] #angle
+            self.kB = 2 #0.01 #curvature
+            self.kZeta = 0.7 #0.38 #dampening
 
         TolVel = 0.2
-        TolAngle = 1
+        TolAngle = 2
 
         ''' drive straight Gains
         kV = [0.05, 0.0, 0.01, 0.0] #velocity
@@ -117,7 +116,7 @@ class Ramsetes():
     def initPath(self, name):
         self.finished = False
 
-        [self.left,self.right,modifier] = PathGen.getTraj(name, self.model, self.period)
+        [self.left, self.right, modifier] = PathGen.getTraj(name, self.model, self.period)
         PathGen.showPath(self.left,self.right,modifier)
 
         self.time = 0

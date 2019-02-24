@@ -48,11 +48,8 @@ class Drive(Subsystem):
     leftVal = 0
     rightVal = 0
 
-    leftConv = -6/12 * math.pi / 256
+    leftConv = 6/12 * math.pi / 256
     rightConv = 6/12 * math.pi / 256
-
-    leftConv = leftConv * -1
-    rightConv = rightConv * -1
 
     def __init__(self, robot):
         super().__init__('Drive')
@@ -150,7 +147,7 @@ class Drive(Subsystem):
             Rtransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.08)
         Ltransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.08)
         Rtransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.2)
-        self.model = dDrive.DifferentialDrive(29, 1.83, 0, units.inchesToMeters(3.0), units.inchesToMeters(14), Ltransmission, Rtransmission)
+        self.model = dDrive.DifferentialDrive(49, 1.83, 0, units.inchesToMeters(3.0), units.inchesToMeters(14), Ltransmission, Rtransmission)
         self.maxVel = self.maxSpeed*self.model.getMaxAbsVelocity(0, 0, 12)
         self.Path = Path.Path(self, self.model, self.odTemp, self.getDistance)
 
@@ -249,7 +246,6 @@ class Drive(Subsystem):
         self.leftVal = self.leftEncoder.get()
         self.rightVal = self.rightEncoder.get()
         self.navxVal = self.navx.getYaw()
-        if not wpilib.RobotBase.isSimulation(): self.navxVal*=-1
 
     def getAngle(self):
         return self.navxVal

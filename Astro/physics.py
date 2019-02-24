@@ -12,7 +12,7 @@ class PhysicsEngine(object):
         self.position = 0
 
         self.DistPerPulseL = 6/12 * math.pi / 256
-        self.DistPerPulseR = -6/12 * math.pi / 256
+        self.DistPerPulseR = 6/12 * math.pi / 256
 
         # Change these parameters to fit your robot!
         self.drivetrain = tankmodel.TankModel.theory(
