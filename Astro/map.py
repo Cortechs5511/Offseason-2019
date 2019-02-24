@@ -1,3 +1,6 @@
+import wpilib
+
+
 #Can ID
 driveLeft1 = 10
 driveLeft2 = 11
@@ -26,3 +29,10 @@ climberLock2 = 3
 
 leftEncoder = (0,1)
 rightEncoder = (2,3)
+
+#sets the system preferences
+AstroV1 = 1
+AstroV2 = 2
+Synapse = 3
+preferences = wpilib.Preferences.getInstance()
+robotID = preferences.getInt("robotID" , AstroV2)
