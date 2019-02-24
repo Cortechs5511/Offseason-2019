@@ -10,19 +10,15 @@ from commands.cargo.wristMove import WristMove
 import map
 class CargoMech(Subsystem):
     def __init__(self, Robot):
-        """ Create all physical parts used by subsystem. """
+        #Create all physical parts used by subsystem.
         super().__init__('Cargo')
         self.debug = True
         self.robot = Robot
         #fix
         self.motorIntake = ctre.WPI_TalonSRX(map.intake)
         self.motorWrist = ctre.WPI_TalonSRX(map.wrist)
-<<<<<<< HEAD
-=======
         self.motorIntake.setName("Cargo","Motor Intake")
         self.motorWrist.setName("Cargo", "Motor Wrist")
-        
->>>>>>> b4ab13c666025fe648767a75d599e27c2d0571bf
     def intake(self):
         ''' Intake the balls (turn wheels inward) '''
         self.motorIntake.set(0.5)

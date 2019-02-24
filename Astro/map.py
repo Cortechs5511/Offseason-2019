@@ -33,7 +33,8 @@ rightEncoder = (2,3)
 
 #sets the system preferences
 
-"""def getInt(Key , V): 
+"""
+def getInt(Key , V): 
     preferences = wpilib.Preferences.getInstance()
     V = preferences.getInt(Key, V)
     if preferences.containsKey(Key):
@@ -48,3 +49,4 @@ AstroV2 = 2
 Synapse = 3
 
 robotID = getInt("robotID" , AstroV2)
+"""
