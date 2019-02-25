@@ -61,8 +61,11 @@ class MyRobot(CommandBasedRobot):
 
         Command.getRobot = lambda x=0: self
 
+        # Load system preferences prior to constructing
+        # subsystems
         map.loadPreferences()
 
+        # Construct subsystems prior to constructing commands
         self.limelight = Limelight.Limelight(self)
         self.hatchMech = HatchMech.HatchMech(self)
         self.cargoMech = CargoMech.CargoMech(self)
