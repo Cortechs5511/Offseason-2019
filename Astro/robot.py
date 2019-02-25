@@ -89,7 +89,8 @@ class MyRobot(CommandBasedRobot):
         self.loop_timer.measure()
 
     def robotPeriodic(self):
-        #self.drive.odMain.display()
+        print("Main, Temp")
+        self.drive.odMain.display()
         self.drive.odTemp.display()
 
         #self.limelight.readLimelightData()

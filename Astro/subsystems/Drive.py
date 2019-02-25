@@ -138,8 +138,8 @@ class Drive(Subsystem):
         self.angleController = angleController
         self.angleController.disable()
 
-        self.odMain = od.Odometer(self.robot.period)
-        self.odTemp = od.Odometer(self.robot.period)
+        self.odMain = od.Odometer(self.robot.period, fudge=1)
+        self.odTemp = od.Odometer(self.robot.period, fudge=1.01)
 
         #Incorrect until redone
         if wpilib.RobotBase.isSimulation():
