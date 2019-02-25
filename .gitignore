@@ -1,5 +1,6 @@
 .vscode/settings.json
 *.pyc
-Astro/.vscode/settings.json
-Astro/.vscode/settings.json
+**/.vscode/settings.json
 Testing/NavxTest/.vscode/settings.json
+**/networktables.ini
+**/networktables.ini.bak

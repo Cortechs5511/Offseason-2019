@@ -78,13 +78,9 @@ class Drive(Subsystem):
 
         leftInverted = True
         rightInverted = False
-        if map.robotID == map.AstroV1:
+        if map.robotId == map.astroV1:
             leftInverted = False
             rightInverted = True
-        SmartDashboard.putBoolean("LeftInverted", leftInverted)
-        SmartDashboard.putNumber("RobotID" , map.robotID)
-
-
         TalonLeft.setInverted(leftInverted)
         TalonRight.setInverted(rightInverted)
 

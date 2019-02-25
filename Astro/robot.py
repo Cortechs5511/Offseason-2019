@@ -23,6 +23,7 @@ from commands.drive.rotateAuton import autonRotation
 
 from wpilib.sendablechooser import SendableChooser
 
+import map
 from subsystems import HatchMech
 from subsystems import CargoMech
 from subsystems import Climber
@@ -60,7 +61,9 @@ class MyRobot(CommandBasedRobot):
 
         Command.getRobot = lambda x=0: self
 
-        #self.limelight = Limelight.Limelight(self)
+        map.loadPreferences()
+
+        self.limelight = Limelight.Limelight(self)
         self.hatchMech = HatchMech.HatchMech(self)
         self.cargoMech = CargoMech.CargoMech(self)
         self.climber = Climber.Climber(self)
@@ -119,7 +122,7 @@ class MyRobot(CommandBasedRobot):
         #self.drive.odMain.display()
         #self.drive.odTemp.display()
 
-        #self.limelight.readLimelightData()
+        self.limelight.readLimelightData()
         if(self.dashboard): self.updateDashboardPeriodic()
 
     def autonomousInit(self):
@@ -131,33 +134,33 @@ class MyRobot(CommandBasedRobot):
 
 
     def updateDashboardInit(self):
-        SmartDashboard.putData("Drive", self.drive)
-        SmartDashboard.putData("Hatch", self.hatchMech)
+        #SmartDashboard.putData("Drive", self.drive)
+        #SmartDashboard.putData("Hatch", self.hatchMech)
         #SmartDashboard.putData("Cargo", self.cargoMech)
         #SmartDashboard.putData("Climber", self.climber)
-        self.drive.dashboardInit()
-        self.hatchMech.dashboardInit()
+        #self.drive.dashboardInit()
+        #self.hatchMech.dashboardInit()
         #self.cargoMech.dashboardInit()
         #self.climber.dashboardInit()
-        #self.limelight.dashboardInit()
+        self.limelight.dashboardInit()
 
         #sequences.dashboardInit()
-        autonomous.dashboardInit()
+        #autonomous.dashboardInit()
 
         #SmartDashboard.putData("Zero", Zero())
 
     def updateDashboardPeriodic(self):
-        SmartDashboard.putNumber("PressureSwitchValue", self.compressor.getPressureSwitchValue())
-        SmartDashboard.putNumber("Timer", self.timer.get())
+        #SmartDashboard.putNumber("PressureSwitchValue", self.compressor.getPressureSwitchValue())
+        #SmartDashboard.putNumber("Timer", self.timer.get())
         self.rate.execute()
-        self.drive.dashboardPeriodic()
+        #self.drive.dashboardPeriodic()
         #self.hatchMech.dashboardPeriodic()
         #self.cargoMech.dashboardPeriodic()
-        self.climber.dashboardPeriodic()
-        #self.limelight.dashboardPeriodic()
+        #self.climber.dashboardPeriodic()
+        self.limelight.dashboardPeriodic()
 
         #sequences.dashboardPeriodic()
-        autonomous.dashboardPeriodic()
+        #autonomous.dashboardPeriodic()
 
     def telopInit(self):
         #auton: Command = self.autonChooser.getSelected()
