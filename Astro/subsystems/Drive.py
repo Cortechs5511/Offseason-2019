@@ -139,7 +139,10 @@ class Drive(Subsystem):
         self.angleController.disable()
 
         self.odMain = od.Odometer(self.robot.period, fudge=1)
-        self.odTemp = od.Odometer(self.robot.period, fudge=1.01)
+        #Doesn't change the axis, just displayed
+
+        self.odTemp = od.Odometer(self.robot.period, fudge=1.07)
+        #Passed into Ramsetes
 
         #Incorrect until redone
         if wpilib.RobotBase.isSimulation():
@@ -324,6 +327,7 @@ class Drive(Subsystem):
 
     def dashboardPeriodic(self):
         SmartDashboard.putBoolean("Driving Reverse", self.flipped)
+        SmartDashboard.putNumber("NavX", self.getAngle())
 
         if(self.debug==False): return
         SmartDashboard.putNumber("Left Counts", self.leftEncoder.get())

@@ -30,7 +30,8 @@ class Align(TimedCommand):
         if(y<-2): self.name = "AlignLeft"
         elif(y>2): self.name= "AlignRight"
         else: self.name = "AlignBack"
-        #print(self.name)
+        #else: self.name = "DriveStraight"
+        print(self.name)
 
         super(Align, self).start()
 

@@ -93,7 +93,7 @@ class MyRobot(CommandBasedRobot):
         self.drive.odMain.display()
         self.drive.odTemp.display()
 
-        #self.limelight.readLimelightData()
+        self.limelight.readLimelightData()
         if(self.dashboard): self.updateDashboardPeriodic()
 
     def autonomousInit(self):
@@ -103,7 +103,8 @@ class MyRobot(CommandBasedRobot):
         self.curr = 0
 
         #[x,y] = self.limelight.getPathXY()
-        [x,y] = [-120/12, 60/12]
+        [x,y] = [-10, 5]
+        #X is positive forward, Y is positive right
         #self.DrivePath.start()
         self.Align.start(x,y)
 

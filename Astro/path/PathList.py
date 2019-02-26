@@ -9,12 +9,13 @@ from CRLibrary.physics import DifferentialDrive as ddrive
 from CRLibrary.path import odometry as od
 from CRLibrary.util import units
 from CRLibrary.util import util
+#Y Values in the PathList are Negative
 
 def makeTraj(name):
     if(name=="DriveStraight"):
         points = [
             pf.Waypoint(0,0,0),
-            pf.Waypoint(20,0,0)
+            pf.Waypoint(10,0,0)
         ]
 
     elif(name=="AlignBack"):
@@ -36,5 +37,6 @@ def makeTraj(name):
             pf.Waypoint(-10,-5,0),
             pf.Waypoint(-5,0,0),
             pf.Waypoint(0,0,0)
+            #y axis is negative
         ]
     return points
