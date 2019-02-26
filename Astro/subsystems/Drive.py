@@ -73,8 +73,7 @@ class Drive(Subsystem):
 
         TalonLeft = Talon(map.driveLeft1)
         TalonRight = Talon(map.driveRight1)
-        TalonLeft.setName("Drive", "Drive Left 1")
-        TalonRight.setName("Drive", "Drive Right 1")
+       
 
         leftInverted = True
         rightInverted = False
@@ -87,15 +86,15 @@ class Drive(Subsystem):
         if not wpilib.RobotBase.isSimulation():
             VictorLeft1 = Victor(map.driveLeft2)
             VictorLeft2 = Victor(map.driveLeft3)
-            VictorLeft1.setName("Drive", "Drive Left 2")
-            VictorLeft2.setName("Drive", "Drive Left 3")
+            VictorLeft1.setName("Drive", "Victor Left 1")
+            VictorLeft2.setName("Drive", "Victor Left 2")
             VictorLeft1.follow(TalonLeft)
             VictorLeft2.follow(TalonLeft)
 
             VictorRight1 = Victor(map.driveRight2)
             VictorRight2 = Victor(map.driveRight3)
-            VictorRight1.setName("Drive", "Drive Right 2")
-            VictorRight2.setName("Drive", "Drive Right 3")
+            VictorRight1.setName("Drive", "Victor Right 1")
+            VictorRight2.setName("Drive", "Victor Right 2")
             VictorRight1.follow(TalonRight)
             VictorRight2.follow(TalonRight)
 
@@ -127,6 +126,8 @@ class Drive(Subsystem):
         self.left = TalonLeft
         self.right = TalonRight
 
+        self.left.setName("Drive", "Left Talon")
+        self.right.setName("Drive", "Right Talon")
         self.navx = navx.AHRS.create_spi()
 
         self.leftEncoder = wpilib.Encoder(map.leftEncoder[0], map.leftEncoder[1])
