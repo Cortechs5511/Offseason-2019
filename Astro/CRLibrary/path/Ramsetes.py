@@ -33,7 +33,7 @@ class Ramsetes():
         '''Gains'''
         if wpilib.RobotBase.isSimulation():
             kV = [0.20, 0.0, 0.0, 0.0] #velocity
-            kA = [0.01, 0.0, 0.0, 0.0] #angle
+            kA = [0.01, 0.0, 0.08, 0.0] #angle
 
             self.kB = 2 #curvature
             self.kZeta = 0.7 #dampening

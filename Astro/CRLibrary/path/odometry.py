@@ -4,9 +4,10 @@ from CRLibrary.util import units
 
 class Odometer():
 
-    def __init__(self, period=1/50, x=0, y=0, angle=0, fudge=1):
+    def __init__(self, period=1/50, x=0, y=0, angle=0, fudgeX=1, fudgeY=1):
         self.period = period
-        self.fudge = fudge
+        self.fudgeX = fudgeX
+        self.fudgeY = fudgeY
 
         [self.x, self.y, self.angle, self.rightVel, self.leftVel] = [x, y, angle, 0, 0]
 
@@ -14,8 +15,13 @@ class Odometer():
         return self.period
 
     def update(self, leftV, rightV, angleIn):
-        self.leftVel = leftV * self.fudge
-        self.rightVel = rightV * self.fudge
+        self.leftVx = math.cos(math.pi/180*angleIn) * leftV * self.fudgeX
+        self.leftVy = math.sin(math.pi/180*angleIn) * leftV * self.fudgeY
+        self.leftVel = (self.leftVx**2 + self.leftVy**2)**0.5
+
+        self.rightVx = math.cos(math.pi/180*angleIn) * rightV * self.fudgeX
+        self.rightVy = math.sin(math.pi/180*angleIn) * rightV * self.fudgeY
+        self.rightVel = (self.rightVx**2 + self.rightVy**2)**0.5
 
         speed = ((self.leftVel + self.rightVel))/2
         self.x += speed * self.period * math.cos(math.pi/180*angleIn)

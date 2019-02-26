@@ -138,16 +138,12 @@ class Drive(Subsystem):
         self.angleController = angleController
         self.angleController.disable()
 
-        self.odMain = od.Odometer(self.robot.period, fudge=1)
+        self.odMain = od.Odometer(self.robot.period, fudgeX=1, fudgeY=1)
         #Doesn't change the axis, just displayed
 
-        self.odTemp = od.Odometer(self.robot.period, fudge=1.07)
-        #Passed into Ramsetes
+        self.odTemp = od.Odometer(self.robot.period, fudgeX=1.11, fudgeY=0.97)
+        #Passed into Ramsetes, (1.07, 1.00 last used for real life tuning)
 
-        #Incorrect until redone
-        if wpilib.RobotBase.isSimulation():
-            Ltransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.08)
-            Rtransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.08)
         Ltransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.08)
         Rtransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.2)
         self.model = dDrive.DifferentialDrive(49, 1.83, 0, units.inchesToMeters(3.0), units.inchesToMeters(14), Ltransmission, Rtransmission)

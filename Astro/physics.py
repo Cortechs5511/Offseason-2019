@@ -17,12 +17,12 @@ class PhysicsEngine(object):
         # Change these parameters to fit your robot!
         self.drivetrain = tankmodel.TankModel.theory(
             motor_cfgs.MOTOR_CFG_MINI_CIM,  # motor configuration
-            60*units.lbs,                  # robot mass
+            120*units.lbs,                  # robot mass
             9.44,                           # drivetrain gear ratio
             3,                              # motors per side
             (20/12)*units.feet,             # robot wheelbase
-            (30/12)*units.feet,             # robot width
-            (30/12)*units.feet,             # robot length
+            (35/12)*units.feet,             # robot width
+            (35/12)*units.feet,             # robot length
             (6/12)*units.feet               # wheel diameter
         )
 
