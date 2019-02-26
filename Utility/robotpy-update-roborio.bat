@@ -23,15 +23,15 @@ exit /b 1
 
 :foundPython
 
+cd %ROBOTPY%
 rem Install/update robotpy on roboRIO
-robotpy-installer install-robotpy
+%PYTHON% installer.py install-robotpy
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 rem Install robotpy modules for roboRIO
-robotpy-installer install-opkg python37-robotpy-cscore
-robotpy-installer install-opkg python37-robotpy-ctre
-robotpy-installer install-pip robotpy-navx
-robotpy-installer install-opkg robotpy-rev
-robotpy-installer install-pip -r requirements.txt
-robotpy-installer install-pip robotpy-pathfinder
+%PYTHON% installer.py install-opkg python37-robotpy-cscore
+%PYTHON% installer.py install-opkg python37-robotpy-ctre
+%PYTHON% installer.py install-opkg robotpy-rev
+%PYTHON% installer.py install-opkg robotpy-pathfinder
+%PYTHON% installer.py install-pip robotpy-navx
 

@@ -32,17 +32,17 @@ rem Install/upgrade pip modules for programming
 cd %ROBOTPY%
 @if %errorlevel% neq 0 exit /b %errorlevel%
 
-robotpy-installer download-robotpy
+%PYTHON% installer.py download-robotpy
 @if %errorlevel% neq 0 exit /b %errorlevel%
 
 @rem Download robotpy modules for roboRIO
-robotpy-installer download-opkg python37-robotpy-cscore
+%PYTHON% installer.py download-opkg python37-robotpy-cscore
 @if %errorlevel% neq 0 exit /b %errorlevel%
-robotpy-installer download-opkg python37-robotpy-ctre
+%PYTHON% installer.py download-opkg python37-robotpy-ctre
 @if %errorlevel% neq 0 exit /b %errorlevel%
-robotpy-installer download-pip robotpy-navx
+%PYTHON% installer.py download-pip robotpy-navx
 @if %errorlevel% neq 0 exit /b %errorlevel%
-robotpy-installer download-opkg robotpy-rev
+%PYTHON% installer.py download-opkg robotpy-rev
 @if %errorlevel% neq 0 exit /b %errorlevel%
-robotpy-installer download-pip robotpy-pathfinder
+%PYTHON% installer.py download-opkg robotpy-pathfinder
 @if %errorlevel% neq 0 exit /b %errorlevel%
