@@ -4,3 +4,4 @@
 Testing/NavxTest/.vscode/settings.json
 **/networktables.ini
 **/networktables.ini.bak
+**/.pytest_cache

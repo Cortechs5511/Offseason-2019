@@ -9,18 +9,20 @@ from robotpy_ext.misc.looptimer import LoopTimer
 
 #class of robot
 class MyRobot(wpilib.TimedRobot):
+
 #initialization
     def robotInit(self):
         self.loop_timer = LoopTimer(self.logger)
 
         #Intake motors
-        self.Intake1 = ctre.WPI_TalonSRX(50)
-        self.Intake1.setNeutralMode(2)
-        self.Intake1.setInverted(True)
-        self.Intake2 = ctre.WPI_TalonSRX(51)
-        self.Intake2.setNeutralMode(2)
-        self.Intake2.setInverted(True)
-        self.Intake1.follow(self.Intake2)
+        self.Intake1: wpilib.VictorSP = wpilib.VictorSP(0) # ctre.WPI_TalonSRX(50)
+        self.Intake2: wpilib.VictorSP = wpilib.VictorSP(1) # ctre.WPI_TalonSRX(51)
+        # When TalonSRX/VictorSPX CAN used
+        # self.Intake1.setNeutralMode(2)
+        # self.Intake1.setInverted(True)
+        # self.Intake2.setNeutralMode(2)
+        # self.Intake2.setInverted(True)
+        # self.Intake1.follow(self.Intake2)
 
         #lift motors
         '''self.Lift1 = ctre.WPI_TalonSRX(30)
@@ -86,19 +88,17 @@ class MyRobot(wpilib.TimedRobot):
         rotation = (self.Joystick0.getRawAxis(0))
         intakeButton = self.Controller1.getRawAxis(2)
         outtakeButton = self.Controller1.getRawAxis(3)
-        liftButtonUp = (self.Controller1.getRawButton(4))
-        liftButtonDown = (self.Controller1.getRawButton(1))
+        #liftButtonUp = (self.Controller1.getRawButton(4))
+        #liftButtonDown = (self.Controller1.getRawButton(1))
         #arcade tank toggle
-        #if True:
-            #self.mrbDrive(left, rotation)
-        #elif self.tankMode == True:
-            #self.drive(left, right)
-        #else:
-        self.arcadeDrive(left,rotation)
+        if self.tankMode == True:
+            self.drive(left, right)
+        else:
+            self.arcadeDrive(left,rotation)
         '''#lift
         self.lift(liftButtonUp,liftButtonDown)
-
-        self.intake(intakeButton > 0.5,outtakeButton > 0.5)'''
+        '''
+        self.intake(intakeButton > 0.5,outtakeButton > 0.5)
 
 
 
@@ -122,14 +122,15 @@ class MyRobot(wpilib.TimedRobot):
         else:
             self.drive(0,0)
 
-    #intake function
-    '''def intake(self,intakeIn,out):
+    def intake(self,intakeIn,out):
+        power = 0.0
         if intakeIn and not out:
-            self.Intake2.set(0.5)
+            power = 0.5
         elif out and not intakeIn:
-            self.Intake2.set(-0.5)
-        else:
-            self.Intake2.set(0)'''
+            power = -0.5
+
+        self.Intake1.set(-power)
+        self.Intake2.set(power)
 
     #lift function
     '''def lift(self,up,down):
