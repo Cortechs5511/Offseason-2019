@@ -27,8 +27,9 @@ from subsystems import Limelight
 from robotpy_ext.misc import looptimer
 from CRLibrary.path import odometry as od
 
-
 import rate
+
+import cProfile
 
 class MyRobot(CommandBasedRobot):
 
@@ -38,10 +39,15 @@ class MyRobot(CommandBasedRobot):
     frequency = 20
     period = 1/frequency
 
+    count = 1
+
     def __init__(self):
         super().__init__(self.period)
 
     def robotInit(self):
+
+        self.pr = cProfile.Profile()
+        self.pr.enable()
 
         '''
         This is a good place to set up your subsystems and anything else that
@@ -89,9 +95,16 @@ class MyRobot(CommandBasedRobot):
         self.loop_timer.measure()
 
     def robotPeriodic(self):
-        print("Main, Temp")
-        self.drive.odMain.display()
-        self.drive.odTemp.display()
+        #print("Main, Temp")
+        #elf.drive.odMain.display()
+        #self.drive.odTemp.display()
+        self.count = (self.count + 1) % (self.frequency*10)
+        if(self.count==0):
+            print()
+            print("Start Here")
+            self.pr.print_stats()
+            print("End Here")
+            print()
 
         self.limelight.readLimelightData()
         if(self.dashboard): self.updateDashboardPeriodic()
@@ -181,9 +194,6 @@ class MyRobot(CommandBasedRobot):
     def readDriverLeftButton(self,id):
         """ Return button value from left joystick """
         return self.joystick0.getRawButton(id)
-
-
-
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)
