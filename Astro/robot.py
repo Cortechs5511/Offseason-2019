@@ -102,7 +102,7 @@ class MyRobot(CommandBasedRobot):
         self.hatchMech.subsystemInit()
         #self.cargoMech.subsystemInit()
         self.climber.subsystemInit()
-        #self.climber.dashboardInit()
+        self.climber.dashboardInit()
 
         climberAuto : wpilib.buttons.JoystickButton = self.driverLeftButton(11)
         cg = CommandGroup("AutoClimb")
@@ -159,7 +159,7 @@ class MyRobot(CommandBasedRobot):
         #self.drive.dashboardPeriodic()
         #self.hatchMech.dashboardPeriodic()
         #self.cargoMech.dashboardPeriodic()
-        #self.climber.dashboardPeriodic()
+        self.climber.dashboardPeriodic()
         self.limelight.dashboardPeriodic()
 
         #sequences.dashboardPeriodic()

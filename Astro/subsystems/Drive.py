@@ -73,13 +73,13 @@ class Drive(Subsystem):
 
         TalonLeft = Talon(map.driveLeft1)
         TalonRight = Talon(map.driveRight1)
-       
+
 
         leftInverted = True
         rightInverted = False
         if map.robotId == map.astroV1:
-            leftInverted = False
-            rightInverted = True
+            leftInverted = True
+            rightInverted = False
         TalonLeft.setInverted(leftInverted)
         TalonRight.setInverted(rightInverted)
 

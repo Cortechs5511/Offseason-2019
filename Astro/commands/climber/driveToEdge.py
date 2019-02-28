@@ -14,7 +14,7 @@ class DriveToEdge(Command):
         pass
 
     def execute(self):
-        lean = self.climber.getPitch()
+        lean = self.climber.getLean()
         if self.mode == "front":
             self.climber.wheelForward()
             if lean < -0.5: self.climber.backLift.set(0.5, True)
