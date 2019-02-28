@@ -67,7 +67,7 @@ class MyRobot(CommandBasedRobot):
 
         # Construct subsystems prior to constructing commands
         self.limelight = Limelight.Limelight(self)
-        self.hatchMech = HatchMech.HatchMech(self)
+        self.hatchMech = HatchMech.HatchMech()
         self.cargoMech = CargoMech.CargoMech(self)
         self.climber = Climber.Climber(self)
         self.drive = Drive.Drive(self)
@@ -99,10 +99,11 @@ class MyRobot(CommandBasedRobot):
         #self.autonChooser.addOption("AutonRotation", autonRotation())
         #SmartDashboard.putData("AutonChooser", self.autonChooser)
 
-        self.hatchMech.subsystemInit()
+        #self.hatchMech.subsystemInit()
         #self.cargoMech.subsystemInit()
         self.climber.subsystemInit()
         self.climber.dashboardInit()
+        self.hatchMech.hatchInit(self)
 
         climberAuto : wpilib.buttons.JoystickButton = self.driverLeftButton(11)
         cg = CommandGroup("AutoClimb")
@@ -124,7 +125,7 @@ class MyRobot(CommandBasedRobot):
     def robotPeriodic(self):
         #self.drive.odMain.display()
         #self.drive.odTemp.display()
-
+        self.hatchMech.hatchPeriodic()
         self.limelight.readLimelightData()
         if(self.dashboard): self.updateDashboardPeriodic()
 
@@ -172,7 +173,7 @@ class MyRobot(CommandBasedRobot):
 
     def disabledInit(self):
         self.drive.disable()
-        self.hatchMech.disable()
+        #self.hatchMech.disable()
         #self.cargoMech.disable()
         self.climber.disable()
 
