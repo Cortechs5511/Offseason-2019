@@ -391,7 +391,7 @@ class Drive(Subsystem):
 
         #SmartDashboard.putBoolean("Disable All", self.disableAll.getBoolean())
         #SmartDashboard.putBoolean("Auto Climb", self.autoClimb.getBoolean())
-
+        SmartDashboard.putNumber("Match Timer", self.robot.timer.get())
     def bumpCheck(self, bumpInt = 0.4):
         self.accelX = self.accel.getX()
         self.accelY = self.accel.getY()
