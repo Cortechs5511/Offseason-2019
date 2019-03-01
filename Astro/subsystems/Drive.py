@@ -100,17 +100,17 @@ class Drive(Subsystem):
 
             for motor in [VictorLeft1,VictorLeft2]:
                 motor.clearStickyFaults(timeout)
-                motor.setSafetyEnabled(False)
+                motor.setSafetyEnabled(True)
                 motor.setInverted(leftInverted)
 
             for motor in [VictorRight1,VictorRight2]:
                 motor.clearStickyFaults(timeout)
-                motor.setSafetyEnabled(False)
+                motor.setSafetyEnabled(True)
                 motor.setInverted(rightInverted)
 
 
         for motor in [TalonLeft,TalonRight]:
-            motor.setSafetyEnabled(False)
+            motor.setSafetyEnabled(True)
             motor.clearStickyFaults(timeout) #Clears sticky faults
 
             motor.configContinuousCurrentLimit(15,timeout) #15 Amps per motor
@@ -391,7 +391,7 @@ class Drive(Subsystem):
 
         #SmartDashboard.putBoolean("Disable All", self.disableAll.getBoolean())
         #SmartDashboard.putBoolean("Auto Climb", self.autoClimb.getBoolean())
-
+        SmartDashboard.putNumber("Match Timer", self.robot.timer.get())
     def bumpCheck(self, bumpInt = 0.4):
         self.accelX = self.accel.getX()
         self.accelY = self.accel.getY()

@@ -52,8 +52,8 @@ class Drive(Subsystem):
 
         TalonLeft = Talon(10)
         TalonRight = Talon(20)
-        TalonLeft.setSafetyEnabled(False)
-        TalonRight.setSafetyEnabled(False)
+        TalonLeft.setSafetyEnabled(True)
+        TalonRight.setSafetyEnabled(True)
 
         if not wpilib.RobotBase.isSimulation():
             VictorLeft1 = Victor(11)
@@ -68,12 +68,12 @@ class Drive(Subsystem):
 
             for motor in [VictorLeft1,VictorLeft2,VictorRight1,VictorRight2]:
                 motor.clearStickyFaults(timeout)
-                motor.setSafetyEnabled(False)
+                motor.setSafetyEnabled(True)
                 motor.setInverted(True)
 
         for motor in [TalonLeft,TalonRight]:
             motor.setInverted(True)
-            motor.setSafetyEnabled(False)
+            motor.setSafetyEnabled(True)
             motor.clearStickyFaults(timeout) #Clears sticky faults
 
             motor.configContinuousCurrentLimit(15,timeout) #15 Amps per motor
