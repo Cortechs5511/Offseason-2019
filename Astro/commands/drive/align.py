@@ -12,7 +12,7 @@ class Align(TimedCommand):
 
     name = ""
 
-    def __init__(self, follower="PathFinder", timeout = 300):
+    def __init__(self, follower="PathFinder", timeout = 4):
         super().__init__('Align', timeoutInSeconds = timeout)
 
         self.requires(self.getRobot().drive)

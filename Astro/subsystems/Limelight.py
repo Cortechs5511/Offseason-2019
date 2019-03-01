@@ -4,6 +4,8 @@ import wpilib
 from wpilib import SmartDashboard
 from networktables import NetworkTables
 
+from CRLibrary.util import units
+
 class Limelight():
 
     abox = 92.25 #area of box around targets
@@ -51,10 +53,10 @@ class Limelight():
     def getDistance(self):
         """returns distance in inches from limelight to target"""
 
-        taBox = (self.thor * self.tvert)/(320**2) #box area as percentage of whole
+        taBox = (self.thor * self.tvert)/(320*240) #box area as percentage of whole
         if(taBox==None or taBox<=0): return -1
-        const = 4 * math.tan(0.471)*math.tan(0.3576)
-        return math.sqrt((self.abox)/(const*taBox))
+        const = 4 * math.tan(units.degreesToRadians(59.6/2))*math.tan(units.degreesToRadians(45.7/2))
+        return (math.sqrt((self.abox)/(const*taBox))) * 0.87
 
     def getAngle2(self):
         #return self.robot.drive.getAngle() - self.getTa() #idk if typo
@@ -77,6 +79,8 @@ class Limelight():
         SmartDashboard.putNumber("xError", self.getPathXY()[0])
         SmartDashboard.putNumber("yError", self.getPathXY()[1])
         SmartDashboard.putNumber("Distance",self.getDistance())
+        SmartDashboard.putNumber("thor",self.getThor())
+        SmartDashboard.putNumber("tvert",self.getTvert())
 
         SmartDashboard.putNumber("Angle1", self.tx)
         SmartDashboard.putNumber("Angle2", self.getAngle2())

@@ -138,15 +138,27 @@ class Drive(Subsystem):
         self.angleController = angleController
         self.angleController.disable()
 
+
+
+
+
+
+
+
+
+
+
+
+
         self.odMain = od.Odometer(self.robot.period, fudgeX=1, fudgeY=1)
         #Doesn't change the axis, just displayed
 
-        self.odTemp = od.Odometer(self.robot.period, fudgeX=1.11, fudgeY=0.97)
+        self.odTemp = od.Odometer(self.robot.period, fudgeX=1.08, fudgeY=0.97)
         #Passed into Ramsetes, (1.07, 1.00 last used for real life tuning)
 
-        Ltransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.08)
-        Rtransmission = DCMotor.DCMotorTransmission(5.21, 4.14, 1.2)
-        self.model = dDrive.DifferentialDrive(49, 1.83, 0, units.inchesToMeters(3.0), units.inchesToMeters(14), Ltransmission, Rtransmission)
+        Ltransmission = DCMotor.DCMotorTransmission(6, 4.14, 1.4) #5.21, 4.14, 1.08
+        Rtransmission = DCMotor.DCMotorTransmission(6, 4.14, 1.4)
+        self.model = dDrive.DifferentialDrive(49, 1.83, 0, units.inchesToMeters(3.0), units.inchesToMeters(20), Ltransmission, Rtransmission)
         self.maxVel = self.maxSpeed*self.model.getMaxAbsVelocity(0, 0, 12)
         self.Path = Path.Path(self, self.model, self.odTemp, self.getDistance)
 

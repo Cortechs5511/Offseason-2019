@@ -13,7 +13,7 @@ from CRLibrary.util import util
 from path import PathList
 
 MAXV = 5
-MAXA = 5
+MAXA = 4
 MAXJ = 5
 
 def getLimits():

@@ -33,7 +33,7 @@ import cProfile
 
 class MyRobot(CommandBasedRobot):
 
-    dashboard = True
+    dashboard = False
     follower = "Ramsetes"
 
     frequency = 20
@@ -86,6 +86,7 @@ class MyRobot(CommandBasedRobot):
         self.Align = Align(follower="Ramsetes", timeout = 300)
 
     def teleopInit(self):
+        self.drive.zero()
         self.loop_timer = looptimer.LoopTimer(self.logger)
         self.DrivePath.cancel()
         self.Align.cancel()
@@ -137,7 +138,7 @@ class MyRobot(CommandBasedRobot):
         #self.hatchMech.dashboardInit()
         #self.cargoMech.dashboardInit()
         #self.climber.dashboardInit()
-        #self.limelight.dashboardInit()
+        self.limelight.dashboardInit()
 
         sequences.dashboardInit()
         autonomous.dashboardInit()
@@ -150,7 +151,7 @@ class MyRobot(CommandBasedRobot):
         #self.hatchMech.dashboardPeriodic()
         #self.cargoMech.dashboardPeriodic()
         #self.climber.dashboardPeriodic()
-        #self.limelight.dashboardPeriodic()
+        self.limelight.dashboardPeriodic()
 
         sequences.dashboardPeriodic()
         autonomous.dashboardPeriodic()
@@ -163,6 +164,8 @@ class MyRobot(CommandBasedRobot):
 
     def disabledPeriodic(self):
         self.disabledInit()
+        self.DrivePath.cancel()
+        self.Align.cancel()
 
     #I think the below should go in oi.py somehow, but I'm lazy tonight - Abhijit
 
