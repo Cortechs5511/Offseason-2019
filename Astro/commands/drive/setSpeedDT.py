@@ -20,7 +20,7 @@ class SetSpeedDT(TimedCommand):
         SmartDashboard.putNumber("gain",1)
         self.maxspeed = 1.00 #In addition to normal reducing factor in Drive.py
         self.diffDrive = DifferentialDrive(self.DT.left,self.DT.right)
-        self.diffDrive.setSafetyEnabled(False)
+        self.diffDrive.setSafetyEnabled(True)
 
     def initialize(self):
         self.DT.setDirect()
