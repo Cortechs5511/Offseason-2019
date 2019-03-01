@@ -9,8 +9,9 @@ from commands.hatch.ejectHatch import EjectHatch
 from commands.hatch.slideToggle import SlideToggle
 from commands.hatch.shimmy import Shimmy
 import map
+import oi
 
-class HatchMech(Subsystem):
+'''class HatchMech(Subsystem):
     def __init__(self, Robot):
         """ Create all physical parts used by subsystem. """
         super().__init__('Hatch')
@@ -21,7 +22,7 @@ class HatchMech(Subsystem):
         self.ejectPistonSlide = wpilib.Solenoid(map.hatchSlide)
         self.ejectPiston.setName("Hatch" , "Ejector")
         self.ejectPistonSlide.setName("Hatch" , "Slider")
-        
+
     def isEjectorOut(self):
         """ Returns True when ejector is sticking out. """
         return self.ejectPiston.get()
@@ -73,4 +74,64 @@ class HatchMech(Subsystem):
         if self.debug:
             SmartDashboard.putBoolean("EjectorOut", self.isEjectorOut())
             SmartDashboard.putBoolean("SlideOut",self.isSlideIn())
-            SmartDashboard.putNumber("practice", self.preferences.putBoolean("practice",False))
+            SmartDashboard.putNumber("practice", self.preferences.putBoolean("practice",False))'''
+
+class HatchMech():
+    def hatchInit(self, Robot):
+        self.robot = Robot
+        self.operator = oi.getJoystick(2)
+        #Normally the ejectPiston would be on solenoid 1, but was changed to see if slide worked.
+        self.ejectPiston = wpilib.Solenoid(map.hatchKick)
+        self.ejectPistonSlide = wpilib.Solenoid(map.hatchSlide)
+        self.ejectPiston.setName("Hatch" , "Ejector")
+        self.ejectPistonSlide.setName("Hatch" , "Slider")
+
+        self.retractEjector()
+
+    def hatchPeriodic(self):
+        r = self.robot
+        if self.operator.getRawButton(3) == True:
+            self.ejectHatch()
+        elif self.operator.getRawButton(7) == True:
+            self.ejectToggle()
+        elif self.operator.getRawButton(8) == True:
+            self.slideToggle()
+        else:
+            pass
+
+    def ejectHatch(self):
+        """ Use this method to throw hatch onto docking surface. """
+        self.ejectPiston.set(True)
+
+    def retractEjector(self):
+        """ Pulls the ejector back in. """
+        self.ejectPiston.set(False)
+
+    def slideOut(self):
+        """ Slides hatch mechanism out over bumpers. """
+        self.ejectPistonSlide.set(True)
+
+    def slideIn(self):
+        """ Pulls hatch mechanism back in. """
+        self.ejectPistonSlide.set(False)
+
+    def isEjectorOut(self):
+        """ Returns True when ejector is sticking out. """
+        return self.ejectPiston.get()
+
+    def ejectToggle(self):
+        ejectorOut = self.isEjectorOut()
+        if ejectorOut:
+            self.retractEjector()
+        else:
+            self.ejectHatch()
+
+    def isSlideIn(self):
+        return self.ejectPistonSlide.get()
+
+    def slideToggle(self):
+        slideOut = self.isSlideIn()
+        if slideOut:
+            self.slideIn()
+        else:
+            self.slideOut()
