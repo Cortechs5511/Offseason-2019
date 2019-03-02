@@ -11,7 +11,7 @@ from commands.hatch.shimmy import Shimmy
 import map
 import oi
 
-'''class HatchMech(Subsystem):
+class HatchMech(Subsystem):
     def __init__(self, Robot):
         """ Create all physical parts used by subsystem. """
         super().__init__('Hatch')
@@ -74,13 +74,14 @@ import oi
         if self.debug:
             SmartDashboard.putBoolean("EjectorOut", self.isEjectorOut())
             SmartDashboard.putBoolean("SlideOut",self.isSlideIn())
-            SmartDashboard.putNumber("practice", self.preferences.putBoolean("practice",False))'''
+            SmartDashboard.putNumber("practice", self.preferences.putBoolean("practice",False))
 
+'''
 class HatchMech(Subsystem):
-    def hatchInit(self, Robot):
+    def __init__(self, Robot):
         self.robot = Robot
         self.operator = oi.getJoystick(2)
-        #Normally the ejectPiston would be on solenoid 1, but was changed to see if slide worked.
+        #Normal1ly the ejectPiston would be on solenoid 1, but was changed to see if slide worked.
         self.ejectPiston = wpilib.Solenoid(map.hatchKick)
         self.ejectPistonSlide = wpilib.Solenoid(map.hatchSlide)
         self.ejectPiston.setName("Hatch" , "Ejector")
@@ -139,3 +140,4 @@ class HatchMech(Subsystem):
             self.slideIn()
         else:
             self.slideOut()
+'''

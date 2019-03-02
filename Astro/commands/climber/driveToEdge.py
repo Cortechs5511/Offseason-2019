@@ -17,12 +17,21 @@ class DriveToEdge(Command):
         lean = self.climber.getLean()
         if self.mode == "front":
             self.climber.wheelForward()
-            if lean < -0.5: self.climber.backLift.set(0.5, True)
-            elif lean < -2 : self.climber.backLift.set(-0.5, True)
-            else: self.climber.liftBack(0)
-            self.climber.liftFront(-1 *self.climber.returnClimbSpeed(), True)
+            if self.climber.isLeaning(False):
+                self.climber.backLift.set(self.climber.returnCorrectionSpeed())
+            elif self.climber.isLeaning(True):
+                self.climber.backLift.set(self.climber.returnCorrectionSpeed())
+            else: self.climber.backLift.set(0)
+            self.climber.frontLift.set(0)
+            #self.climber.liftFront(-1 *self.climber.returnClimbSpeed(), True)
         elif self.mode == "back":
             self.climber.wheelForward()
+            if self.climber.isLeaning(False):
+                self.climber.backLift.set(self.climber.returnCorrectionSpeed())
+            elif self.climber.isLeaning(True):
+                self.climber.backLift.set(self.climber.returnCorrectionSpeed())
+            else: self.climber.backLift.set(0)
+            self.climber.frontLift.set(0)
 
     def interrupted(self):
         self.end()
