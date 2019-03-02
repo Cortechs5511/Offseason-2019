@@ -33,7 +33,6 @@ class Climber(Subsystem):
     def __init__(self, robot):
         super().__init__('Climber')
 
-
         self.robot = robot
         self.debug = True
         self.DriveToEdge = DriveToEdge
@@ -70,9 +69,6 @@ class Climber(Subsystem):
         self.switchTopFront = wpilib.DigitalInput(7)
         self.switchBottomFront = wpilib.DigitalInput(6)
         self.switchTopBack = wpilib.DigitalInput(9)
-
-
-        #self.wheels = self.wheelLeft
 
         self.backLift.setNeutralMode(2)
         self.frontLift.setNeutralMode(2)
@@ -166,7 +162,6 @@ class Climber(Subsystem):
 
     def isFullyRetractedBack(self):
         return not self.switchBottomBack.get()
-
 
     def isFullyExtendedBoth(self):
         """ tells us if both front and back are fully extended, so it can stop """
