@@ -125,10 +125,11 @@ class Climber(Subsystem):
         climberBackDown : wpilib.buttons.JoystickButton = r.driverLeftButton(15)
         climberBackDown.whileHeld(LowerRobot("back"))
 
-        #climberAuto : wpilib.buttons.JoystickButton = r.driverLeftButton(11)
-        #climberAuto.whileHeld(AutoClimb())
+        autoClimbButton : wpilib.buttons.JoystickButton = r.operatorButton(7)
+        autoClimbButton.whenPressed(AutoClimb())
 
-
+        killautoClimbButton : wpilib.buttons.JoystickButton = r.operatorButton(8)
+        killautoClimbButton.whenPressed(self.disable())
 
     def getPitch(self):
         '''negative is leaning forward on V2'''
