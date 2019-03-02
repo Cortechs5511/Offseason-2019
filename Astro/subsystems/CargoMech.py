@@ -46,16 +46,20 @@ class CargoMech(Subsystem):
             SmartDashboard.putData("Wrist up",WristMove('wrist up',1))
             SmartDashboard.putData("Wrist down",WristMove('wrist down',-1))
             SmartDashboard.putData("Stop wrist",WristMove('stop wrist',0))
+
+    def initDefaultCommand(self):
+            self.setDefaultCommand(setSpeedCargo(timeout = 300))
     def subsystemInit(self):
         r = self.robot
-        wristUp : wpilib.buttons.JoystickButton = r.operatorButton(1)
-        wristUp.whileActive(WristMove('wrist up',1))
-        wristDown : wpilib.buttons.JoystickButton = r.operatorButton(4)
-        wristDown.whileActive(WristMove('wrist down',-1))
-        outtakeButton : wpilib.buttons.JoystickButton = r.operatorButton(5)
-        outtakeButton.whileActive(WristIntake('outtake',-1))
-        intakeButton : wpilib.buttons.JoystickButton = r.operatorButton(6)
-        intakeButton.whileActive(WristIntake('intake',1))
+
+        #wristUp : wpilib.buttons.JoystickButton = r.operatorAxis(1)
+        #wristUp.whileActive(WristMove('wrist up',1))
+        #wristDown : wpilib.buttons.JoystickButton = r.operatorAxis(1)
+        #wristDown.whileActive(WristMove('wrist down',-1))
+        #outtakeButton : wpilib.buttons.JoystickButton = r.operatorButton(5)
+        #outtakeButton.whileActive(WristIntake('outtake',-1))
+        #intakeButton : wpilib.buttons.JoystickButton = r.operatorButton(6)
+        #intakeButton.whileActive(WristIntake('intake',1))
     def disable(self):
         self.stopIntake()
     def dashboardPeriodic(self):
