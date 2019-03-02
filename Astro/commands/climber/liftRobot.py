@@ -20,11 +20,19 @@ class LiftRobot(Command):
         elif self.mode == "both":
             if self.climber.isLeaning(True):
                 self.climber.backLift.set(self.climber.returnCorrectionSpeed())
+                if self.climber.getLean() < -2 * self.climber.MAX_ANGLE:
+                    self.climber.frontLift.set(0)
+                else:
+                    self.climber.frontLift.set(-1 * self.climber.returnClimbSpeed())
             elif self.climber.isLeaning(False):
                 self.climber.backLift.set(self.climber.returnCorrectionSpeed())
+                if self.climber.getLean() > 2 * self.climber.MAX_ANGLE:
+                    self.climber.frontLift.set(0)
+                else:
+                    self.climber.frontLift.set(-1 * self.climber.returnClimbSpeed())
             else:
                 self.climber.backLift.set(-1 * self.climber.returnClimbSpeed())
-            self.climber.frontLift.set(-1 * self.climber.returnClimbSpeed())
+                self.climber.frontLift.set(-1 * self.climber.returnClimbSpeed())
 
     def interrupted(self): self.climber.stop()
 

@@ -34,7 +34,7 @@ from subsystems import disableAll
 
 
 from CRLibrary.path import odometry as od
-from commands.climber.autoClimb import AutoClimb
+#from commands.climber.autoClimb import AutoClimb
 from commands.climber.liftRobot import LiftRobot
 from commands.climber.driveToEdge import DriveToEdge
 
