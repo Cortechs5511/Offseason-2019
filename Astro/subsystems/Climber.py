@@ -80,7 +80,8 @@ class Climber(Subsystem):
 
         for motor in [self.backLift, self.frontLift, self.wheelLeft, self.wheelRight]:
             motor.clearStickyFaults(timeout)
-            motor.setSafetyEnabled(True)
+            motor.setSafetyEnabled(False)
+            #motor.setExpiration(2 * self.robot.period)
 
         for motor in [self.backLift, self.frontLift]:
             motor.configContinuousCurrentLimit(20,timeout) #15 Amps per motor

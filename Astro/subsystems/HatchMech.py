@@ -76,7 +76,7 @@ import oi
             SmartDashboard.putBoolean("SlideOut",self.isSlideIn())
             SmartDashboard.putNumber("practice", self.preferences.putBoolean("practice",False))'''
 
-class HatchMech():
+class HatchMech(Subsystem):
     def hatchInit(self, Robot):
         self.robot = Robot
         self.operator = oi.getJoystick(2)
@@ -128,6 +128,10 @@ class HatchMech():
 
     def isSlideIn(self):
         return self.ejectPistonSlide.get()
+
+    def disable(self):
+        self.retractEjector()
+        self.slideIn()
 
     def slideToggle(self):
         slideOut = self.isSlideIn()

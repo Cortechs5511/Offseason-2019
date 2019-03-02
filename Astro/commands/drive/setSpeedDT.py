@@ -25,7 +25,7 @@ class SetSpeedDT(TimedCommand):
         self.maxspeed = 1.00 #In addition to normal reducing factor in Drive.py
         self.diffDrive = DifferentialDrive(self.DT.left,self.DT.right)
         self.diffDrive.setName("Drive", "Differential Drive")
-        self.diffDrive.setSafetyEnabled(True)
+        self.diffDrive.setSafetyEnabled(False)
 
     def initialize(self):
         self.DT.setDirect()

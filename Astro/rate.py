@@ -10,6 +10,7 @@ class DebugRate(Command):
         self.curr += 1
         if(self.curr%self.print!=0): return
         time = self.timeSinceInitialized()
-        SmartDashboard.putNumber("Iterations:", self.curr/(time+1e-5))
+        #SmartDashboard.putNumber("Iterations:", self.curr/(time+1e-5))
+        SmartDashboard.putNumber("Duration", (time)/self.curr)
         SmartDashboard.putNumber("Time", time)
         SmartDashboard.putNumber("Rate", self.curr/(time+1e-5))

@@ -84,8 +84,10 @@ class MyRobot(CommandBasedRobot):
 
         [self.joystick0, self.joystick1, self.xbox] = oi.commands()
 
-        self.rate = rate.DebugRate()
-        self.rate.initialize()
+        #self.rate = rate.DebugRate()
+        SmartDashboard.putData(rate.DebugRate())
+
+        #self.rate.initialize()
 
         self.updateDashboardInit()
         self.DriveStraight = DriveStraight()
@@ -140,11 +142,11 @@ class MyRobot(CommandBasedRobot):
         #SmartDashboard.putData("Drive", self.drive)
         #SmartDashboard.putData("Hatch", self.hatchMech)
         #SmartDashboard.putData("Cargo", self.cargoMech)
-        #SmartDashboard.putData("Climber", self.climber)
+        SmartDashboard.putData("Climber", self.climber)
         #self.drive.dashboardInit()
         #self.hatchMech.dashboardInit()
         #self.cargoMech.dashboardInit()
-        #self.climber.dashboardInit()
+        self.climber.dashboardInit()
         self.limelight.dashboardInit()
 
         #sequences.dashboardInit()
@@ -155,7 +157,7 @@ class MyRobot(CommandBasedRobot):
     def updateDashboardPeriodic(self):
         #SmartDashboard.putNumber("PressureSwitchValue", self.compressor.getPressureSwitchValue())
         #SmartDashboard.putNumber("Timer", self.timer.get())
-        self.rate.execute()
+        #self.rate.execute()
         #self.drive.dashboardPeriodic()
         #self.hatchMech.dashboardPeriodic()
         #self.cargoMech.dashboardPeriodic()

@@ -100,17 +100,20 @@ class Drive(Subsystem):
 
             for motor in [VictorLeft1,VictorLeft2]:
                 motor.clearStickyFaults(timeout)
-                motor.setSafetyEnabled(True)
+                motor.setSafetyEnabled(False)
+                #motor.setExpiration(2 * self.robot.period)
                 motor.setInverted(leftInverted)
 
             for motor in [VictorRight1,VictorRight2]:
                 motor.clearStickyFaults(timeout)
-                motor.setSafetyEnabled(True)
+                motor.setSafetyEnabled(False)
+                #motor.setExpiration(2 * self.robot.period)
                 motor.setInverted(rightInverted)
 
 
         for motor in [TalonLeft,TalonRight]:
-            motor.setSafetyEnabled(True)
+            motor.setSafetyEnabled(False)
+            #motor.setExpiration(2 * self.robot.period)
             motor.clearStickyFaults(timeout) #Clears sticky faults
 
             motor.configContinuousCurrentLimit(15,timeout) #15 Amps per motor
