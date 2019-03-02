@@ -53,12 +53,12 @@ class SetSpeedDT(TimedCommand):
 
             gain = SmartDashboard.getNumber("gain",1)
             #diff drive is messed up
-            power = -(self.robot.operatorAxis(1))
+            '''power = -(self.robot.operatorAxis(1))
             rotation = self.robot.operatorAxis(4)*.75
             #quickTurn = self.robot.readOperatorButton(10)
             #self.diffDrive.curvatureDrive(power,rotation,quickTurn)
             self.diffDrive.arcadeDrive(rotation, power)
-            #self.DT.tankDrive(power*gain,power)
+            #self.DT.tankDrive(power*gain,power)'''
         else:
             if flip == True:
                 self.DT.tankDrive (-right * self.maxspeed ,-left * self.maxspeed)
