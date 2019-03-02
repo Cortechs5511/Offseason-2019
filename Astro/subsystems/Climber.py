@@ -15,6 +15,7 @@ from commands.climber.autoClimb import AutoClimb
 from subsystems.disableAll import DisableAll
 from commands.climber.driveToEdge import DriveToEdge
 
+import math
 
 import map
 
@@ -95,8 +96,8 @@ class Climber(Subsystem):
     def subsystemInit(self):
         r = self.robot
 
-        SmartDashboard.putData("Drive to Front", self.DriveToEdge("front"))
-        SmartDashboard.putData("Drive to Back", self.DriveToEdge("back"))
+        #SmartDashboard.putData("Drive to Front", self.DriveToEdge("front"))
+        #SmartDashboard.putData("Drive to Back", self.DriveToEdge("back"))
         #wheels
         climberWheelsForward : wpilib.buttons.JoystickButton = r.driverLeftButton(7)
         climberWheelsForward.whileHeld(SetSpeedWheel(1))
@@ -189,7 +190,6 @@ class Climber(Subsystem):
         else:
             return self.getPitch()
 
-
     def isFrontOverGround(self):
         if self.frontsensor.getVoltage() < 1.5:
             return True
@@ -201,38 +201,6 @@ class Climber(Subsystem):
             return True
         else:
             return False
-    #functions for lift
-    def liftFront(self, lift, single=True):
-        """ Basic lift function for lifting robot.
-        @param lift - Positive values make lift go down(extend) """
-
-        #if self.isFullyExtendedFront() and lift/abs(lift) == 1 : self.stopFront()
-        #elif self.isFullyRetractedFront() and lift/abs(lift) == -1 : self.stopFront()
-        #elif single and self.isLeaning(False): self.backLift.set(0.5)
-        #elif single and self.isLeaning(True): self.backLift.set(-0.5)
-        if single: self.frontLift.set(lift)
-        elif self.getLean()>self.MAX_ANGLE and lift>0: self.stopFront()
-        elif self.getLean()<-self.MAX_ANGLE and lift<0: self.stopFront()
-        else: self.frontLift.set(1.1*lift)
-
-    def liftBack(self, lift, single = True):
-        """ Basic lift function for lifting robot.
-        @param lift - Positive values make lift go down """
-
-        #if self.isFullyExtendedBack() and lift/abs(lift) == 1 : self.stopBack()
-        #elif self.isFullyRetractedBack() and lift/abs(lift) == -1 : self.stopBack()
-        #elif single and self.isLeaning(False): self.frontLift.set(0.5)
-        #elif single and self.isLeaning(True): self.frontLift.set(-0.5)
-        if single: self.backLift.set(lift)
-        elif self.getLean()>self.MAX_ANGLE and lift<0: self.stopBack()
-        elif self.getLean()<-self.MAX_ANGLE and lift>0: self.stopBack()
-        else: self.backLift.set(lift)
-
-    def lift(self, lift):
-        """ Basic lift function for lifting robot.
-        @param lift - Positive values make lift go down(extend) """
-        self.liftFront(lift, False)
-        self.liftBack(lift, False)
 
     #wheel speed
     def wheelForward(self):
@@ -264,8 +232,14 @@ class Climber(Subsystem):
         SmartDashboard.putNumber("WheelSpeed", 0.7)
 
         SmartDashboard.putNumber("Tolerance", 2)
+
         SmartDashboard.putData("Lift Robot", LiftRobot("both"))
-        SmartDashboard.putData("Lower Robot", LowerRobot("both"))
+        SmartDashboard.putData("Drive To Edge, Front", DriveToEdge("front"))
+        SmartDashboard.putData("Drive To Edge, Back", DriveToEdge("back"))
+        SmartDashboard.putData("Lift Robot, Front", LiftRobot("front"))
+        SmartDashboard.putData("Lift Robot, Back", LiftRobot("back"))
+
+        #SmartDashboard.putData("Lower Robot", LowerRobot("both"))
 
     def dashboardPeriodic(self):
         self.MAX_ANGLE = self.returnTolerance()
@@ -274,13 +248,27 @@ class Climber(Subsystem):
         SmartDashboard.putNumber("Lean", self.getLean())
 
         if self.debug == True:
-            SmartDashboard.putBoolean("Sensor1",self.isFullyExtendedFront())
-            SmartDashboard.putBoolean("Sensor2",self.isFullyExtendedBack())
-            SmartDashboard.putBoolean("Sensor3",self.isFullyRetractedFront())
-            SmartDashboard.putBoolean("Sensor4",self.isFullyRetractedBack())
-            SmartDashboard.putNumber("FrontTicks", self.getHeightFront())
-            SmartDashboard.putNumber("BackTicks", self.getHeightBack())
+            SmartDashboard.putBoolean("Fully Extended Front",self.isFullyExtendedFront())
+            SmartDashboard.putBoolean("Fully Extended Back",self.isFullyExtendedBack())
+            SmartDashboard.putBoolean("Fully Retracted Front",self.isFullyRetractedFront())
+            SmartDashboard.putBoolean("Fully Retracted Back",self.isFullyRetractedBack())
+            #SmartDashboard.putNumber("FrontTicks", self.getHeightFront())
+            #SmartDashboard.putNumber("BackTicks", self.getHeightBack())
             #SmartDashboard.putData("Lean", self.isLeaning())
+
+    def returnCorrectionSpeed(self):
+        #proportional speed based on angle
+        lean = self.getLean()
+        targetAngle = 1
+        lean += targetAngle
+        error = math.fabs(lean)
+        pGain = 0.5
+        if lean < -self.MAX_ANGLE:
+            return error * pGain
+        elif lean > self.MAX_ANGLE:
+            return error * -pGain
+        else:
+            return self.returnClimbSpeed()
 
     def returnClimbSpeed(self):
         self.climbSpeed = SmartDashboard.getNumber("ClimberSpeed", 0.9)

@@ -67,7 +67,7 @@ class MyRobot(CommandBasedRobot):
 
         # Construct subsystems prior to constructing commands
         self.limelight = Limelight.Limelight(self)
-        self.hatchMech = HatchMech.HatchMech()
+        self.hatchMech = HatchMech.HatchMech(self)
         self.cargoMech = CargoMech.CargoMech(self)
         self.climber = Climber.Climber(self)
         self.drive = Drive.Drive(self)
@@ -85,7 +85,7 @@ class MyRobot(CommandBasedRobot):
         [self.joystick0, self.joystick1, self.xbox] = oi.commands()
 
         #self.rate = rate.DebugRate()
-        SmartDashboard.putData(rate.DebugRate())
+        #SmartDashboard.putData(rate.DebugRate())
 
         #self.rate.initialize()
 
@@ -104,7 +104,7 @@ class MyRobot(CommandBasedRobot):
         #self.cargoMech.subsystemInit()
         self.climber.subsystemInit()
         self.climber.dashboardInit()
-        self.hatchMech.hatchInit(self)
+        #self.hatchMech.hatchInit(self)
 
         climberAuto : wpilib.buttons.JoystickButton = self.driverLeftButton(11)
         cg = CommandGroup("AutoClimb")
@@ -126,7 +126,7 @@ class MyRobot(CommandBasedRobot):
     def robotPeriodic(self):
         #self.drive.odMain.display()
         #self.drive.odTemp.display()
-        self.hatchMech.hatchPeriodic()
+        #self.hatchMech.hatchPeriodic()
         self.limelight.readLimelightData()
         if(self.dashboard): self.updateDashboardPeriodic()
 
@@ -147,7 +147,7 @@ class MyRobot(CommandBasedRobot):
         #self.hatchMech.dashboardInit()
         #self.cargoMech.dashboardInit()
         self.climber.dashboardInit()
-        self.limelight.dashboardInit()
+        #self.limelight.dashboardInit()
 
         #sequences.dashboardInit()
         #autonomous.dashboardInit()
@@ -162,7 +162,7 @@ class MyRobot(CommandBasedRobot):
         #self.hatchMech.dashboardPeriodic()
         #self.cargoMech.dashboardPeriodic()
         self.climber.dashboardPeriodic()
-        self.limelight.dashboardPeriodic()
+        #self.limelight.dashboardPeriodic()
 
         #sequences.dashboardPeriodic()
         #autonomous.dashboardPeriodic()

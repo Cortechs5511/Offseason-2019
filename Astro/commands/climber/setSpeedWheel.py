@@ -15,7 +15,7 @@ class SetSpeedWheel(Command):
     def execute(self):
         if self.climber.isLeaning(False): self.climber.backLift.set(0.5)
         elif self.climber.isLeaning(True): self.climber.backLift.set(-0.5)
-        else: self.climber.liftBack(0, True)
+        else: self.climber.backLift.set(0)
 
         if self.power == 1: self.climber.wheelForward()
         if self.power == -1: self.climber.wheelBack()

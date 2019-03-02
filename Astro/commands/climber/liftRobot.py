@@ -12,11 +12,19 @@ class LiftRobot(Command):
 
     def execute(self):
         if self.mode == "front":
-            self.climber.liftFront(self.climber.returnClimbSpeed(), True)
+            self.climber.backLift.set(0)
+            self.climber.frontLift.set(-1 * self.climber.returnClimbSpeed())
         elif self.mode == "back":
-            self.climber.liftBack(self.climber.returnClimbSpeed(), True)
+            self.climber.frontLift.set(0)
+            self.climber.backLift.set(-1* self.climber.returnClimbSpeed())
         elif self.mode == "both":
-            self.climber.lift(self.climber.returnClimbSpeed())
+            if self.climber.isLeaning(True):
+                self.climber.backLift.set(self.climber.returnCorrectionSpeed())
+            elif self.climber.isLeaning(False):
+                self.climber.backLift.set(self.climber.returnCorrectionSpeed())
+            else:
+                self.climber.backLift.set(-1 * self.climber.returnClimbSpeed())
+            self.climber.frontLift.set(-1 * self.climber.returnClimbSpeed())
 
     def interrupted(self): self.climber.stop()
 
