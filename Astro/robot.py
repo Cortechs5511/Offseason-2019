@@ -139,11 +139,11 @@ class MyRobot(CommandBasedRobot):
 
 
     def updateDashboardInit(self):
-        #SmartDashboard.putData("Drive", self.drive)
+        SmartDashboard.putData("Drive", self.drive)
         #SmartDashboard.putData("Hatch", self.hatchMech)
         #SmartDashboard.putData("Cargo", self.cargoMech)
         SmartDashboard.putData("Climber", self.climber)
-        #self.drive.dashboardInit()
+        self.drive.dashboardInit()
         #self.hatchMech.dashboardInit()
         #self.cargoMech.dashboardInit()
         self.climber.dashboardInit()
@@ -158,7 +158,7 @@ class MyRobot(CommandBasedRobot):
         #SmartDashboard.putNumber("PressureSwitchValue", self.compressor.getPressureSwitchValue())
         #SmartDashboard.putNumber("Timer", self.timer.get())
         #self.rate.execute()
-        #self.drive.dashboardPeriodic()
+        self.drive.dashboardPeriodic()
         #self.hatchMech.dashboardPeriodic()
         #self.cargoMech.dashboardPeriodic()
         self.climber.dashboardPeriodic()

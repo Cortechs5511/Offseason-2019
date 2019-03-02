@@ -336,7 +336,6 @@ class Drive(Subsystem):
         else:
             self.navx.zeroYaw()
 
-
     def zero(self):
         self.zeroEncoders()
         self.zeroNavx()
@@ -348,31 +347,32 @@ class Drive(Subsystem):
         self.__tankDrive__(0,0)
 
     def dashboardInit(self):
-        SmartDashboard.putData("Flipped drive", FlipButton())
-        SmartDashboard.putData("Measure", Measured())
+        pass
+        #SmartDashboard.putData("Flipped drive", FlipButton())
+        #SmartDashboard.putData("Measure", Measured())
 
-        if(self.debug==False): return
+        #if(self.debug==False): return
         #SmartDashboard.putData("autonCheck Frw", AutonCheck(10))
         #SmartDashboard.putData("autonCheck Bkwd", AutonCheck(-10))
 
-        SmartDashboard.putData("DT_DiffDrive", DiffDrive())
-        SmartDashboard.putData("DT_DrivePath", DrivePath())
-        SmartDashboard.putData("DT_DriveStraightCombined", DriveStraightCombined())
-        SmartDashboard.putData("DT_DriveStraightDistance", DriveStraightDistance())
-        SmartDashboard.putData("DT_DriveStraightTime", DriveStraightTime(0.5))
+        #SmartDashboard.putData("DT_DiffDrive", DiffDrive())
+        #SmartDashboard.putData("DT_DrivePath", DrivePath())
+        #SmartDashboard.putData("DT_DriveStraightCombined", DriveStraightCombined())
+        #SmartDashboard.putData("DT_DriveStraightDistance", DriveStraightDistance())
+        #SmartDashboard.putData("DT_DriveStraightTime", DriveStraightTime(0.5))
 
-        SmartDashboard.putData("DT_SetFixedDT", SetFixedDT())
-        SmartDashboard.putData("DT_SetSpeedDT", SetSpeedDT())
+        #SmartDashboard.putData("DT_SetFixedDT", SetFixedDT())
+        #SmartDashboard.putData("DT_SetSpeedDT", SetSpeedDT())
 
-        SmartDashboard.putData("DT_TurnAngle", TurnAngle(90))
+        #SmartDashboard.putData("DT_TurnAngle", TurnAngle(90))
         #SmartDashboard.putData("DT_RelativeTurn", RelativeTurn(90))
 
-        SmartDashboard.putData("DriveStraightTime", DriveStraightTime(0.5))
+        #SmartDashboard.putData("DriveStraightTime", DriveStraightTime(0.5))
 
     def dashboardPeriodic(self):
-        SmartDashboard.putBoolean("Driving Reverse", self.flipped)
-        SmartDashboard.putNumber("Roll", self.getRoll())
-        if(self.debug==False): return
+        #SmartDashboard.putBoolean("Driving Reverse", self.flipped)
+        #SmartDashboard.putNumber("Roll", self.getRoll())
+        #if(self.debug==False): return
         SmartDashboard.putNumber("Left Counts", self.leftEncoder.get())
         SmartDashboard.putNumber("Left Distance", self.leftEncoder.getDistance())
         SmartDashboard.putNumber("Right Counts", self.rightEncoder.get())
@@ -381,7 +381,7 @@ class Drive(Subsystem):
         SmartDashboard.putNumber("DT_DistanceLeft", self.getDistance()[0])
         SmartDashboard.putNumber("DT_DistanceRight", self.getDistance()[1])
         SmartDashboard.putNumber("DT_Angle", self.getAngle())
-        SmartDashboard.putNumber("practice", self.preferences.getBoolean("Practice", False))
+        #SmartDashboard.putNumber("practice", self.preferences.getBoolean("Practice", False))
         SmartDashboard.putNumber("DT_PowerLeft", self.left.get())
         SmartDashboard.putNumber("DT_PowerRight", self.right.get())
         SmartDashboard.putNumber("DT_VelocityLeft", self.getVelocity()[0])
@@ -390,18 +390,18 @@ class Drive(Subsystem):
         SmartDashboard.putNumber("DT_CounLeft", self.getRaw()[0])
         SmartDashboard.putNumber("DT_CountRight", self.getRaw()[1])
 
-        SmartDashboard.putNumber("DriveAmps",self.getOutputCurrent())
+        #SmartDashboard.putNumber("DriveAmps",self.getOutputCurrent())
 
         #SmartDashboard.putBoolean("Disable All", self.disableAll.getBoolean())
         #SmartDashboard.putBoolean("Auto Climb", self.autoClimb.getBoolean())
-        SmartDashboard.putNumber("Match Timer", self.robot.timer.get())
+        #SmartDashboard.putNumber("Match Timer", self.robot.timer.get())
     def bumpCheck(self, bumpInt = 0.4):
         self.accelX = self.accel.getX()
         self.accelY = self.accel.getY()
 
-        if self.debug:
-            SmartDashboard.putNumber("AccelX", self.accelX)
-            SmartDashboard.putNumber("AccelY", self.accelY)
+        #if self.debug:
+        #    SmartDashboard.putNumber("AccelX", self.accelX)
+        #    SmartDashboard.putNumber("AccelY", self.accelY)
 
         if abs(self.accelX) >= bumpInt or abs(self.accelY) >= bumpInt: return True
         return False

@@ -49,7 +49,7 @@ class Climber(Subsystem):
             self.frontLift.setInverted(True)
             self.backLift.setInverted(True)
         else:
-            self.frontLift.setInverted(True)
+            self.frontLift.setInverted(False)
             self.backLift.setInverted(True)
         if map.robotId == map.astroV1:
             self.wheelLeft = Victor(map.wheelLeft)
@@ -65,10 +65,10 @@ class Climber(Subsystem):
         elif map.robotId == map.astroV2:
             self.wheelRight.setInverted(True)
             self.wheelLeft.setInverted(False)
-        self.switchBottomBack = wpilib.DigitalInput(8)
-        self.switchTopFront = wpilib.DigitalInput(7)
-        self.switchBottomFront = wpilib.DigitalInput(6)
-        self.switchTopBack = wpilib.DigitalInput(9)
+        self.switchBottomBack = wpilib.DigitalInput(map.backBottomSensor)
+        self.switchTopFront = wpilib.DigitalInput(map.frontTopSensor)
+        self.switchBottomFront = wpilib.DigitalInput(map.frontBottomSensor)
+        self.switchTopBack = wpilib.DigitalInput(map.backTopSensor)
 
         self.backLift.setNeutralMode(2)
         self.frontLift.setNeutralMode(2)

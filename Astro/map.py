@@ -1,6 +1,6 @@
 import wpilib
 from wpilib import Preferences
-  
+
 # Known robots that might have slight variations in configuration
 # that we want to deploy the code to
 synapse: int = 0
@@ -22,9 +22,12 @@ driveRight3 = 22
 intake = 30
 wrist = 31
 
-
-frontLift = 40
-backLift = 41
+if map.robotId == map.astroV1:
+    frontLift = 40
+    backLift = 41
+else:
+    frontLift = 41
+    backLift = 40
 
 wheelLeft = 50
 wheelRight = 51
@@ -33,6 +36,7 @@ wheelRight = 51
 
 hatchKick = 0
 hatchSlide = 1
+
 climberLock1 = 2
 climberLock2 = 3
 
@@ -40,6 +44,11 @@ climberLock2 = 3
 
 leftEncoder = (0,1)
 rightEncoder = (2,3)
+
+frontBottomSensor = 6
+frontTopSensor = 7
+backBottomSensor = 8
+backTopSensor = 9
 
 #sets the system preferences
 

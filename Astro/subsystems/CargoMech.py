@@ -7,6 +7,7 @@ from wpilib.command import Command
 import ctre
 from commands.cargo.wristIntake import WristIntake
 from commands.cargo.wristMove import WristMove
+from commands.cargo import setSpeedCargo
 import map
 class CargoMech(Subsystem):
     def __init__(self, Robot):
@@ -19,6 +20,8 @@ class CargoMech(Subsystem):
         self.motorWrist = ctre.WPI_TalonSRX(map.wrist)
         self.motorIntake.setName("Cargo","Motor Intake")
         self.motorWrist.setName("Cargo", "Motor Wrist")
+        self.SetSpeedCargo = setSpeedCargo.SetSpeedCargo
+
     def intake(self):
         ''' Intake the balls (turn wheels inward) '''
         self.motorIntake.set(0.5)
@@ -48,7 +51,7 @@ class CargoMech(Subsystem):
             SmartDashboard.putData("Stop wrist",WristMove('stop wrist',0))
 
     def initDefaultCommand(self):
-            self.setDefaultCommand(setSpeedCargo(timeout = 300))
+            self.setDefaultCommand(self.SetSpeedCargo(timeout = 300))
     def subsystemInit(self):
         r = self.robot
 
