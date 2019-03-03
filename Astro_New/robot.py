@@ -74,7 +74,7 @@ class MyRobot(wpilib.IterativeRobot):
 
     def disabledInit(self):
         #self.drive.disable()
-        #self.hatchMech.disable()
+        self.hatchMech.disable()
         self.cargoMech.disable()
         self.climber.disable()
 
