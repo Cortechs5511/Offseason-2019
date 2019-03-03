@@ -34,9 +34,9 @@ class MyRobot(wpilib.IterativeRobot):
         self.timer.start()
         self.watch = wpilib.Watchdog(150, None)
         self.climber = Climber.Climber()
-
+        self.cargoMech = CargoMech.CargoMech()
         self.climber.climberInit()
-
+        self.cargoMech.cargoInit()
 
         '''
         Since OI instantiates commands and commands need access to subsystems,
@@ -45,7 +45,7 @@ class MyRobot(wpilib.IterativeRobot):
 
     def robotPeriodic(self):
         self.climber.climberPeriodic()
-
+        self.cargoMech.cargoPeriodic()
 
     def autonomousInit(self):
         self.drive.zero()
