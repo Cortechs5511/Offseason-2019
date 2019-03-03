@@ -7,14 +7,17 @@ from ctre import WPI_VictorSPX as Victor
 import math
 import map
 from subsystems import Sensors
+from navx.ahrs import AHRS as NavX
 
 class Climber():
     def climberInit(self):
         timeout = 0
         self.debug = False
         self.joystick = map.getJoystick(0)
+        self.navx = NavX.create_i2c()
 
-        self.sensors = Sensors.Sensors
+        self.pitch = 0
+        self.roll = 0
         self.frontSensor = wpilib.AnalogInput(map.frontSensor)
         self.backSensor = wpilib.AnalogInput(map.backSensor)
         self.switchBottomBack = wpilib.DigitalInput(map.backBottomSensor)
@@ -77,6 +80,8 @@ class Climber():
         else:
             self.stopFront()
 
+        self.sensorAnglePeriodic()
+
         #AUTOCLIMB
         if self.joystick.getRawButton(map.autoClimb):
             state = self.getState()
@@ -125,15 +130,19 @@ class Climber():
                 self.frontLift.set(-1 * self.returnClimbSpeed())
                 self.backLift.set(-1 *self.returnClimbSpeed())
 
+    def sensorAnglePeriodic(self):
+        self.pitch = self.navx.getPitch()
+        self.roll = self.navx.getRoll()
+
     def getPitch(self):
         '''negative is leaning forward V2'''
-        #return self.sensors.getSensorPitch()
-        return 0
+        return self.pitch
+        #return 0
 
     def getRoll(self):
         '''negative is leaning forward V1'''
-        #return self.sensors.getSensorRoll()
-        return 0
+        return self.roll
+        #return 0
 
     def isFullyExtendedFront(self):
         """ tells us if the front is fully extended """
