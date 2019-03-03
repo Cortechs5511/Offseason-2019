@@ -2,10 +2,12 @@ import navx
 import wpilib
 import ctre
 
-
 class Sensors():
     def sensorsInit(self):
         self.navx = navx.AHRS.create_spi()
+        self.yaw = 0
+        self.pitch = 0
+        self.roll = 0
 
     def sensorsPeriodic(self):
         self.yaw = self.navx.getYaw()
@@ -14,8 +16,8 @@ class Sensors():
         #self.leftVal = self.leftEncoder.get()
         #self.rightVal = self.rightEncoder.get()
 
-    def getPitch(self):
+    def getSensorPitch(self):
         return self.pitch
 
-    def getRoll(self):
+    def getSensorRoll(self):
         return self.roll

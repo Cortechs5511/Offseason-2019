@@ -1,13 +1,10 @@
 import wpilib
 from wpilib import SmartDashboard
 import map
-import oi
 
 class HatchMech():
-    def __init__(self, Robot):
-        self.robot = Robot
+    def hatchInit(self):
         self.operator = map.getJoystick(2)
-        #Normal1ly the ejectPiston would be on solenoid 1, but was changed to see if slide worked.
         self.ejectPiston = wpilib.Solenoid(map.hatchKick)
         self.ejectPistonSlide = wpilib.Solenoid(map.hatchSlide)
         self.ejectPiston.setName("Hatch" , "Ejector")
@@ -59,3 +56,6 @@ class HatchMech():
             self.slide("in")
         else:
             self.slide("out")
+
+    def dashboardPeriodic():
+        pass

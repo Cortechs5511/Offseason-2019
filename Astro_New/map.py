@@ -39,8 +39,8 @@ else:
 
 #Solenoids
 
-hatchKick = 0
-hatchSlide = 1
+hatchKick = 1
+hatchSlide = 0
 
 climberLock1 = 2
 climberLock2 = 3
@@ -54,6 +54,10 @@ frontBottomSensor = 6
 frontTopSensor = 7
 backBottomSensor = 8
 backTopSensor = 9
+
+#Analog Input sensors
+frontSensor = 0
+backSensor = 1
 
 #sets the system preferences
 

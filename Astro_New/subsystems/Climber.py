@@ -9,147 +9,130 @@ import map
 from subsystems import Sensors
 
 class Climber():
-
     def climberInit(self):
-
         timeout = 0
-        #xbox should be joystick oops
-        self.xbox = map.getJoystick(0)
-        self.sensors = Sensors.Sensors
+        self.debug = False
+        self.joystick = map.getJoystick(0)
 
-        #SENSORS
-        self.frontSensor = wpilib.AnalogInput(0)
-        self.backSensor = wpilib.AnalogInput(1)
+        self.sensors = Sensors.Sensors
+        self.frontSensor = wpilib.AnalogInput(map.frontSensor)
+        self.backSensor = wpilib.AnalogInput(map.backSensor)
         self.switchBottomBack = wpilib.DigitalInput(map.backBottomSensor)
         self.switchTopFront = wpilib.DigitalInput(map.frontTopSensor)
         self.switchBottomFront = wpilib.DigitalInput(map.frontBottomSensor)
         self.switchTopBack = wpilib.DigitalInput(map.backTopSensor)
+
         if map.robotId == map.astroV1:
             self.wheelLeft = Victor(map.wheelLeft)
             self.wheelRight = Victor(map.wheelRight)
         elif map.robotId == map.astroV2:
             self.wheelLeft = Talon(map.wheelLeft)
             self.wheelRight = Talon(map.wheelRight)
-
-        #LIFT MOTORS
         self.backLift = Talon(map.backLift)
         self.frontLift = Talon(map.frontLift)
-
         if map.robotId == map.astroV1:
             self.frontLift.setInverted(True)
             self.backLift.setInverted(True)
         else:
             self.frontLift.setInverted(False)
             self.backLift.setInverted(True)
-
         if map.robotId == map.astroV1:
             self.wheelRight.setInverted(True)
             self.wheelLeft.setInverted(True)
         elif map.robotId == map.astroV2:
             self.wheelRight.setInverted(True)
             self.wheelLeft.setInverted(False)
-
         for motor in [self.backLift, self.frontLift, self.wheelLeft, self.wheelRight]:
             motor.clearStickyFaults(timeout)
             motor.setSafetyEnabled(True)
-
         for motor in [self.backLift, self.frontLift]:
             motor.configContinuousCurrentLimit(20,timeout) #15 Amps per motor
             motor.enableCurrentLimit(True)
             motor.configVoltageCompSaturation(9,timeout) #Sets saturation value
             motor.enableVoltageCompensation(True) #Compensates for lower voltages
+        self.backLift.setNeutralMode(2)
+        self.frontLift.setNeutralMode(2)
+        self.wheelLeft.setNeutralMode(2)
+        self.wheelRight.setNeutralMode(2)
 
         self.backLift.setName("Climber", "Back Lift")
         self.frontLift.setName("Climber", "Front Lift")
         self.wheelLeft.setName("Climber", "Wheel Left")
         self.wheelRight.setName("Climber", "Wheel Right")
 
-        self.backLift.setNeutralMode(2)
-        self.frontLift.setNeutralMode(2)
-        self.wheelLeft.setNeutralMode(2)
-        self.wheelRight.setNeutralMode(2)
-
-
-
     def climberPeriodic(self):
         lean = self.getLean()
-        #BUTTONS
-        #lower climber legs
-        if self.xbox.getRawButton(map.lowerFrontClimber) == True:
-            self.lowerFront()
-        elif self.xbox.getRawButton(map.lowerBackClimber) == True:
-            self.lowerBack()
-        elif self.xbox.getRawButton(map.lowerClimber) == True:
-            self.lowerBoth()
-        #lift climber legs
-        elif self.xbox.getRawButton(map.liftFrontClimber) == True:
-            self.liftFront()
-        elif self.xbox.getRawButton(map.liftBackClimber) == True:
-            self.liftBoth()
-        elif self.xbox.getRawButton(map.liftClimber) == True:
-            self.liftBoth()
+        if self.joystick.getRawButton(map.lowerFrontClimber) == True:
+            self.lower("front")
+        elif self.joystick.getRawButton(map.lowerBackClimber) == True:
+            self.lower("back")
+        elif self.joystick.getRawButton(map.lowerClimber) == True:
+            self.lower("both")
+        elif self.joystick.getRawButton(map.liftFrontClimber) == True:
+            self.lift("front")
+        elif self.joystick.getRawButton(map.liftBackClimber) == True:
+            self.lift("back")
+        elif self.joystick.getRawButton(map.liftClimber) == True:
+            self.lift("both")
         else:
             self.stopFront()
-            self.stopBack()
 
         #AUTOCLIMB
-        if self.xbox.getRawButton(map.autoClimb):
+        if self.joystick.getRawButton(map.autoClimb):
             state = self.getState()
             if state == 0:
-                self.liftBoth()
+                self.lift("both")
             elif state == 1:
-                self.wheelForward()
+                self.wheel("forward")
             elif state == 2:
-                self.liftFront()
+                self.lift("front")
             elif state == 3:
-                self.wheelForward()
+                self.wheel("forward")
             elif state == 4:
-                self.liftBack()
+                self.lift("back")
             else:
                 pass
     #LOGIC AND SENSOR FEEDBACK
 
     # lift and lower are in terms of legs
-    def liftFront(self):
-        self.backLift.set(0)
-        self.frontLift.set(self.returnClimbSpeed())
-
-    def liftBack(self):
-        self.frontLift.set(0)
-        self.backLift.set(self.returnClimbSpeed())
-
-    def liftBoth(self):
-        if self.isLeaning(False) or self.isLeaning(True):
-            self.backLift.set(self.returnCorrectionSpeed())
-            self.frontLift.set(self.returnCorrectionSpeed())
-        else:
+    def lift(self, mode):
+        if mode == "front":
+            self.backLift.set(0)
             self.frontLift.set(self.returnClimbSpeed())
+        elif mode == "back":
+            self.frontLift.set(0)
             self.backLift.set(self.returnClimbSpeed())
+        elif mode == "both":
+            if self.isLeaning(False) or self.isLeaning(True):
+                self.backLift.set(self.returnCorrectionSpeed())
+                self.frontLift.set(self.returnCorrectionSpeed())
+            else:
+                self.frontLift.set(self.returnClimbSpeed())
+                self.backLift.set(self.returnClimbSpeed())
 
-    def lowerFront(self):
-        self.backLift.set(0)
-        self.frontLift.set(-1 * self.returnClimbSpeed())
-
-    def lowerBack(self):
-        self.frontLift.set(0)
-        self.backLift.set(-1* self.returnClimbSpeed())
-
-    def lowerBoth(self):
-        if self.isLeaning(False) or self.isLeaning(True):
-            self.backLift.set(self.returnCorrectionSpeed())
-            self.frontLift.set(self.returnCorrectionSpeed())
-        else:
+    def lower(self, mode):
+        if mode == "front":
+            self.backLift.set(0)
             self.frontLift.set(-1 * self.returnClimbSpeed())
-            self.backLift.set(-1 *self.returnClimbSpeed())
+        elif mode == "back":
+            self.frontLift.set(0)
+            self.backLift.set(-1* self.returnClimbSpeed())
+        elif mode == "both":
+            if self.isLeaning(False) or self.isLeaning(True):
+                self.backLift.set(self.returnCorrectionSpeed())
+                self.frontLift.set(self.returnCorrectionSpeed())
+            else:
+                self.frontLift.set(-1 * self.returnClimbSpeed())
+                self.backLift.set(-1 *self.returnClimbSpeed())
 
     def getPitch(self):
         '''negative is leaning forward V2'''
-        #return self.sensors.getPitch()
+        #return self.sensors.getSensorPitch()
         return 0
 
     def getRoll(self):
         '''negative is leaning forward V1'''
-        #return self.sensors.getRoll()
+        #return self.sensors.getSensorRoll()
         return 0
 
     def isFullyExtendedFront(self):
@@ -205,13 +188,13 @@ class Climber():
 
     #SET SPEED CLIMBER
 
-    def wheelForward(self):
-        self.wheelLeft.set(self.returnWheelSpeed())
-        self.wheelRight.set(self.returnWheelSpeed())
-
-    def wheelBack(self):
-        self.wheelLeft.set(-1 * self.returnWheelSpeed())
-        self.wheelRight.set(-1 * self.returnWheelSpeed())
+    def wheel(self, direction):
+        if direction == "forward":
+            self.wheelLeft.set(self.returnWheelSpeed())
+            self.wheelRight.set(self.returnWheelSpeed())
+        elif direction == "backward":
+            self.wheelLeft.set(-1 * self.returnWheelSpeed())
+            self.wheelRight.set(-1 * self.returnWheelSpeed())
 
     def returnCorrectionSpeed(self):
         #proportional speed based on angle
@@ -229,9 +212,11 @@ class Climber():
 
     #DISABLE FUNCTION
 
-    def stopFront(self): self.frontLift.set(0)
+    def stopFront(self):
+        self.frontLift.set(0)
 
-    def stopBack(self): self.backLift.set(0)
+    def stopBack(self):
+        self.backLift.set(0)
 
     def stop(self):
         self.stopFront()
@@ -242,8 +227,7 @@ class Climber():
         self.wheelRight.set(0)
 
     def disable(self):
-        self.stopFront()
-        self.stopBack()
+        self.stop()
         self.stopDrive()
 
     #SYSTEM SPEEDS FROM DASHBOARD
