@@ -15,6 +15,7 @@ class Climber():
         self.debug = False
         self.joystick = map.getJoystick(0)
         self.navx = NavX.create_i2c()
+        self.MAX_ANGLE = 3
 
         self.pitch = 0
         self.roll = 0
@@ -47,7 +48,8 @@ class Climber():
             self.wheelLeft.setInverted(False)
         for motor in [self.backLift, self.frontLift, self.wheelLeft, self.wheelRight]:
             motor.clearStickyFaults(timeout)
-            motor.setSafetyEnabled(True)
+            #motor.setSafetyEnabled(True)
+            motor.setSafetyEnabled(False)
         for motor in [self.backLift, self.frontLift]:
             motor.configContinuousCurrentLimit(20,timeout) #15 Amps per motor
             motor.enableCurrentLimit(True)
@@ -262,7 +264,7 @@ class Climber():
         state 4 - robot back is over platform
         *state 5 - robot back legs are fully retracted
         state 6 - something is wrong"""
-        if isFullyRetractedBoth():
+        if self.isFullyRetractedBoth():
             state = 0
         if self.isFullyExtendedBoth():
             state = 1

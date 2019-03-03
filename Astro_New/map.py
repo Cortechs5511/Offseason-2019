@@ -23,8 +23,8 @@ driveRight1 = 20
 driveRight2 = 21
 driveRight3 = 22
 
-intake = 30
-wrist = 31
+intake = 31
+wrist = 30
 
 wheelLeft = 50
 wheelRight = 51
@@ -56,8 +56,8 @@ backBottomSensor = 8
 backTopSensor = 9
 
 #Analog Input sensors
-frontSensor = 0
-backSensor = 1
+frontSensor = 1
+backSensor = 0
 
 #sets the system preferences
 
