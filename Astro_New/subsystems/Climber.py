@@ -9,31 +9,28 @@ import map
 
 class Climber():
 
-    def climberInit():
+    def climberInit(self):
 
         timeout = 0
+        self.xbox = map.getJoystick(2)
 
         #SENSORS
-        self.frontsensor = wpilib.AnalogInput(0)
-        self.backsensor = wpilib.AnalogInput(1)
+        self.frontSensor = wpilib.AnalogInput(0)
+        self.backSensor = wpilib.AnalogInput(1)
         self.switchBottomBack = wpilib.DigitalInput(map.backBottomSensor)
         self.switchTopFront = wpilib.DigitalInput(map.frontTopSensor)
         self.switchBottomFront = wpilib.DigitalInput(map.frontBottomSensor)
         self.switchTopBack = wpilib.DigitalInput(map.backTopSensor)
+        if map.robotId == map.astroV1:
+            self.wheelLeft = Victor(map.wheelLeft)
+            self.wheelRight = Victor(map.wheelRight)
+        elif map.robotId == map.astroV2:
+            self.wheelLeft = Talon(map.wheelLeft)
+            self.wheelRight = Talon(map.wheelRight)
 
         #LIFT MOTORS
         self.backLift = Talon(map.backLift)
         self.frontLift = Talon(map.frontLift)
-
-        self.backLift.setName("Climber", "Back Lift")
-        self.frontLift.setName("Climber", "Front Lift")
-        self.wheelLeft.setName("Climber", "Wheel Left")
-        self.wheelRight.setName("Climber", "Wheel Right")
-
-        self.backLift.setNeutralMode(2)
-        self.frontLift.setNeutralMode(2)
-        self.wheelLeft.setNeutralMode(2)
-        self.wheelRight.setNeutralMode(2)
 
         if map.robotId == map.astroV1:
             self.frontLift.setInverted(True)
@@ -59,17 +56,97 @@ class Climber():
             motor.configVoltageCompSaturation(9,timeout) #Sets saturation value
             motor.enableVoltageCompensation(True) #Compensates for lower voltages
 
+        self.backLift.setName("Climber", "Back Lift")
+        self.frontLift.setName("Climber", "Front Lift")
+        self.wheelLeft.setName("Climber", "Wheel Left")
+        self.wheelRight.setName("Climber", "Wheel Right")
+
+        self.backLift.setNeutralMode(2)
+        self.frontLift.setNeutralMode(2)
+        self.wheelLeft.setNeutralMode(2)
+        self.wheelRight.setNeutralMode(2)
+
+
+
+    def climberPeriodic(self):
+        lean = self.getLean()
+        #BUTTONS
+        #lower climber legs
+        if self.xbox.getRawButton(map.lowerFrontClimber) == True:
+            self.lowerFront()
+        elif self.xbox.getRawButton(map.lowerBackClimber) == True:
+            self.lowerBack()
+        elif self.xbox.getRawButton(map.lowerClimber) == True:
+            self.lowerBoth()
+        #lift climber legs
+        elif self.xbox.getRawButton(map.liftFrontClimber) == True:
+            self.liftFront()
+        elif self.xbox.getRawButton(map.liftBackClimber) == True:
+            self.liftBoth()
+        elif self.xbox.getRawButton(map.liftClimber) == True:
+            self.liftBoth()
+        else:
+            stopFront()
+            stopBack()
+
+        #AUTOCLIMB
+        if self.xbox.getRawButton(map.autoClimb):
+            state = self.getState()
+            if state == 0:
+                self.liftBoth()
+            elif state == 1:
+                self.wheelForward()
+            elif state == 2:
+                self.liftFront()
+            elif state == 3:
+                self.wheelForward()
+            elif state == 4:
+                self.liftBack()
+            else:
+                pass
     #LOGIC AND SENSOR FEEDBACK
 
+    # lift and lower are in terms of legs
+    def liftFront(self):
+        self.backLift.set(0)
+        self.frontLift.set(self.returnClimbSpeed())
+
+    def liftBack(self):
+        self.frontLift.set(0)
+        self.backLift.set(self.returnClimbSpeed())
+
+    def liftBoth(self):
+        if self.isLeaning(False) or self.isLeaning(True):
+            self.backLift.set(self.returnCorrectionSpeed())
+            self.frontLift.set(self.returnCorrectionSpeed())
+        else:
+            self.frontLift.set(self.returnClimbSpeed())
+            self.backLift.set(self.returnClimbSpeed())
+
+    def lowerFront(self):
+        self.backLift.set(0)
+        self.frontLift.set(-1 * self.returnClimbSpeed())
+
+    def lowerBack(self):
+        self.frontLift.set(0)
+        self.backLift.set(-1* self.returnClimbSpeed())
+
+    def lowerBoth(self):
+        if self.isLeaning(False) or self.isLeaning(True):
+            self.backLift.set(self.returnCorrectionSpeed())
+            self.frontLift.set(self.returnCorrectionSpeed())
+        else:
+            self.frontLift.set(-1 * self.returnClimbSpeed())
+            self.backLift.set(-1 *self.returnClimbSpeed())
+
     def getPitch(self):
-        '''negative is leaning forward on V2'''
-        '''dependent on drive for now'''
-        #return self.robot.drive.pitch
-        return 0
+        '''negative is leaning forward V2'''
+        return self.robot.drive.pitch
+
 
     def getRoll(self):
-        #return self.robot.drive.roll
-        return 0
+        '''negative is leaning forward V1'''
+        return self.robot.drive.roll
 
     def isFullyExtendedFront(self):
         """ tells us if the front is fully extended """
@@ -111,13 +188,13 @@ class Climber():
             return False
 
     def isFrontOverGround(self):
-        if self.frontsensor.getVoltage() < 1.5:
+        if self.frontSensor.getVoltage() < 1.5:
             return True
         else:
             return False
 
     def isBackOverGround(self):
-        if self.backsensor.getVoltage() < 1.5:
+        if self.backSensor.getVoltage() < 1.5:
             return True
         else:
             return False
@@ -178,6 +255,30 @@ class Climber():
     def returnTolerance(self):
         self.tolerance = SmartDashboard.getNumber("Tolerance", 2)
         return self.tolerance
+
+    #AUTO CLIMB HELPERS
+
+    def getState(self):
+        """ *state 1 - robot is fully up and legs are Extended
+        *state 2 - robot front is over platform
+        *state 3 - robot front legs are Retracted
+        state 4 - robot back is over platform
+        *state 5 - robot back legs are fully retracted
+        state 6 - something is wrong"""
+        if isFullyRetractedBoth():
+            state = 0
+        if self.isFullyExtendedBoth():
+            state = 1
+        elif self.isFullyExtendedBoth() and self.isFrontOverGround():
+            state = 2
+        elif self.isFullyRetractedFront() and self.isFrontOverGround():
+            state = 3
+        elif self.isFrontOverGround() and self.isBackOverGround() and self.isFullyRetractedBack():
+            state = 5
+        elif self.isFrontOverGround() and self.isBackOverGround():
+            state = 4
+        else:
+            state = 6
 
     #DASHBOARD FUNCTIONS
 

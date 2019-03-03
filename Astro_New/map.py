@@ -5,7 +5,15 @@ from wpilib.joystick import Joystick
 from wpilib.buttons.joystickbutton import JoystickButton
 from wpilib.buttons import Button
 
-'''ROBOT IDS'''
+# Known robots that might have slight variations in configuration
+# that we want to deploy the code to
+synapse: int = 0
+astroV1: int = 1
+astroV2: int = 2
+
+# ID of robot we are deploying to
+# NOTE: Value will be updated when preferences are loaded
+robotId: int = astroV2
 
 #Can ID
 driveLeft1 = 10
@@ -18,16 +26,22 @@ driveRight3 = 22
 intake = 30
 wrist = 31
 
-frontLift = 40
-backLift = 41
-
 wheelLeft = 50
 wheelRight = 51
+
+
+if robotId == astroV1:
+  frontLift = 40
+  backLift = 41
+else:
+  frontLift = 41
+  backLift = 40
 
 #Solenoids
 
 hatchKick = 0
 hatchSlide = 1
+
 climberLock1 = 2
 climberLock2 = 3
 
@@ -36,25 +50,18 @@ climberLock2 = 3
 leftEncoder = (0,1)
 rightEncoder = (2,3)
 
-
-
-'''ROBOT PREFERENCES'''
+frontBottomSensor = 6
+frontTopSensor = 7
+backBottomSensor = 8
+backTopSensor = 9
 
 #sets the system preferences
+
+
 # Robot preferences file stored on roboRIO
 # values can be set differently for each roboRIO
-
-# Known robots that might have slight variations in configuration
-# that we want to deploy the code to
-synapse: int = 0
-astroV1: int = 1
-astroV2: int = 2
-
-# ID of robot we are deploying to
-# NOTE: Value will be updated when preferences are loaded
-robotId: int = astroV2
-
 config: Preferences = None
+
 def getConfigInt(key: str, defVal: int) -> int:
   """
   Looks up an integer value from the robot configuration file
@@ -124,8 +131,8 @@ autoClimb = 7 #while held button that will initiate the auto climb
 #buttons
 driveForwardClimber = 7
 driveBackwardClimber = 8
-liftRobot = 9
-lowerRobot = 10
+liftClimber = 9
+lowerClimber = 10
 liftFrontClimber = 13
 lowerFrontClimber = 14
 liftBackClimber = 12
@@ -136,7 +143,7 @@ def getJoystick(num):
 
     joystick0 = Joystick(0)
     joystick1 = Joystick(1)
-    xbox = Xbox(2)
+    xbox = Joystick(2)
 
     if num == 0: return joystick0
     elif num == 1: return joystick1

@@ -8,10 +8,9 @@ from subsystems import CargoMech
 from subsystems import Climber
 from subsystems import Drive
 from subsystems import Limelight
-from subsystems import disableAll
 from CRLibrary.path import odometry as od
 
-class MyRobot(CommandBasedRobot):
+class MyRobot(wpilib.IterativeRobot):
 
     dashboard = True
     follower = "Ramsetes"
@@ -20,7 +19,7 @@ class MyRobot(CommandBasedRobot):
     period = 1/frequency
 
     def __init__(self):
-        super().__init__(self.period)
+        super().__init__()
 
     def robotInit(self):
 
@@ -28,15 +27,16 @@ class MyRobot(CommandBasedRobot):
         This is a good place to set up your subsystems and anything else that
         you will need to access later.
         '''
-
-        Command.getRobot = lambda x=0: self
-
         map.loadPreferences()
         self.compressor = wpilib.Compressor(0)
 
         self.timer = wpilib.Timer()
         self.timer.start()
         self.watch = wpilib.Watchdog(150, None)
+        self.climber = Climber.Climber()
+
+        self.climber.climberInit()
+
 
         '''
         Since OI instantiates commands and commands need access to subsystems,
@@ -44,6 +44,7 @@ class MyRobot(CommandBasedRobot):
         '''
 
     def robotPeriodic(self):
+        self.climber.climberPeriodic()
 
 
     def autonomousInit(self):
