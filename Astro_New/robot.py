@@ -8,7 +8,11 @@ from subsystems import CargoMech
 from subsystems import Climber
 from subsystems import Drive
 from subsystems import Limelight
+from subsystems import Sensors
 from CRLibrary.path import odometry as od
+from ctre import WPI_TalonSRX as Talon
+from ctre import WPI_VictorSPX as Victor
+
 
 class MyRobot(wpilib.IterativeRobot):
 
@@ -22,6 +26,9 @@ class MyRobot(wpilib.IterativeRobot):
         super().__init__()
 
     def robotInit(self):
+        #temporary
+        TalonLeft = Talon(map.driveLeft1)
+        TalonRight = Talon(map.driveRight1)
 
         '''
         This is a good place to set up your subsystems and anything else that
@@ -35,8 +42,10 @@ class MyRobot(wpilib.IterativeRobot):
         self.watch = wpilib.Watchdog(150, None)
         self.climber = Climber.Climber()
         self.cargoMech = CargoMech.CargoMech()
+        self.sensors = Sensors.Sensors()
         self.climber.climberInit()
         self.cargoMech.cargoInit()
+        self.sensors.sensorsInit()
 
         '''
         Since OI instantiates commands and commands need access to subsystems,
@@ -46,9 +55,10 @@ class MyRobot(wpilib.IterativeRobot):
     def robotPeriodic(self):
         self.climber.climberPeriodic()
         self.cargoMech.cargoPeriodic()
+        self.sensors.sensorsPeriodic()
 
     def autonomousInit(self):
-        self.drive.zero()
+        #self.drive.zero()
         self.timer.reset()
         self.timer.start()
         self.curr = 0
@@ -63,8 +73,8 @@ class MyRobot(wpilib.IterativeRobot):
         pass
 
     def disabledInit(self):
-        self.drive.disable()
-        self.hatchMech.disable()
+        #self.drive.disable()
+        #self.hatchMech.disable()
         self.cargoMech.disable()
         self.climber.disable()
 

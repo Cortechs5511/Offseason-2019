@@ -6,13 +6,16 @@ from ctre import WPI_TalonSRX as Talon
 from ctre import WPI_VictorSPX as Victor
 import math
 import map
+from subsystems import Sensors
 
 class Climber():
 
     def climberInit(self):
 
         timeout = 0
-        self.xbox = map.getJoystick(2)
+        #xbox should be joystick oops
+        self.xbox = map.getJoystick(0)
+        self.sensors = Sensors.Sensors
 
         #SENSORS
         self.frontSensor = wpilib.AnalogInput(0)
@@ -86,8 +89,8 @@ class Climber():
         elif self.xbox.getRawButton(map.liftClimber) == True:
             self.liftBoth()
         else:
-            stopFront()
-            stopBack()
+            self.stopFront()
+            self.stopBack()
 
         #AUTOCLIMB
         if self.xbox.getRawButton(map.autoClimb):
@@ -141,12 +144,13 @@ class Climber():
 
     def getPitch(self):
         '''negative is leaning forward V2'''
-        return self.robot.drive.pitch
-
+        #return self.sensors.getPitch()
+        return 0
 
     def getRoll(self):
         '''negative is leaning forward V1'''
-        return self.robot.drive.roll
+        #return self.sensors.getRoll()
+        return 0
 
     def isFullyExtendedFront(self):
         """ tells us if the front is fully extended """

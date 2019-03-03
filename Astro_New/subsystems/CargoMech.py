@@ -10,14 +10,13 @@ import map
 class CargoMech():
     def cargoInit(self):
         #Create all physical parts used by subsystem
+        self.xbox = map.getJoystick(2)
         self.debug = True
-        self.robot = Robot
         #fix
         self.motorIntake = ctre.WPI_TalonSRX(map.intake)
         self.motorWrist = ctre.WPI_TalonSRX(map.wrist)
         self.motorIntake.setName("Cargo","Motor Intake")
         self.motorWrist.setName("Cargo", "Motor Wrist")
-        self.xbox = self.robot.operatorAxis(id)
     def intake(self):
         ''' Intake the balls (turn wheels inward) '''
         self.motorIntake.set(0.5)
@@ -46,14 +45,14 @@ class CargoMech():
             self.wristDown()
 
         else: self.wristStop()
-        
+
         if self.xbox.getRawAxis(2) > deadband:
             self.intake()
-        
+
         elif self.xbox.getRawAxis(3) > deadband:
             self.outtake()
 
-        else: self.stopIntake() 
+        else: self.stopIntake()
 
     def subsystemInit(self):
         r = self.robot
@@ -66,7 +65,7 @@ class CargoMech():
         #outtakeButton.whileActive(WristIntake('outtake',-1))
         #intakeButton : wpilib.buttons.JoystickButton = r.operatorButton(6)
         #intakeButton.whileActive(WristIntake('intake',1))
-    
+
     ''' def dashboardInit(self):
         """ Adds subsystem specific commands. """
 
@@ -82,6 +81,4 @@ class CargoMech():
         self.stopIntake()
         self.wristStop()
     def dashboardPeriodic(self):
-        pass 
-
-   
+        pass
