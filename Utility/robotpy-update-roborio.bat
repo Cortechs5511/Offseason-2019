@@ -34,4 +34,4 @@ rem Install robotpy modules for roboRIO
 %PYTHON% installer.py install-opkg robotpy-rev
 %PYTHON% installer.py install-opkg robotpy-pathfinder
 %PYTHON% installer.py install-pip robotpy-navx
-
+%PYTHON% installer.py install-pip pprofile

@@ -46,3 +46,5 @@ cd %ROBOTPY%
 @if %errorlevel% neq 0 exit /b %errorlevel%
 %PYTHON% installer.py download-opkg robotpy-pathfinder
 @if %errorlevel% neq 0 exit /b %errorlevel%
+%PYTHON% installer.py download-pip pprofile
+@if %errorlevel% neq 0 exit /b %errorlevel%
