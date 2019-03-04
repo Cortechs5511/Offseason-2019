@@ -40,20 +40,28 @@ class MyRobot(wpilib.IterativeRobot):
         self.sensors = Sensors.Sensors()
         self.hatchMech = HatchMech.HatchMech()
         self.climber = Climber.Climber()
-        self.cargoMech.cargoInit()
+        self.limelight = Limelight.Limelight()
+        self.drive = Drive.Drive()
+
+        self.cargoMech.cargoInit(self)
         self.sensors.sensorsInit()
         self.hatchMech.hatchInit()
         self.climber.climberInit()
+        self.drive.driveInit(self)
+        self.limelight.limelightInit(self)
+
 
     def robotPeriodic(self):
         if self.dashboard:
             self.timer.reset()
             self.timer.start()
             self.timerNum = self.timer.get()
+        self.limelight.readLimelightData()
         self.cargoMech.cargoPeriodic()
         self.sensors.sensorsPeriodic()
         self.hatchMech.hatchPeriodic()
         self.climber.climberPeriodic()
+        self.drive.drivePeriodic()
 
     def autonomousInit(self):
         #self.drive.zero()
@@ -62,11 +70,15 @@ class MyRobot(wpilib.IterativeRobot):
         self.curr = 0
 
     def updateDashboardInit(self):
+        self.limelight.updateDashboardInit()
         self.climber.dashboardInit()
+        self.drive.updateDashboardInit()
 
     def updateDashboardPeriodic(self):
         SmartDashboard.putNumber("Periodic Duration", self.timerNum)
+        self.limelight.updateDashboardPeriodic()
         self.climber.dashboardPeriodic()
+        self.drive.updateDashboardPeriodic()
 
     def telopInit(self):
         pass
@@ -76,6 +88,7 @@ class MyRobot(wpilib.IterativeRobot):
         self.hatchMech.disable()
         self.cargoMech.disable()
         self.climber.disable()
+        self.drive.disable()
 
     def disabledPeriodic(self):
         self.disabledInit()

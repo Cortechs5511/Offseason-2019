@@ -131,8 +131,10 @@ autoClimb = 7 #while held button that will initiate the auto climb
 
 #DRIVE
 #axes
-#PLEASE ADD ABHI
+drive = 1
 #buttons
+flip = 0
+halfSpeed = 3
 driveForwardClimber = 7
 driveBackwardClimber = 8
 liftClimber = 9

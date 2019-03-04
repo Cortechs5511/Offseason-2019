@@ -4,11 +4,13 @@ import ctre
 import map
 
 class CargoMech():
-    def cargoInit(self):
+    def cargoInit(self, robot):
+        self.robot = robot
         self.xbox = map.getJoystick(2)
         self.debug = True
         self.motorIntake = ctre.WPI_TalonSRX(map.intake)
-        self.motorIntake.configFactoryDefault()
+        if not wpilib.RobotBase.isSimulation():
+            self.motorIntake.configFactoryDefault()
         self.motorWrist = ctre.WPI_TalonSRX(map.wrist)
         self.motorIntake.setName("Cargo","Motor Intake")
         self.motorWrist.setName("Cargo", "Motor Wrist")
