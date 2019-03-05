@@ -46,7 +46,7 @@ class MyRobot(CommandBasedRobot):
     dashboard = True
     follower = "Ramsetes"
 
-    frequency = 20
+    frequency = 38
     period = 1/frequency
 
     def __init__(self):
