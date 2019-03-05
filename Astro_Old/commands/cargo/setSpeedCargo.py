@@ -1,4 +1,5 @@
 from wpilib.command import Command
+import map
 
 class SetSpeedCargo(Command):
     def __init__(self, timeout=300):
@@ -13,34 +14,24 @@ class SetSpeedCargo(Command):
         pass
 
     def execute(self):
-        deadband = .1
-        #if self.robot.getOperatorAxis(0) > deadband:
-        #    self.cargoMech.wristUp()
-        #elif self.robot.getOperatorAxis(1) < -deadband:
-        #    self.cargoMech.wristDown()
+        deadband = 0.05
+        if self.xbox.getRawAxis(map.setSpeedWrist) > deadband:
+            self.cargoMech.wrist("up")
+        elif self.xbox.getRawAxis(map.setSpeedWrist) < -deadband:
+            self.cargoMech.wrist("down")
+        else: self.cargoMech.wrist("stop")
 
-        #else:
-        #    self.cargoMech.wristStop()
-
-        #if self.robot.getOperatorAxis(0) > deadband:
-        #    self.cargoMech.intake()
-        #
-        #elif self.robot.getOperatorAxis(1) < -deadband:
-        #    self.cargoMech.outtake()
-
-        #else:
-        #    self.cargoMech.stopIntake()
-        """if self.power == -1:
-            self.cargoMech.outtake()
-        elif self.power == 1:
-            self.cargoMech.intake()"""
+        if self.xbox.getRawAxis(map.intakeCargo) > deadband:
+            self.cargoMech.motorIntake.set(0.5)
+        elif self.xbox.getRawAxis(map.outtakeCargo) > deadband:
+            self.cargoMech.intake("outtake")
+        else: self.cargoMech.intake("stop")
 
     def interrupted(self):
-        self.cargoMech.stopIntake()
+        self.cargoMech.disable()
 
     def end(self):
-        self.cargoMech.stopIntake()
+        self.cargoMech.disable()
 
     def isFinished(self):
-        #return self.power == 0
         return False

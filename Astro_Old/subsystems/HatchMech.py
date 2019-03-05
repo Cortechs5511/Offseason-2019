@@ -56,12 +56,10 @@ class HatchMech(Subsystem):
             SmartDashboard.putData("Shimmy", Shimmy(3))
         self.retractEjector()
         r = self.robot
-        b : wpilib.buttons.JoystickButton = r.operatorButton(3)
+        b : wpilib.buttons.JoystickButton = r.operatorButton(map.KickSimpleHatch)
         b.whenPressed(EjectHatch())
-        b : wpilib.buttons.JoystickButton = r.operatorButton(7)
+        b : wpilib.buttons.JoystickButton = r.operatorButton(map.ToggleSimpleHatch)
         b.whenPressed(EjectToggle())
-        b : wpilib.buttons.JoystickButton = r.operatorButton(8)
-        b.whenPressed(SlideToggle())
 
     def disable(self):
         self.retractEjector()

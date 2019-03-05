@@ -11,20 +11,17 @@ class LowerRobot(Command):
     def initialize(self): pass
 
     def execute(self):
+        #lift climber legs to lower the robot
         lean = self.climber.getLean()
         if self.mode == "front":
-            self.climber.backLift.set(0)
-            self.climber.frontLift.set(self.climber.returnClimbSpeed())
+            self.climber.lift("front")
         elif self.mode == "back":
-            self.climber.frontLift.set(0)
-            self.climber.backLift.set(self.climber.returnClimbSpeed())
+            self.climber.lift("back")
         elif self.mode == "both":
-            if self.climber.isLeaning(False) or self.climber.isLeaning(True):
-                self.climber.backLift.set(self.climber.returnCorrectionSpeed())
-                self.climber.frontLift.set(self.climber.returnCorrectionSpeed())
-            else:
-                self.climber.frontLift.set(self.climber.returnClimbSpeed())
-                self.climber.backLift.set(self.climber.returnClimbSpeed())
+            self.climber.lift("both")
+        else:
+            self.climber.stopBack()
+            self.climber.stopFront()
 
     def interrupted(self): self.climber.stop()
 

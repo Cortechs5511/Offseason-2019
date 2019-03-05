@@ -22,12 +22,8 @@ driveRight3 = 22
 intake = 30
 wrist = 31
 
-if map.robotId == map.astroV1:
-    frontLift = 40
-    backLift = 41
-else:
-    frontLift = 41
-    backLift = 40
+frontLift = 40
+backLift = 41
 
 wheelLeft = 50
 wheelRight = 51
@@ -103,3 +99,34 @@ def loadPreferences():
   global robotId
   robotId = getConfigFloat("RobotId", astroV2)
   print("map.py robotId", robotId)
+
+'''BUTTONS/AXES'''
+#call these constants when reading button states in subsystems
+
+#OPERATOR
+#axes
+setSpeedWrist = 1 #drive the wrist up and down using an axes
+intakeCargo = 2
+outtakeCargo = 3
+#buttons
+ShootPositionWrist = 1 #brings wrist in a position to outtake carog
+KickSimpleHatch = 2 #controlls original only hatch mech
+ToggleSimpleHatch = 3 #controlls original only hatch mech
+IntakePositionWrist = 4 #brings the wrist to intaking position on floor
+ToggleNewHatch = 5 #controls hatch mech on arm
+autoClimb = 7 #while held button that will initiate the auto climb
+
+#DRIVE
+#axes
+drive = 1
+#buttons
+flip = 0
+halfSpeed = 3
+driveForwardClimber = 7
+driveBackwardClimber = 8
+liftClimber = 9
+lowerClimber = 10
+liftFrontClimber = 13
+lowerFrontClimber = 14
+liftBackClimber = 12
+lowerBackClimber = 15

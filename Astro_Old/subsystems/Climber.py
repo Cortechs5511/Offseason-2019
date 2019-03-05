@@ -11,6 +11,7 @@ from ctre import WPI_VictorSPX as Victor
 from commands.climber.liftRobot import LiftRobot
 from commands.climber.lowerRobot import LowerRobot
 from commands.climber.setSpeedWheel import SetSpeedWheel
+from commands.climber.setSpeedClimber import SetSpeedClimber
 #from commands.climber.autoClimb import AutoClimb
 from subsystems.disableAll import DisableAll
 from commands.climber.driveToEdge import DriveToEdge
@@ -35,13 +36,17 @@ class Climber(Subsystem):
 
         self.robot = robot
         self.debug = True
-        self.DriveToEdge = DriveToEdge
-
         timeout = 0
+
         self.frontsensor = wpilib.AnalogInput(0)
         self.backsensor = wpilib.AnalogInput(1)
-        self.backLift = Talon(map.backLift)
-        self.frontLift = Talon(map.frontLift)
+        if map.robotId == map.astroV1:
+            self.backLift = Talon(map.backLift)
+            self.frontLift = Talon(map.frontLift)
+        else:
+            #MOTORS ARE SWITCHED ON V2
+            self.backLift = Talon(map.frontLift)
+            self.frontLift = Talon(map.backLift)
         self.backLift.setName("Climber", "Back Lift")
         self.frontLift.setName("Climber", "Front Lift")
 
@@ -92,9 +97,6 @@ class Climber(Subsystem):
     def subsystemInit(self):
         r = self.robot
 
-        #SmartDashboard.putData("Drive to Front", self.DriveToEdge("front"))
-        #SmartDashboard.putData("Drive to Back", self.DriveToEdge("back"))
-        #wheels
         climberWheelsForward : wpilib.buttons.JoystickButton = r.driverLeftButton(7)
         climberWheelsForward.whileHeld(SetSpeedWheel(1))
 
@@ -128,28 +130,73 @@ class Climber(Subsystem):
         #killautoClimbButton : wpilib.buttons.JoystickButton = r.operatorButton(8)
         #killautoClimbButton.whenPressed(self.disable())
 
+    def lift(self, mode):
+        if mode == "front":
+            if self.isLeaning(True):
+                self.backLift.set(self.returnCorrectionSpeed())
+            else:
+                self.stopBack()
+            self.frontLift.set(self.returnClimbSpeed())
+        elif mode == "back":
+            self.frontLift.set(0)
+            self.backLift.set(self.returnClimbSpeed())
+        elif mode == "both":
+            if self.isLeaning(True):
+                self.backLift.set(self.returnCorrectionSpeed())
+                self.frontLift.set(self.returnClimbSpeed())
+            elif self.isLeaning(False):
+                self.backLift.set(self.returnClimbSpeed())
+                self.frontLift.set(self.returnCorrectionSpeed())
+            else:
+                self.backLift.set(self.returnClimbSpeed())
+                self.frontLift.set(self.returnClimbSpeed())
 
 
-    def getHeightFront(self):
-        """ this will return the height in inches from encoder """
-        #ticks = self.frontLift.getQuadraturePosition()
-        #return ticks * self.TICKS_TO_INCHES
-        return 0 #temp
+    def lower(self, mode):
+        if mode == "front":
+            if self.isLeaning(True):
+                self.backLift.set(self.returnCorrectionSpeed())
+            else:
+                self.stopBack()
+            self.frontLift.set(self.returnClimbSpeed())
+        elif mode == "back":
+            self.frontLift.set(0)
+            self.backLift.set(-1* self.returnClimbSpeed())
+        elif mode == "both":
+            if self.isLeaning(False):
+                self.backLift.set(-1 * self.returnCorrectionSpeed())
+                self.frontLift.set(-1 * self.returnClimbSpeed())
+            elif self.isLeaning(True):
+                self.backLift.set(-1 * self.returnClimbSpeed())
+                self.frontLift.set(-1 * self.returnCorrectionSpeed())
+            else:
+                self.backLift.set(-1 * self.returnClimbSpeed())
+                self.frontLift.set(-1 * self.returnClimbSpeed())
 
-    def getHeightBack(self):
-        """ this will return the height in inches from encoder """
-        #ticks = self.backLift.getQuadraturePosition()
-        #return ticks * self.TICKS_TO_INCHES
-        return 0 #temp
+    def wheel(self, direction):
+        if direction == "forward":
+            self.wheelLeft.set(self.returnWheelSpeed())
+            self.wheelRight.set(self.returnWheelSpeed())
+        elif direction == "backward":
+            self.wheelLeft.set(-1 * self.returnWheelSpeed())
+            self.wheelRight.set(-1 * self.returnWheelSpeed())
+
+        if self.isLeaning(False):
+            self.backLift.set(-1 * self.returnCorrectionSpeed())
+            self.stopFront()
+        elif self.isLeaning(True):
+            self.backLift.set(self.returnCorrectionSpeed())
+            self.stopFront()
+
+    def initDefaultCommand(self):
+        self.setDefaultCommand(SetSpeedClimber())
 
     def isFullyExtendedFront(self):
         """ tells us if the front is fully extended """
-        #return self.getHeightFront() >= self.MAX_EXTEND
         return not self.switchTopFront.get()
 
     def isFullyExtendedBack(self):
         """ tells us if the back is fully extended, so it can stop """
-        #return self.getHeightBack() >= self.MAX_EXTEND
         return not self.switchTopBack.get()
 
     def isFullyRetractedFront(self):
@@ -177,9 +224,9 @@ class Climber(Subsystem):
 
     def getLean(self):
         if map.robotId == map.astroV1:
-            return self.getRoll()
+            return self.robot.drive.getRoll()
         else:
-            return self.getPitch()
+            return self.robot.drive.getPitch()
 
     def isFrontOverGround(self):
         if self.frontsensor.getVoltage() < 1.5:
@@ -222,16 +269,13 @@ class Climber(Subsystem):
     def dashboardInit(self):
         SmartDashboard.putNumber("ClimberSpeed", 0.9)
         SmartDashboard.putNumber("WheelSpeed", 0.7)
-
         SmartDashboard.putNumber("Tolerance", 2)
-
         SmartDashboard.putData("Lift Robot", LiftRobot("both"))
         SmartDashboard.putData("Drive To Edge, Front", DriveToEdge("front"))
         SmartDashboard.putData("Drive To Edge, Back", DriveToEdge("back"))
         SmartDashboard.putData("Lift Robot, Front", LiftRobot("front"))
         SmartDashboard.putData("Lift Robot, Back", LiftRobot("back"))
-
-        #SmartDashboard.putData("Lower Robot", LowerRobot("both"))
+        SmartDashboard.putData("Lower Robot", LowerRobot("both"))
 
     def dashboardPeriodic(self):
         self.MAX_ANGLE = self.returnTolerance()
@@ -244,23 +288,15 @@ class Climber(Subsystem):
             SmartDashboard.putBoolean("Fully Extended Back",self.isFullyExtendedBack())
             SmartDashboard.putBoolean("Fully Retracted Front",self.isFullyRetractedFront())
             SmartDashboard.putBoolean("Fully Retracted Back",self.isFullyRetractedBack())
-            #SmartDashboard.putNumber("FrontTicks", self.getHeightFront())
-            #SmartDashboard.putNumber("BackTicks", self.getHeightBack())
-            #SmartDashboard.putData("Lean", self.isLeaning())
+            #SmartDashboard.putData("Lean", self.getLean())
 
     def returnCorrectionSpeed(self):
         #proportional speed based on angle
+        targetAngle = -1
         lean = self.getLean()
-        targetAngle = 1
-        lean += targetAngle
-        error = math.fabs(lean)
-        pGain = 0.5
-        if lean < -self.MAX_ANGLE:
-            return error * pGain
-        elif lean > self.MAX_ANGLE:
-            return error * -pGain
-        else:
-            return self.returnClimbSpeed()
+        error = lean - targetAngle
+        multiplier = 1 - (0.1 * math.fabs(error))
+        return (multiplier * self.returnClimbSpeed())
 
     def returnClimbSpeed(self):
         self.climbSpeed = SmartDashboard.getNumber("ClimberSpeed", 0.9)

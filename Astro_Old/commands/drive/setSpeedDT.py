@@ -2,7 +2,7 @@ import math
 import wpilib
 #from robot import MyRobot
 #from subsystems.Drive import Drive
-
+import map
 from wpilib.command import Command
 from wpilib.command import TimedCommand
 from wpilib import SmartDashboard
@@ -35,37 +35,16 @@ class SetSpeedDT(TimedCommand):
         right = -self.Joystick1.getY()
         flip = self.DT.isFlipped()
 # half-speed
-        if self.robot.readDriverRightButton(4):
+        if self.robot.readDriverRightButton(map.halfSpeed):
             left = left / 2
             right = right / 2
-# brakes
-        if self.robot.readDriverLeftButton(2):
-            left = left / 1000
-            right = right / 1000
-
-# both left and right go at power of left(perfectly straight drive)
-        if self.robot.readDriverLeftButton(1):
-            right = left
-
-
         if (abs(left)<0.025) and (abs(right)<0.025):
-
-
             gain = SmartDashboard.getNumber("gain",1)
-            #diff drive is messed up
-            '''power = -(self.robot.operatorAxis(1))
-            rotation = self.robot.operatorAxis(4)*.75
-            #quickTurn = self.robot.readOperatorButton(10)
-            #self.diffDrive.curvatureDrive(power,rotation,quickTurn)
-            self.diffDrive.arcadeDrive(rotation, power)
-            #self.DT.tankDrive(power*gain,power)'''
         else:
-            if flip == True:
+            if self.robot.readDriverRightButton(map.flip):
                 self.DT.tankDrive (-right * self.maxspeed ,-left * self.maxspeed)
             else:
                 self.DT.tankDrive(left * self.maxspeed ,right * self.maxspeed)
-
-
     def interrupted(self):
         self.end()
 

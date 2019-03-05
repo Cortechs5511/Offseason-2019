@@ -10,14 +10,11 @@ from wpilib.command import WaitCommand
 from commandbased import CommandBasedRobot
 
 from commands.zero import Zero
-
 from commands import sequences
-
 from commands import autonomous
-#from commands.autonomous import TestPath
+
 from commands.autonomous import DriveStraight
-#from commands.autonomous import AutoFrontHatch
-#from commands.drive.autonCheck import AutonCheck
+
 from commands.drive.drivePath import DrivePath
 from commands.drive.rotateAuton import autonRotation
 

@@ -11,35 +11,21 @@ class LiftRobot(Command):
     def initialize(self): pass
 
     def execute(self):
+        #lift climber legs to lower the robot
+        lean = self.climber.getLean()
         if self.mode == "front":
-            self.climber.backLift.set(0)
-            self.climber.frontLift.set(-1 * self.climber.returnClimbSpeed())
+            self.climber.lower("front")
         elif self.mode == "back":
-            self.climber.frontLift.set(0)
-            self.climber.backLift.set(-1* self.climber.returnClimbSpeed())
+            self.climber.lower("back")
         elif self.mode == "both":
-            if self.climber.isLeaning(True):
-                self.climber.backLift.set(self.climber.returnCorrectionSpeed())
-                if self.climber.getLean() < -2 * self.climber.MAX_ANGLE:
-                    self.climber.frontLift.set(0)
-                else:
-                    self.climber.frontLift.set(-1 * self.climber.returnClimbSpeed())
-            elif self.climber.isLeaning(False):
-                self.climber.backLift.set(self.climber.returnCorrectionSpeed())
-                if self.climber.getLean() > 2 * self.climber.MAX_ANGLE:
-                    self.climber.frontLift.set(0)
-                else:
-                    self.climber.frontLift.set(-1 * self.climber.returnClimbSpeed())
-            else:
-                self.climber.backLift.set(-1 * self.climber.returnClimbSpeed())
-                self.climber.frontLift.set(-1 * self.climber.returnClimbSpeed())
+            self.climber.lower("both")
+        else:
+            self.climber.stopBack()
+            self.climber.stopFront()
 
     def interrupted(self): self.climber.stop()
 
     def end(self): self.interrupted()
 
     def isFinished(self):
-        if self.mode == "both" : return self.climber.isFullyExtendedBoth()
-        elif self.mode == "front" : return self.climber.isFullyExtendedFront()
-        elif self.mode == "back" : return self.climber.isFullyExtendedBack()
-        else: return False
+        return False
