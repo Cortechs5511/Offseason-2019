@@ -5,3 +5,5 @@ Testing/NavxTest/.vscode/settings.json
 **/networktables.ini
 **/networktables.ini.bak
 **/.pytest_cache
+Testing/NeoTest/tests/pyfrc_test.py
+Testing/NeoTest/.deploy_cfg
