@@ -22,7 +22,7 @@ driveRight3 = 22
 intake = 30
 wrist = 31
 
-if map.robotId == map.astroV1:
+if robotId == astroV1:
     frontLift = 40
     backLift = 41
 else:
