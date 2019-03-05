@@ -76,12 +76,12 @@ class Drive():
 
             for motor in [VictorLeft1,VictorLeft2]:
                 motor.clearStickyFaults(timeout)
-                motor.setSafetyEnabled(True)
+                #motor.setSafetyEnabled(True)
                 motor.setInverted(leftInverted)
 
             for motor in [VictorRight1,VictorRight2]:
                 motor.clearStickyFaults(timeout)
-                motor.setSafetyEnabled(True)
+                #motor.setSafetyEnabled(True)
                 motor.setInverted(rightInverted)
 
 
@@ -103,8 +103,9 @@ class Drive():
         self.right = TalonRight
 
         self.accel = wpilib.BuiltInAccelerometer()
-        self.navx = navx.AHRS.create_spi()
-
+        #self.navx = navx.AHRS.create_spi()
+        self.navx = None
+        
         self.leftEncoder = wpilib.Encoder(map.leftEncoder[0], map.leftEncoder[1])
         self.leftEncoder.setName("Drive", "Left Encoder")
         self.leftEncoder.setDistancePerPulse(self.leftConv)
@@ -163,10 +164,10 @@ class Drive():
             self.tankDrive (0 ,0)
         else:
             #flipped
-            if  self.joystick1.getRawButton(map.flip) or self.joystick0.getRawButton(map.flip) :
-                self.tankDrive (-right * self.maxspeed ,-left * self.maxspeed)
+            if self.joystick1.getRawButton(map.flip) or self.joystick0.getRawButton(map.flip) :
+                self.__tankDrive__(-right * self.maxspeed ,-left * self.maxspeed)
             else:
-                self.tankDrive(left * self.maxspeed ,right * self.maxspeed)
+                self.__tankDrive__(left * self.maxspeed ,right * self.maxspeed)
 
 
     def __getDistance__(self): return self.getAvgDistance()
@@ -305,10 +306,10 @@ class Drive():
     def disable(self):
         self.__tankDrive__(0,0)
 
-    def dashboardInit(self):
+    def updateDashboardInit(self):
         pass
 
-    def dashboardPeriodic(self):
+    def updateDashboardPeriodic(self):
         SmartDashboard.putNumber("Left Counts", self.leftEncoder.get())
         SmartDashboard.putNumber("Left Distance", self.leftEncoder.getDistance())
         SmartDashboard.putNumber("Right Counts", self.rightEncoder.get())

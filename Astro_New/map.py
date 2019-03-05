@@ -30,12 +30,8 @@ wheelLeft = 50
 wheelRight = 51
 
 
-if robotId == astroV1:
-  frontLift = 40
-  backLift = 41
-else:
-  frontLift = 41
-  backLift = 40
+frontLift = 40
+backLift = 41
 
 #Solenoids
 

@@ -2,6 +2,7 @@ import wpilib
 from wpilib import SmartDashboard
 import wpilib.buttons
 import map
+from wpilib import LiveWindow
 from subsystems import HatchMech
 from subsystems import CargoMech
 from subsystems import Climber
@@ -12,16 +13,16 @@ from CRLibrary.path import odometry as od
 from ctre import WPI_TalonSRX as Talon
 from ctre import WPI_VictorSPX as Victor
 
-class MyRobot(wpilib.IterativeRobot):
+class MyRobot(wpilib.TimedRobot):
 
     dashboard = True
     follower = "Ramsetes"
 
-    frequency = 20
+    frequency = 28
     period = 1/frequency
 
     def __init__(self):
-        super().__init__()
+        super().__init__(self.period)
 
     def robotInit(self):
         #temporary
@@ -49,7 +50,9 @@ class MyRobot(wpilib.IterativeRobot):
         self.climber.climberInit()
         self.drive.driveInit(self)
         self.limelight.limelightInit(self)
+        self.updateDashboardInit()
 
+        LiveWindow.disableAllTelemetry()
 
     def robotPeriodic(self):
         if self.dashboard:
@@ -62,6 +65,7 @@ class MyRobot(wpilib.IterativeRobot):
         self.hatchMech.hatchPeriodic()
         self.climber.climberPeriodic()
         self.drive.drivePeriodic()
+        self.updateDashboardPeriodic()
 
     def autonomousInit(self):
         #self.drive.zero()
@@ -70,15 +74,15 @@ class MyRobot(wpilib.IterativeRobot):
         self.curr = 0
 
     def updateDashboardInit(self):
-        self.limelight.updateDashboardInit()
-        self.climber.dashboardInit()
-        self.drive.updateDashboardInit()
+        #self.limelight.updateDashboardInit()
+        self.climber.updateDashboardInit()
+        #self.drive.updateDashboardInit()
 
     def updateDashboardPeriodic(self):
-        SmartDashboard.putNumber("Periodic Duration", self.timerNum)
-        self.limelight.updateDashboardPeriodic()
-        self.climber.dashboardPeriodic()
-        self.drive.updateDashboardPeriodic()
+        #SmartDashboard.putNumber("Periodic Duration", self.timerNum)
+        #self.limelight.updateDashboardPeriodic()
+        self.climber.updateDashboardPeriodic()
+        #self.drive.updateDashboardPeriodic()
 
     def telopInit(self):
         pass

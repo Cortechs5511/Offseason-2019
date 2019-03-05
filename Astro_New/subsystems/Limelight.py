@@ -69,10 +69,10 @@ class Limelight():
         if wpilib.RobotBase.isSimulation(): return [-10, -5]
         return [-self.getYError()/12, self.getXError()/12]'''
 
-    def dashboardInit(self):
+    def updateDashboardInit(self):
         pass
 
-    def dashboardPeriodic(self):
+    def updateDashboardPeriodic(self):
         SmartDashboard.putNumber("xError", self.getXError())
         SmartDashboard.putNumber("yError", self.getYError())
         SmartDashboard.putNumber("Distance",self.getDistance())

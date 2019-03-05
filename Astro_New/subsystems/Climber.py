@@ -7,14 +7,14 @@ from ctre import WPI_VictorSPX as Victor
 import math
 import map
 from subsystems import Sensors
-from navx.ahrs import AHRS as NavX
+import navx
 
 class Climber():
     def climberInit(self):
         timeout = 0
         self.debug = False
         self.joystick = map.getJoystick(0)
-        self.navx = NavX.create_i2c()
+        self.navx = navx.AHRS.create_spi()
         self.MAX_ANGLE = 3
 
         self.pitch = 0
@@ -81,6 +81,7 @@ class Climber():
             self.lift("both")
         else:
             self.stopFront()
+            self.stopBack()
 
         self.sensorAnglePeriodic()
 
@@ -104,33 +105,46 @@ class Climber():
     # lift and lower are in terms of legs
     def lift(self, mode):
         if mode == "front":
-            self.backLift.set(0)
+            if self.isLeaning(True):
+                self.backLift.set(self.returnCorrectionSpeed())
+            else:
+                self.stopBack()
             self.frontLift.set(self.returnClimbSpeed())
         elif mode == "back":
             self.frontLift.set(0)
             self.backLift.set(self.returnClimbSpeed())
         elif mode == "both":
-            if self.isLeaning(False) or self.isLeaning(True):
+            if self.isLeaning(True):
                 self.backLift.set(self.returnCorrectionSpeed())
+                self.frontLift.set(self.returnClimbSpeed())
+            elif self.isLeaning(False):
+                self.backLift.set(self.returnClimbSpeed())
                 self.frontLift.set(self.returnCorrectionSpeed())
             else:
-                self.frontLift.set(self.returnClimbSpeed())
                 self.backLift.set(self.returnClimbSpeed())
+                self.frontLift.set(self.returnClimbSpeed())
+
 
     def lower(self, mode):
         if mode == "front":
-            self.backLift.set(0)
-            self.frontLift.set(-1 * self.returnClimbSpeed())
+            if self.isLeaning(True):
+                self.backLift.set(self.returnCorrectionSpeed())
+            else:
+                self.stopBack()
+            self.frontLift.set(self.returnClimbSpeed())
         elif mode == "back":
             self.frontLift.set(0)
             self.backLift.set(-1* self.returnClimbSpeed())
         elif mode == "both":
-            if self.isLeaning(False) or self.isLeaning(True):
-                self.backLift.set(self.returnCorrectionSpeed())
-                self.frontLift.set(self.returnCorrectionSpeed())
-            else:
+            if self.isLeaning(False):
+                self.backLift.set(-1 * self.returnCorrectionSpeed())
                 self.frontLift.set(-1 * self.returnClimbSpeed())
-                self.backLift.set(-1 *self.returnClimbSpeed())
+            elif self.isLeaning(True):
+                self.backLift.set(-1 * self.returnClimbSpeed())
+                self.frontLift.set(-1 * self.returnCorrectionSpeed())
+            else:
+                self.backLift.set(-1 * self.returnClimbSpeed())
+                self.frontLift.set(-1 * self.returnClimbSpeed())
 
     def sensorAnglePeriodic(self):
         self.pitch = self.navx.getPitch()
@@ -172,7 +186,7 @@ class Climber():
 
     def getLean(self):
         if map.robotId == map.astroV1:
-            return self.getRoll()
+            return self.navx.getRoll()
         else:
             return self.getPitch()
 
@@ -207,20 +221,21 @@ class Climber():
             self.wheelLeft.set(-1 * self.returnWheelSpeed())
             self.wheelRight.set(-1 * self.returnWheelSpeed())
 
+        if self.isLeaning(False):
+            self.backLift.set(-1 * self.returnCorrectionSpeed())
+            self.stopFront()
+        elif self.isLeaning(True):
+            self.backLift.set(self.returnCorrectionSpeed())
+            self.stopFront()
+
+
     def returnCorrectionSpeed(self):
         #proportional speed based on angle
+        targetAngle = -1
         lean = self.getLean()
-        targetAngle = 1
-        lean += targetAngle
-        error = math.fabs(lean)
-        pGain = 0.5
-        if lean < -self.MAX_ANGLE:
-            return error * pGain
-        elif lean > self.MAX_ANGLE:
-            return error * -pGain
-        else:
-            return self.returnClimbSpeed()
-
+        error = lean - targetAngle
+        multiplier = 1 - (0.1 * math.fabs(error))
+        return (multiplier * self.returnClimbSpeed())
     #DISABLE FUNCTION
 
     def stopFront(self):
@@ -281,12 +296,12 @@ class Climber():
 
     #DASHBOARD FUNCTIONS
 
-    def dashboardInit(self):
+    def updateDashboardInit(self):
         SmartDashboard.putNumber("ClimberSpeed", 0.9)
         SmartDashboard.putNumber("WheelSpeed", 0.7)
         SmartDashboard.putNumber("Tolerance", 2)
 
-    def dashboardPeriodic(self):
+    def updateDashboardPeriodic(self):
         self.returnWheelSpeed()
         self.returnClimbSpeed()
         SmartDashboard.putNumber("Lean", self.getLean())

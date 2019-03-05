@@ -4,13 +4,16 @@ import ctre
 
 class Sensors():
     def sensorsInit(self):
-        self.navx = NavX.create_i2c()
-        self.yaw = 0
+        #self.navx = NavX.create_i2c()
+        #self.navx = None
+        #self.yaw = 0
+        pass
 
     def sensorsPeriodic(self):
-        self.yaw = self.navx.getYaw()
+        #self.yaw = self.navx.getYaw()
         #self.leftVal = self.leftEncoder.get()
         #self.rightVal = self.rightEncoder.get()
+        pass
 
 '''Sensors need to be in the subsystem that they belong in
     For example: self.pitch and self.roll were moved into Climber.py
