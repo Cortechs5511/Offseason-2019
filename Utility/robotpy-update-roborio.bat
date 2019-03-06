@@ -6,7 +6,7 @@ rem and want to update the roboRIO with the downloaded packages
 rem
 rem Change following according to your system
 if "%PYTHON%" == "" set PYTHON=py -3
-set ROBOTPY_VER=2019.2.1
+set ROBOTPY_VER=2019.2.2
 set ROBOTPY=%HOMEPATH%\Desktop\frc-2019\robotpy-%ROBOTPY_VER%
 
 rem Search for installation of python
