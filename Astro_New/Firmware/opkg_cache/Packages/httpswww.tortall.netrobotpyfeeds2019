@@ -227,6 +227,21 @@ Depends: python37
 Priority: optional
 
 
+Package: python37-ptvsd
+Version: 4.2.4
+Section: devel
+Architecture: cortexa9-vfpv3
+Maintainer: RobotPy Developers <robotpy@googlegroups.com>
+MD5Sum: bc9d5b5edc1ac7848e01f27bc14afcb2
+Size: 2165430
+Filename: python37-ptvsd_4.2.4_cortexa9-vfpv3.ipk
+Description: Remote debugging server for Python support in Visual Studio and Visual Studio Code
+OE: unknown
+Homepage: unknown
+Depends: python37
+Priority: optional
+
+
 Package: python37-pydevd
 Version: 1.4.0
 Section: devel
