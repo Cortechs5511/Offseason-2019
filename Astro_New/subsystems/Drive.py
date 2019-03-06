@@ -51,11 +51,13 @@ class Drive():
         TalonLeft = Talon(map.driveLeft1)
         TalonRight = Talon(map.driveRight1)
 
-        leftInverted = False
-        rightInverted = True
+        leftInverted = True
+        rightInverted = False
+
         if map.robotId == map.astroV1:
             leftInverted = False
             rightInverted = True
+            
         TalonLeft.setInverted(leftInverted)
         TalonRight.setInverted(rightInverted)
 
@@ -105,7 +107,7 @@ class Drive():
         self.accel = wpilib.BuiltInAccelerometer()
         #self.navx = navx.AHRS.create_spi()
         self.navx = None
-        
+
         self.leftEncoder = wpilib.Encoder(map.leftEncoder[0], map.leftEncoder[1])
         self.leftEncoder.setName("Drive", "Left Encoder")
         self.leftEncoder.setDistancePerPulse(self.leftConv)

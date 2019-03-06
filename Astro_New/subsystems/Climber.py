@@ -10,9 +10,10 @@ from subsystems import Sensors
 import navx
 
 class Climber():
+
     def climberInit(self):
         timeout = 0
-        self.debug = False
+        self.debug = True
         self.joystick = map.getJoystick(0)
         self.navx = navx.AHRS.create_spi()
         self.MAX_ANGLE = 3
@@ -26,6 +27,8 @@ class Climber():
         self.switchBottomFront = wpilib.DigitalInput(map.frontBottomSensor)
         self.switchTopBack = wpilib.DigitalInput(map.backTopSensor)
 
+        self.state = 6
+
         if map.robotId == map.astroV1:
             self.wheelLeft = Victor(map.wheelLeft)
             self.wheelRight = Victor(map.wheelRight)
@@ -34,18 +37,21 @@ class Climber():
             self.wheelRight = Talon(map.wheelRight)
         self.backLift = Talon(map.backLift)
         self.frontLift = Talon(map.frontLift)
+
         if map.robotId == map.astroV1:
             self.frontLift.setInverted(True)
             self.backLift.setInverted(True)
         else:
-            self.frontLift.setInverted(False)
-            self.backLift.setInverted(True)
+            self.frontLift.setInverted(True)
+            self.backLift.setInverted(False)
+
         if map.robotId == map.astroV1:
             self.wheelRight.setInverted(True)
             self.wheelLeft.setInverted(True)
         elif map.robotId == map.astroV2:
             self.wheelRight.setInverted(True)
             self.wheelLeft.setInverted(False)
+
         for motor in [self.backLift, self.frontLift, self.wheelLeft, self.wheelRight]:
             motor.clearStickyFaults(timeout)
             #motor.setSafetyEnabled(True)
@@ -79,15 +85,22 @@ class Climber():
             self.lift("back")
         elif self.joystick.getRawButton(map.liftClimber) == True:
             self.lift("both")
+        elif self.joystick.getRawButton(map.driveForwardClimber) == True:
+            self.wheel("forward")
+        elif self.joystick.getRawButton(map.driveBackwardClimber) == True:
+            self.wheel("backward")
         else:
             self.stopFront()
             self.stopBack()
+            self.stopDrive()
 
         self.sensorAnglePeriodic()
 
+        self.getState()
+
         #AUTOCLIMB
         if self.joystick.getRawButton(map.autoClimb):
-            state = self.getState()
+            #state = self.getState()
             if state == 0:
                 self.lift("both")
             elif state == 1:
@@ -127,11 +140,9 @@ class Climber():
 
     def lower(self, mode):
         if mode == "front":
-            if self.isLeaning(True):
-                self.backLift.set(self.returnCorrectionSpeed())
-            else:
-                self.stopBack()
-            self.frontLift.set(self.returnClimbSpeed())
+            self.backLift.set(0.1 * (self.getLean() + 10))
+            self.frontLift.set(-1* self.returnClimbSpeed())
+            print([-0.1 * (self.getLean()+10), -1*self.returnClimbSpeed()])
         elif mode == "back":
             self.frontLift.set(0)
             self.backLift.set(-1* self.returnClimbSpeed())
@@ -234,7 +245,7 @@ class Climber():
         targetAngle = -1
         lean = self.getLean()
         error = lean - targetAngle
-        multiplier = 1 - (0.1 * math.fabs(error))
+        multiplier = 1 - (0.2 * math.fabs(error))
         return (multiplier * self.returnClimbSpeed())
     #DISABLE FUNCTION
 
@@ -280,19 +291,21 @@ class Climber():
         *state 5 - robot back legs are fully retracted
         state 6 - something is wrong"""
         if self.isFullyRetractedBoth():
-            state = 0
-        if self.isFullyExtendedBoth():
-            state = 1
+            self.state = 0
+        elif self.isFullyExtendedBoth():
+            self.state = 1
         elif self.isFullyExtendedBoth() and self.isFrontOverGround():
-            state = 2
+            self.state = 2
         elif self.isFullyRetractedFront() and self.isFrontOverGround():
-            state = 3
+            self.state = 3
         elif self.isFrontOverGround() and self.isBackOverGround() and self.isFullyRetractedBack():
-            state = 5
+            self.state = 5
         elif self.isFrontOverGround() and self.isBackOverGround():
-            state = 4
+            self.state = 4
         else:
-            state = 6
+            self.state = 6
+
+        return self.state
 
     #DASHBOARD FUNCTIONS
 
@@ -311,3 +324,6 @@ class Climber():
             SmartDashboard.putBoolean("Fully Extended Back",self.isFullyExtendedBack())
             SmartDashboard.putBoolean("Fully Retracted Front",self.isFullyRetractedFront())
             SmartDashboard.putBoolean("Fully Retracted Back",self.isFullyRetractedBack())
+            SmartDashboard.putBoolean("Front Over Ground", self.isFrontOverGround())
+            SmartDashboard.putBoolean("Back Over Ground", self.isBackOverGround())
+            SmartDashboard.putNumber("State", self.state)

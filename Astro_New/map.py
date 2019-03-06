@@ -16,12 +16,20 @@ astroV2: int = 2
 robotId: int = astroV2
 
 #Can ID
-driveLeft1 = 10
-driveLeft2 = 11
-driveLeft3 = 12
-driveRight1 = 20
-driveRight2 = 21
-driveRight3 = 22
+if robotId == astroV2:
+    driveLeft1 = 20
+    driveLeft2 = 21
+    driveLeft3 = 22
+    driveRight1 = 10
+    driveRight2 = 11
+    driveRight3 = 12
+else:
+    driveLeft1 = 10
+    driveLeft2 = 11
+    driveLeft3 = 12
+    driveRight1 = 20
+    driveRight2 = 21
+    driveRight3 = 22
 
 intake = 31
 wrist = 30
@@ -29,9 +37,13 @@ wrist = 30
 wheelLeft = 50
 wheelRight = 51
 
+if robotId == astroV2:
+    frontLift = 41
+    backLift = 40
+else:
+    frontLift = 40
+    backLift = 41
 
-frontLift = 40
-backLift = 41
 
 #Solenoids
 
@@ -123,7 +135,7 @@ KickSimpleHatch = 2 #controlls original only hatch mech
 ToggleSimpleHatch = 3 #controlls original only hatch mech
 IntakePositionWrist = 4 #brings the wrist to intaking position on floor
 ToggleNewHatch = 5 #controls hatch mech on arm
-autoClimb = 7 #while held button that will initiate the auto climb
+autoClimb = 11 #while held button that will initiate the auto climb
 
 #DRIVE
 #axes
