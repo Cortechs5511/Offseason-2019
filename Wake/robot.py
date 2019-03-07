@@ -69,9 +69,9 @@ class MyRobot(CommandBasedRobot):
 
         # Construct subsystems prior to constructing commands
         self.limelight = Limelight.Limelight(self)
-        self.hatchMech = HatchMech.HatchMech(self)
+        self.hatchMech = HatchMech.HatchMech(self) #not a subsystem
         self.cargoMech = CargoMech.CargoMech(self)
-        self.climber = Climber.Climber(self)
+        self.climber = Climber.Climber(self) #not a subsystem
         self.drive = Drive.Drive(self)
         self.compressor = wpilib.Compressor(0)
 
@@ -129,6 +129,15 @@ class MyRobot(CommandBasedRobot):
         self.autoSelector("level1","R")
         #self.autonChooser.getSelected().start()
 
+    def autonomousPeriodic(self):
+        pass
+
+    def teleopInit(self):
+        pass
+
+    def teleopPeriodic(self):
+        self.climber.periodic()
+
     def updateDashboardInit(self):
         SmartDashboard.putData("Drive", self.drive)
         SmartDashboard.putData("Hatch", self.hatchMech)
@@ -146,9 +155,8 @@ class MyRobot(CommandBasedRobot):
         #SmartDashboard.putData("Zero", Zero())
 
     def updateDashboardPeriodic(self):
-        #SmartDashboard.putNumber("PressureSwitchValue", self.compressor.getPressureSwitchValue())
         #SmartDashboard.putNumber("Timer", self.timer.get())
-        #self.rate.execute()
+
         self.drive.dashboardPeriodic()
         #self.hatchMech.dashboardPeriodic()
         #self.cargoMech.dashboardPeriodic()
