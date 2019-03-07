@@ -22,7 +22,7 @@ from commands.drive.setSpeedDT import SetSpeedDT
 from commands.drive.turnAngle import TurnAngle
 from commands.drive.measured import Measured
 from commands.drive.FlipButton import FlipButton
-from commands.hatch.autonShimmy import AutonShimmy
+#from commands.hatch import autoShimmy
 #from commands.drive.relativeTurn import RelativeTurn
 #from commands.climber.autoClimb import AutoClimb
 
@@ -154,9 +154,9 @@ class Drive(Subsystem):
         self.distController = distController
         self.distController.disable()
 
-        self.TolAngle = 3 #degrees
+        self.TolAngle = 2 #degrees
         [kP,kI,kD,kF] = [0.024, 0.00, 0.20, 0.00]
-        if wpilib.RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.020,0.00,0.00,0.00]
+        if wpilib.RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.019,0.00,0.2,0.00]
         angleController = wpilib.PIDController(kP, kI, kD, kF, source=self.__getAngle__, output=self.__setAngle__)
         angleController.setInputRange(-180,  180) #degrees
         angleController.setOutputRange(-0.9, 0.9)
@@ -246,7 +246,7 @@ class Drive(Subsystem):
         self.updateSensors()
 
         if(self.mode=="Distance"): [left,right] = [self.distPID,self.distPID]
-        elif(self.mode=="Angle"): [left,right] = [self.anglePID,-self.anglePID]
+        elif(self.mode=="Angle"): [left,right] = [-self.anglePID,self.anglePID]
         elif(self.mode=="Combined"): [left,right] = [self.distPID+self.anglePID,self.distPID-self.anglePID]
         elif(self.mode=="Path"): [left, right] = self.Path.followPath()
         elif(self.mode=="DriveStraight"): [left, right] = [left+self.anglePID, right-self.anglePID]
@@ -261,14 +261,14 @@ class Drive(Subsystem):
         #self.disableAll = self.robot.disableall.DisableAll
 
         #self.autoClimb = self.robot.autoClimb.AutoClimb
+        #self.autoShimmy = shimmy.Shimmy
 
-        #self.autonShimmy = self.robot.autonShimmy.AutonShimmy
+        '''b = self.robot.driverRightButton(3)
+        b.whenPressed(FlipButton())'''
 
-        b = self.robot.driverRightButton(3)
-        b.whenPressed(FlipButton())
-
-        #s = self.robot.operatorButton(10)
-        #s.whenPressed(self.autonShimmy())
+        #s = self.robot.driverRightButton(map.shimmy)
+        #
+        #s.whenPressed(self.Shimmy())
 
         #b7 = self.robot.readOperatorButton(9)
         #b7.whenPressed(self.disableAll())
@@ -304,7 +304,10 @@ class Drive(Subsystem):
         self.rightVal = self.rightEncoder.get()
 
     def getAngle(self):
-        return (-1 * self.yaw)
+        if wpilib.RobotBase.isSimulation():
+            return self.yaw
+        else:
+            return (-1 * self.yaw)
 
     '''LeaningForward - negative,LeaningBackward - Positive'''
     def getRoll(self): return self.roll

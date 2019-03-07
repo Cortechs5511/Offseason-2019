@@ -17,7 +17,7 @@ from subsystems.disableAll import DisableAll
 from commands.climber.driveToEdge import DriveToEdge
 
 import math
-
+import oi
 import map
 
 class Climber(Subsystem):
@@ -37,6 +37,7 @@ class Climber(Subsystem):
         self.robot = robot
         self.debug = True
         timeout = 0
+        self.xbox = oi.getJoystick(2)
 
         self.frontsensor = wpilib.AnalogInput(0)
         self.backsensor = wpilib.AnalogInput(1)
@@ -97,22 +98,22 @@ class Climber(Subsystem):
     def subsystemInit(self):
         r = self.robot
 
-        climberWheelsForward : wpilib.buttons.JoystickButton = r.driverLeftButton(7)
+        '''climberWheelsForward : wpilib.buttons.JoystickButton = r.operator2Button(map.driveForwardClimber)
         climberWheelsForward.whileHeld(SetSpeedWheel(1))
 
-        climberWheelsBackward : wpilib.buttons.JoystickButton = r.driverLeftButton(8)
+        climberWheelsBackward : wpilib.buttons.JoystickButton = r.operator2Button(map.driveBackwardClimber)
         climberWheelsBackward.whileHeld(SetSpeedWheel(-1))
 
-        liftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(9)
+        liftButton : wpilib.buttons.JoystickButton = r.operator2Button(map.lowerClimber)
         liftButton.whileHeld(LiftRobot("both"))
 
-        liftButton : wpilib.buttons.JoystickButton = r.driverLeftButton(10)
+        liftButton : wpilib.buttons.JoystickButton = r.operator2Button(map.liftClimber)
         liftButton.whileHeld(LowerRobot("both"))
 
-        disableAll : wpilib.buttons.JoystickButton = r.operatorButton(9)
+        disableAll : wpilib.buttons.JoystickButton =r.operator2Button(map.disableAll)
         disableAll.whenPressed(DisableAll())
 
-        climberFrontUp : wpilib.buttons.JoystickButton = r.driverLeftButton(13)
+        climberFrontUp : wpilib.buttons.JoystickButton = r.operato2Button(13)
         climberFrontUp.whileHeld(LiftRobot("front"))
 
         climberFrontDown : wpilib.buttons.JoystickButton = r.driverLeftButton(14)
@@ -122,7 +123,7 @@ class Climber(Subsystem):
         climberBackUp.whileHeld(LiftRobot("back"))
 
         climberBackDown : wpilib.buttons.JoystickButton = r.driverLeftButton(15)
-        climberBackDown.whileHeld(LowerRobot("back"))
+        climberBackDown.whileHeld(LowerRobot("back"))'''
 
         #autoClimbButton : wpilib.buttons.JoystickButton = r.operatorButton(7)
         #autoClimbButton.whenPressed(AutoClimb())

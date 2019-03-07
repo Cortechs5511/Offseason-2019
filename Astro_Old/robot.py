@@ -35,14 +35,14 @@ from CRLibrary.path import odometry as od
 from commands.climber.liftRobot import LiftRobot
 from commands.climber.driveToEdge import DriveToEdge
 
-from commands import autoSingleHatch.LeftCargo as LeftCargo
-from commands import autoSingleHatch.RightCargo as RightCargo
-from commands import autoSingleHatch.CenterCargo as CenterCargo
-from commands import autoSingleHatch.LeftCargoLevel2 as LeftCargoLevel2
-from commands import autoSingleHatch.RightCargoLevel2 as RightCargoLevel2
-from commands import autoSingleHatch.CenterCargoLevel2Left as CenterCargoLevel2Left
-from commands import autoSingleHatch.CenterCargoLevel2Right as CenterCargoLevel2Right
-from commands import autoSingleHatch.DriveStraight as DriveStraight
+from commands.autoSingleHatch import LeftCargo as LeftCargo
+from commands.autoSingleHatch import RightCargo as RightCargo
+from commands.autoSingleHatch import CenterCargo as CenterCargo
+from commands.autoSingleHatch import LeftCargoLevel2 as LeftCargoLevel2
+from commands.autoSingleHatch import RightCargoLevel2 as RightCargoLevel2
+from commands.autoSingleHatch import CenterCargoLevel2Left as CenterCargoLevel2Left
+from commands.autoSingleHatch import CenterCargoLevel2Right as CenterCargoLevel2Right
+from commands .autoSingleHatch import DriveStraight as DriveStraight
 
 
 import rate
@@ -88,7 +88,7 @@ class MyRobot(CommandBasedRobot):
         OI must be initialized after subsystems.
         '''
 
-        [self.joystick0, self.joystick1, self.xbox] = oi.commands()
+        [self.joystick0, self.joystick1, self.xbox, self.xbox2] = oi.commands()
 
         #self.rate = rate.DebugRate()
         #SmartDashboard.putData(rate.DebugRate())
@@ -97,6 +97,13 @@ class MyRobot(CommandBasedRobot):
 
         self.updateDashboardInit()
         self.DriveStraight = DriveStraight()
+        self.LeftCargo = LeftCargo()
+        self.RightCargo = RightCargo()
+        self.CenterCargo = CenterCargo()
+        self.LeftCargoLevel2 =LeftCargoLevel2()
+        self.RightCargoLevel2 = RightCargoLevel2()
+        self.CenterCargoLevel2Left = CenterCargoLevel2Left()
+        self.CenterCargoLevel2Right = CenterCargoLevel2Right()
         self.DrivePath = DrivePath(name="DriveStraight", follower="Ramsetes")
         #self.autonChooser = SendableChooser()
         #self.autonChooser.setDefaultOption("Do Nothing", WaitCommand(3))
@@ -141,7 +148,7 @@ class MyRobot(CommandBasedRobot):
         self.timer.reset()
         self.timer.start()
         self.curr = 0
-        autoSingleHatch.AutoSingleHatch()
+        self.autoSelector("level1","R")
         #self.autonChooser.getSelected().start()
 
 
@@ -181,14 +188,13 @@ class MyRobot(CommandBasedRobot):
 
     def disabledInit(self):
         self.drive.disable()
-        #self.hatchMech.disable()
-        #self.cargoMech.disable()
+        self.hatchMech.disable()
+        self.cargoMech.disable()
         self.climber.disable()
 
     def disabledPeriodic(self):
         self.disabledInit()
 
-    #I think the below should go in oi.py somehow, but I'm lazy tonight - Abhijit
 
     def driverLeftButton(self, id):
         """ Return a button off of the left driver joystick that we want to map a command to. """
@@ -202,10 +208,20 @@ class MyRobot(CommandBasedRobot):
         """ Return a button off of the operator gamepad that we want to map a command to. """
         return wpilib.buttons.JoystickButton(self.xbox, id)
 
+    def operator2Button(self, id):
+        """ Return a button off of the operator gamepad that we want to map a command to. """
+        return wpilib.buttons.JoystickButton(self.xbox2, id)
+
     def operatorAxis(self,id):
         """ Return a Joystick off of the operator gamepad that we want to map a command to. """
         #id is axis channel for taking value of axis
         return self.xbox.getRawAxis(id)
+        #wpilib.joystick.setAxisChannel(self.xbox, id)
+
+    def operator2Axis(self,id):
+        """ Return a Joystick off of the operator gamepad that we want to map a command to. """
+        #id is axis channel for taking value of axis
+        return self.xbox2.getRawAxis(id)
         #wpilib.joystick.setAxisChannel(self.xbox, id)
 
     def readOperatorButton(self,id):
@@ -226,35 +242,29 @@ class MyRobot(CommandBasedRobot):
         pref = preference
         if pos == "L":
             if pref == "level1":
-                LeftCargo.start()
-            elif pref == "level2Side":
-                LeftCargoLevel2.start()
-            elif pref == "level2Center":
-                CenterCargoLevel2Left.start()
+                self.LeftCargo.start()
+            elif pref == "level2side":
+                self.LeftCargoLevel2.start()
+            elif pref == "level2center":
+                self.CenterCargoLevel2Left.start()
             elif pref == "drivestraight":
-                DriveStraight.start()
+                self.DriveStraight.start()
             else: pass
         elif pos == "R":
             if pref == "level1":
-                RightCargo.start()
-            elif pref == "level2Side":
-                RightCargoLevel2.start()
-            elif pref== "level2Center":
-                CenterCargoLevel2Right.start()
-            elif pref =="drivestraight"
-                DriveStraight.start()
+                self.RightCargo.start()
+            elif pref == "level2side":
+                self.RightCargoLevel2.start()
+            elif pref== "level2center":
+                self.CenterCargoLevel2Right.start()
+            elif pref =="drivestraight":
+                self.DriveStraight.start()
             else:
                 pass
+        elif pos == "C":
+            self.CenterCargo.start()
         else:
             pass
-
-
-
-
-
-
-
-
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)

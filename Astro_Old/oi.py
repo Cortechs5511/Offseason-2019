@@ -32,15 +32,19 @@ def getJoystick(num):
     joystick0 = Joystick(0)
     joystick1 = Joystick(1)
     xbox = Xbox(2)
+    xbox2 = Xbox(3)
 
     if num == 0: return joystick0
     elif num == 1: return joystick1
-    else: return xbox
+    elif num == 2:
+        return xbox
+    else: return xbox2
 
 def commands():
     #SmartDashboard.putData("bumpDrive", Bump())
-    
+
     joystick0 = getJoystick(0)
     joystick1 = getJoystick(1)
     xbox = getJoystick(2)
-    return [joystick0, joystick1, xbox]
+    xbox2 = getJoystick(3)
+    return [joystick0, joystick1, xbox, xbox2]

@@ -10,7 +10,7 @@ class DriveStraightDistance(TimedCommand):
         super().__init__('DriveStraightDistance', timeoutInSeconds = timeout)
         self.requires(self.getRobot().drive)
         self.DT = self.getRobot().drive
-        self.setpoint = distance
+        self.setpoint = distance/12
 
     def initialize(self):
         StartAngle = self.DT.getAngle()

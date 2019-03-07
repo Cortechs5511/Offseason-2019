@@ -27,9 +27,9 @@ class CargoMech(Subsystem):
     def intake(self, mode):
         ''' Intake/Outtake/StopIntake the balls (turn wheels inward)'''
         if mode == "intake":
-            self.motorIntake.set(0.5)
+            self.motorIntake.set(0.9)
         elif mode == "outtake":
-            self.motorIntake.set(-0.5)
+            self.motorIntake.set(-0.9)
         elif mode == "stop":
             self.motorIntake.set(0)
 

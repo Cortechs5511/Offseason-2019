@@ -15,9 +15,10 @@ class SetSpeedCargo(Command):
 
     def execute(self):
         deadband = 0.05
-        if self.xbox.getRawAxis(map.setSpeedWrist) > deadband:
+        deadband2 = 0.4
+        if self.xbox.getRawAxis(map.setSpeedWrist) > deadband2:
             self.cargoMech.wrist("up")
-        elif self.xbox.getRawAxis(map.setSpeedWrist) < -deadband:
+        elif self.xbox.getRawAxis(map.setSpeedWrist) < -deadband2:
             self.cargoMech.wrist("down")
         else: self.cargoMech.wrist("stop")
 
