@@ -35,7 +35,15 @@ from CRLibrary.path import odometry as od
 from commands.climber.liftRobot import LiftRobot
 from commands.climber.driveToEdge import DriveToEdge
 
-from commands import autoSingleHatch
+from commands import autoSingleHatch.LeftCargo as LeftCargo
+from commands import autoSingleHatch.RightCargo as RightCargo
+from commands import autoSingleHatch.CenterCargo as CenterCargo
+from commands import autoSingleHatch.LeftCargoLevel2 as LeftCargoLevel2
+from commands import autoSingleHatch.RightCargoLevel2 as RightCargoLevel2
+from commands import autoSingleHatch.CenterCargoLevel2Left as CenterCargoLevel2Left
+from commands import autoSingleHatch.CenterCargoLevel2Right as CenterCargoLevel2Right
+from commands import autoSingleHatch.DriveStraight as DriveStraight
+
 
 import rate
 
@@ -211,6 +219,42 @@ class MyRobot(CommandBasedRobot):
     def readDriverLeftButton(self,id):
         """ Return button value from left joystick """
         return self.joystick0.getRawButton(id)
+
+    def autoSelector(self, preference, position):
+        """"returns auto command group to run based on starting position and preference for level 1 or 2"""
+        pos = position
+        pref = preference
+        if pos == "L":
+            if pref == "level1":
+                LeftCargo.start()
+            elif pref == "level2Side":
+                LeftCargoLevel2.start()
+            elif pref == "level2Center":
+                CenterCargoLevel2Left.start()
+            elif pref == "drivestraight":
+                DriveStraight.start()
+            else: pass
+        elif pos == "R":
+            if pref == "level1":
+                RightCargo.start()
+            elif pref == "level2Side":
+                RightCargoLevel2.start()
+            elif pref== "level2Center":
+                CenterCargoLevel2Right.start()
+            elif pref =="drivestraight"
+                DriveStraight.start()
+            else:
+                pass
+        else:
+            pass
+
+
+
+
+
+
+
+
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)
