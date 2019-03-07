@@ -82,11 +82,6 @@ class MyRobot(CommandBasedRobot):
 
         [self.joystick0, self.joystick1, self.xbox] = oi.commands()
 
-        #self.rate = rate.DebugRate()
-        #SmartDashboard.putData(rate.DebugRate())
-
-        #self.rate.initialize()
-
         self.updateDashboardInit()
         self.DriveStraight = DriveStraight()
         self.LeftCargo = LeftCargo()
@@ -105,14 +100,11 @@ class MyRobot(CommandBasedRobot):
         #self.autonChooser.addOption("AutonRotation", autonRotation())
         #SmartDashboard.putData("AutonChooser", self.autonChooser)
 
-        #self.hatchMech.subsystemInit()
-        #self.cargoMech.subsystemInit()
-        self.climber.subsystemInit()
-        self.climber.dashboardInit()
-        #self.hatchMech.hatchInit(self)
+        self.hatch.initialize()
+        self.cargo.initialize()
+        self.climber.initialize()
 
     def robotPeriodic(self):
-        #self.hatchMech.hatchPeriodic()
         self.limelight.readLimelightData()
         if(self.dashboard): self.updateDashboardPeriodic()
 
@@ -120,7 +112,7 @@ class MyRobot(CommandBasedRobot):
         self.drive.zero()
         self.timer.reset()
         self.timer.start()
-        self.curr = 0
+
         self.autoSelector("level1","R")
         #self.autonChooser.getSelected().start()
 
@@ -133,11 +125,12 @@ class MyRobot(CommandBasedRobot):
     def teleopPeriodic(self):
         self.climber.periodic()
         self.cargo.periodic()
+        self.hatch.periodic()
 
     def updateDashboardInit(self):
         self.drive.dashboardInit()
-        #self.hatchMech.dashboardInit()
-        self.cargoMech.dashboardInit()
+        self.hatch.dashboardInit()
+        self.cargo.dashboardInit()
         self.climber.dashboardInit()
         #self.limelight.dashboardInit()
 
@@ -150,8 +143,8 @@ class MyRobot(CommandBasedRobot):
         #SmartDashboard.putNumber("Timer", self.timer.get())
 
         self.drive.dashboardPeriodic()
-        #self.hatchMech.dashboardPeriodic()
-        self.cargoMech.dashboardPeriodic()
+        self.hatch.dashboardPeriodic()
+        self.cargo.dashboardPeriodic()
         self.climber.dashboardPeriodic()
         #self.limelight.dashboardPeriodic()
 
