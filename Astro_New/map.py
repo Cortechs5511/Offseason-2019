@@ -135,7 +135,9 @@ KickSimpleHatch = 2 #controlls original only hatch mech
 ToggleSimpleHatch = 3 #controlls original only hatch mech
 IntakePositionWrist = 4 #brings the wrist to intaking position on floor
 ToggleNewHatch = 5 #controls hatch mech on arm
-autoClimb = 11 #while held button that will initiate the auto climb
+
+resetAutoClimb = 4#11 #when pressed this clears the auto climb cache to retry
+autoClimb = 5#12 #while held button that will run the auto climb
 
 #DRIVE
 #axes

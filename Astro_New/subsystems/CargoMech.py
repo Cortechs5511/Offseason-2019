@@ -18,9 +18,9 @@ class CargoMech():
     def intake(self, mode):
         ''' Intake/Outtake/StopIntake the balls (turn wheels inward)'''
         if mode == "intake":
-            self.motorIntake.set(0.5)
+            self.motorIntake.set(0.9)
         elif mode == "outtake":
-            self.motorIntake.set(-0.5)
+            self.motorIntake.set(-0.9)
         elif mode == "stop":
             self.motorIntake.set(0)
 
@@ -34,7 +34,7 @@ class CargoMech():
             self.motorWrist.set(0)
 
     def cargoPeriodic(self):
-        deadband = 0.0
+        deadband = 0.4
         if self.xbox.getRawAxis(map.setSpeedWrist) > deadband:
             self.wrist("up")
         elif self.xbox.getRawAxis(map.setSpeedWrist) < -deadband:
@@ -42,8 +42,7 @@ class CargoMech():
         else: self.wrist("stop")
 
         if self.xbox.getRawAxis(map.intakeCargo) > deadband:
-            #self.intake("intake")
-            self.motorIntake.set(0.5)
+            self.intake("intake")
         elif self.xbox.getRawAxis(map.outtakeCargo) > deadband:
             self.intake("outtake")
         else: self.intake("stop")

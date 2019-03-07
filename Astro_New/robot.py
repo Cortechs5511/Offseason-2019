@@ -60,7 +60,7 @@ class MyRobot(wpilib.TimedRobot):
             self.timer.start()
             self.timerNum = self.timer.get()
         #self.limelight.readLimelightData()
-        #self.cargoMech.cargoPeriodic()
+        self.cargoMech.cargoPeriodic()
         #self.sensors.sensorsPeriodic()
         #self.hatchMech.hatchPeriodic()
         self.climber.climberPeriodic()

@@ -14,6 +14,7 @@ class Climber():
     def climberInit(self):
         timeout = 0
         self.debug = True
+        self.test = True
         self.joystick = map.getJoystick(0)
         self.navx = navx.AHRS.create_spi()
         self.MAX_ANGLE = 3
@@ -27,7 +28,7 @@ class Climber():
         self.switchBottomFront = wpilib.DigitalInput(map.frontBottomSensor)
         self.switchTopBack = wpilib.DigitalInput(map.backTopSensor)
 
-        self.state = 6
+        self.state = -1
 
         if map.robotId == map.astroV1:
             self.wheelLeft = Victor(map.wheelLeft)
@@ -73,21 +74,21 @@ class Climber():
 
     def climberPeriodic(self):
         lean = self.getLean()
-        if self.joystick.getRawButton(map.lowerFrontClimber) == True:
+        if self.joystick.getRawButton(map.lowerFrontClimber):
             self.lower("front")
-        elif self.joystick.getRawButton(map.lowerBackClimber) == True:
+        elif self.joystick.getRawButton(map.lowerBackClimber):
             self.lower("back")
-        elif self.joystick.getRawButton(map.lowerClimber) == True:
+        elif self.joystick.getRawButton(map.lowerClimber):
             self.lower("both")
-        elif self.joystick.getRawButton(map.liftFrontClimber) == True:
+        elif self.joystick.getRawButton(map.liftFrontClimber):
             self.lift("front")
-        elif self.joystick.getRawButton(map.liftBackClimber) == True:
+        elif self.joystick.getRawButton(map.liftBackClimber):
             self.lift("back")
-        elif self.joystick.getRawButton(map.liftClimber) == True:
+        elif self.joystick.getRawButton(map.liftClimber):
             self.lift("both")
-        elif self.joystick.getRawButton(map.driveForwardClimber) == True:
+        elif self.joystick.getRawButton(map.driveForwardClimber):
             self.wheel("forward")
-        elif self.joystick.getRawButton(map.driveBackwardClimber) == True:
+        elif self.joystick.getRawButton(map.driveBackwardClimber):
             self.wheel("backward")
         else:
             self.stopFront()
@@ -96,23 +97,21 @@ class Climber():
 
         self.sensorAnglePeriodic()
 
-        self.getState()
-
         #AUTOCLIMB
+        if self.joystick.getRawButton(map.resetAutoClimb):
+            self.startState()
+
         if self.joystick.getRawButton(map.autoClimb):
-            #state = self.getState()
-            if state == 0:
-                self.lift("both")
-            elif state == 1:
-                self.wheel("forward")
-            elif state == 2:
-                self.lift("front")
-            elif state == 3:
-                self.wheel("forward")
-            elif state == 4:
-                self.lift("back")
-            else:
-                pass
+
+            if(self.test): state = self.getStateTest()
+            else: state = self.getState()
+
+            if state == 0: self.lift("both")
+            elif state == 1: self.wheel("forward")
+            elif state == 2: self.lift("front")
+            elif state == 3: self.wheel("forward")
+            elif state == 4: self.lift("back")
+
     #LOGIC AND SENSOR FEEDBACK
 
     # lift and lower are in terms of legs
@@ -195,6 +194,36 @@ class Climber():
         """ tells us if both front and back are fully extended, so it can stop """
         return self.isFullyRetractedFront() and self.isFullyRetractedBack()
 
+
+
+
+
+    def isFullyExtendedFrontTest(self):
+        """ tells us if the front is fully extended """
+        return self.fullyExtendedFront
+
+    def isFullyExtendedBackTest(self):
+        """ tells us if the back is fully extended, so it can stop """
+        return self.fullyExtendedBack
+
+    def isFullyRetractedFrontTest(self):
+        """ tells us if the front is fully retracted """
+        return self.fullyRetractedFront
+
+    def isFullyRetractedBackTest(self):
+        """ tells us if the back is fully retracted, so it can stop """
+        return self.fullyRetractedBack
+
+    def isFullyExtendedBothTest(self):
+        """ tells us if both front and back are fully extended, so it can stop """
+        return self.isFullyExtendedFrontTest() and self.isFullyExtendedBackTest()
+
+    def isFullyRetractedBothTest(self):
+        """ tells us if both front and back are fully extended, so it can stop """
+        return self.isFullyRetractedFrontTest() and self.isFullyRetractedBackTest()
+
+
+
     def getLean(self):
         if map.robotId == map.astroV1:
             return self.navx.getRoll()
@@ -203,12 +232,9 @@ class Climber():
 
     def isLeaning(self, direction):
         '''true checking tip forward'''
-        if direction == True and self.getLean()+1 < -self.MAX_ANGLE :
-            return True
-        elif direction == False and self.getLean()-1 > self.MAX_ANGLE :
-            return True
-        else:
-            return False
+        if direction == True and self.getLean()+1 < -self.MAX_ANGLE: return True
+        elif direction == False and self.getLean()-1 > self.MAX_ANGLE: return True
+        return False
 
     def isFrontOverGround(self):
         if self.frontSensor.getVoltage() < 1.5:
@@ -221,6 +247,13 @@ class Climber():
             return True
         else:
             return False
+
+
+    def isFrontOverGroundTest(self):
+        return self.frontOverGround
+
+    def isBackOverGroundTest(self):
+        return self.backOverGround
 
     #SET SPEED CLIMBER
 
@@ -283,27 +316,111 @@ class Climber():
 
     #AUTO CLIMB HELPERS
 
+    def startState(self):
+        self.state = 0
+        self.updateDashboardInit()
+
     def getState(self):
-        """ *state 1 - robot is fully up and legs are Extended
-        *state 2 - robot front is over platform
-        *state 3 - robot front legs are Retracted
-        state 4 - robot back is over platform
-        *state 5 - robot back legs are fully retracted
-        state 6 - something is wrong"""
-        if self.isFullyRetractedBoth():
-            self.state = 0
-        elif self.isFullyExtendedBoth():
-            self.state = 1
-        elif self.isFullyExtendedBoth() and self.isFrontOverGround():
+        '''
+        state 0 is robot elevating itself until top sensors trigger
+        state 1 is robot driving forward until front sensor triggers
+        state 2 is robot lifting front leg until bottom front sensor triggers
+        state 3 is robot driving forward until back sensor triggers
+        state 4 is robot lifting back leg until bottom back sensor triggers
+        state 5 is robot driving forward until drivers disable method
+        '''
+
+        '''checking any illogical scenarios, if they occur end autoclimb'''
+
+        if self.state==1 and (not self.isFullyExtendedBoth() or self.isBackOverGround()):
+            self.state = -1
+
+        if self.state==2 and (not self.isFullyExtendedBack() or self.isBackOverGround() or not self.isFrontOverGround()):
+            self.state = -1
+
+        if self.state==3 and (not self.isFrontOverGround() or not self.isFullyExtendedBack() or not self.isFullyRetractedFront()):
+            self.state = -1
+
+        if self.state==4 and (not self.isFrontOverGround() or not self.isBackOverGround() or not self.isFullyRetractedFront()):
+            self.state = -1
+
+        if self.state==5 and (not self.isFrontOverGround() or not self.isBackOverGround() or not self.isFullyRetractedBoth()):
+            self.state=-1
+
+        if self.state==0 and self.isFullyExtendedBoth() and not self.isFrontOverGround() and not self.isBackOverGround():
+            self.state = -1
+
+        '''checking milestones to transition to next steps'''
+
+        if self.state==1 and self.isFrontOverGround():
             self.state = 2
-        elif self.isFullyRetractedFront() and self.isFrontOverGround():
+
+        if self.state==2 and self.isFullyRetractedFront():
             self.state = 3
-        elif self.isFrontOverGround() and self.isBackOverGround() and self.isFullyRetractedBack():
-            self.state = 5
-        elif self.isFrontOverGround() and self.isBackOverGround():
+
+        if self.state==3 and self.isBackOverGround():
             self.state = 4
-        else:
-            self.state = 6
+
+        if self.state==4 and self.isFullyRetractedBack():
+            self.state = 5
+
+        return self.state
+
+    def getStateTest(self):
+        '''
+        state 0 is robot elevating itself until top sensors trigger
+        state 1 is robot driving forward until front sensor triggers
+        state 2 is robot lifting front leg until bottom front sensor triggers
+        state 3 is robot driving forward until back sensor triggers
+        state 4 is robot lifting back leg until bottom back sensor triggers
+        state 5 is robot driving forward until drivers disable method
+        '''
+
+        '''checking any illogical scenarios, if they occur end autoclimb'''
+
+        if self.state==1 and (not self.isFullyExtendedBothTest() or self.isBackOverGroundTest()):
+            print("STATE 1 Error")
+            self.state = -1
+
+        if self.state==2 and (not self.isFullyExtendedBackTest() or self.isBackOverGroundTest() or not self.isFrontOverGroundTest()):
+            print("STATE 2 Error")
+            self.state = -1
+
+        if self.state==3 and (not self.isFrontOverGroundTest() or not self.isFullyExtendedBackTest() or not self.isFullyRetractedFrontTest()):
+            print("STATE 3 Error")
+            self.state = -1
+
+        if self.state==4 and (not self.isFrontOverGroundTest() or not self.isBackOverGroundTest() or not self.isFullyRetractedFrontTest()):
+            print("STATE 4 Error")
+            self.state = -1
+
+        if self.state==5 and (not self.isFrontOverGroundTest() or not self.isBackOverGroundTest() or not self.isFullyRetractedBothTest()):
+            print("STATE 5 Error")
+            self.state=-1
+
+
+        '''checking milestones to transition to next steps'''
+
+        if self.state==0 and self.isFullyExtendedBothTest() and not self.isFrontOverGroundTest() and not self.isBackOverGroundTest():
+            print("Transition to State 1")
+            self.state = 1
+
+
+        if self.state==1 and self.isFrontOverGroundTest():
+            print("Transition to State 2")
+            self.state = 2
+
+        if self.state==2 and self.isFullyRetractedFrontTest():
+            print("Transition to State 3")
+            self.state = 3
+
+        if self.state==3 and self.isBackOverGroundTest():
+            print("Transition to State 4")
+            self.state = 4
+
+        if self.state==4 and self.isFullyRetractedBackTest():
+            print("Transition to State 5")
+            self.state = 5
 
         return self.state
 
@@ -314,12 +431,19 @@ class Climber():
         SmartDashboard.putNumber("WheelSpeed", 0.7)
         SmartDashboard.putNumber("Tolerance", 2)
 
+        SmartDashboard.putBoolean("FullyExtendedFrontTest2", False)
+        SmartDashboard.putBoolean("FullyExtendedBackTest2", False)
+        SmartDashboard.putBoolean("FullyRetractedFrontTest2", True)
+        SmartDashboard.putBoolean("FullyRetractedBackTest2", True)
+        SmartDashboard.putBoolean("FrontOverGroundTest2", True)
+        SmartDashboard.putBoolean("BackOverGroundTest2", True)
+
     def updateDashboardPeriodic(self):
         self.returnWheelSpeed()
         self.returnClimbSpeed()
         SmartDashboard.putNumber("Lean", self.getLean())
 
-        if self.debug == True:
+        if self.debug:
             SmartDashboard.putBoolean("Fully Extended Front",self.isFullyExtendedFront())
             SmartDashboard.putBoolean("Fully Extended Back",self.isFullyExtendedBack())
             SmartDashboard.putBoolean("Fully Retracted Front",self.isFullyRetractedFront())
@@ -327,3 +451,10 @@ class Climber():
             SmartDashboard.putBoolean("Front Over Ground", self.isFrontOverGround())
             SmartDashboard.putBoolean("Back Over Ground", self.isBackOverGround())
             SmartDashboard.putNumber("State", self.state)
+
+        self.fullyExtendedFront = SmartDashboard.getBoolean("FullyExtendedFrontTest2", True)
+        self.fullyExtendedBack = SmartDashboard.getBoolean("FullyExtendedBackTest2", True)
+        self.fullyRetractedFront = SmartDashboard.getBoolean("FullyRetractedFrontTest2", True)
+        self.fullyRetractedBack = SmartDashboard.getBoolean("FullyRetractedBackTest2", True)
+        self.frontOverGround = SmartDashboard.getBoolean("FrontOverGroundTest2", True)
+        self.backOverGround = SmartDashboard.getBoolean("BackOverGroundTest2", True)
