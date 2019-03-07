@@ -35,6 +35,7 @@ from CRLibrary.path import odometry as od
 from commands.climber.liftRobot import LiftRobot
 from commands.climber.driveToEdge import DriveToEdge
 
+from commands import autoSingleHatch
 
 import rate
 
@@ -132,6 +133,7 @@ class MyRobot(CommandBasedRobot):
         self.timer.reset()
         self.timer.start()
         self.curr = 0
+        autoSingleHatch.AutoSingleHatch()
         #self.autonChooser.getSelected().start()
 
 
