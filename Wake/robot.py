@@ -4,6 +4,7 @@ import oi
 
 from wpilib import SmartDashboard
 import wpilib.buttons
+
 from wpilib.command import Command
 from wpilib.command import CommandGroup
 from wpilib.command import WaitCommand
@@ -29,9 +30,6 @@ from subsystems import Limelight
 from commands import resetAll
 from subsystems import disableAll
 
-
-from CRLibrary.path import odometry as od
-#from commands.climber.autoClimb import AutoClimb
 from commands.climber.liftRobot import LiftRobot
 from commands.climber.driveToEdge import DriveToEdge
 
@@ -42,15 +40,13 @@ from commands.autoSingleHatch import LeftCargoLevel2 as LeftCargoLevel2
 from commands.autoSingleHatch import RightCargoLevel2 as RightCargoLevel2
 from commands.autoSingleHatch import CenterCargoLevel2Left as CenterCargoLevel2Left
 from commands.autoSingleHatch import CenterCargoLevel2Right as CenterCargoLevel2Right
-from commands .autoSingleHatch import DriveStraight as DriveStraight
-
+from commands.autoSingleHatch import DriveStraight as DriveStraight
 
 import rate
 
 class MyRobot(CommandBasedRobot):
 
     dashboard = True
-    follower = "Ramsetes"
 
     frequency = 20
     period = 1/frequency
@@ -81,6 +77,7 @@ class MyRobot(CommandBasedRobot):
 
         self.timer = wpilib.Timer()
         self.timer.start()
+
         self.watch = wpilib.Watchdog(150, None)
 
         '''
@@ -88,7 +85,7 @@ class MyRobot(CommandBasedRobot):
         OI must be initialized after subsystems.
         '''
 
-        [self.joystick0, self.joystick1, self.xbox, self.xbox2] = oi.commands()
+        [self.joystick0, self.joystick1, self.xbox] = oi.commands()
 
         #self.rate = rate.DebugRate()
         #SmartDashboard.putData(rate.DebugRate())
@@ -104,7 +101,7 @@ class MyRobot(CommandBasedRobot):
         self.RightCargoLevel2 = RightCargoLevel2()
         self.CenterCargoLevel2Left = CenterCargoLevel2Left()
         self.CenterCargoLevel2Right = CenterCargoLevel2Right()
-        self.DrivePath = DrivePath(name="DriveStraight", follower="Ramsetes")
+
         #self.autonChooser = SendableChooser()
         #self.autonChooser.setDefaultOption("Do Nothing", WaitCommand(3))
         #self.autonChooser.addOption("FrontHatch", AutoFrontHatch())
@@ -119,26 +116,7 @@ class MyRobot(CommandBasedRobot):
         self.climber.dashboardInit()
         #self.hatchMech.hatchInit(self)
 
-        climberAuto : wpilib.buttons.JoystickButton = self.driverLeftButton(11)
-        cg = CommandGroup("AutoClimb")
-        cg.addSequential(LiftRobot("both"))
-        cg.addSequential(DriveToEdge("front"))
-        cg.addSequential(LiftRobot("front"))
-        cg.addSequential(DriveToEdge("back"))
-        cg.addSequential(LiftRobot("back"))
-        climberAuto.whileHeld(cg)
-
-
-    # def teleopInit(self):
-    #     self.loop_timer = looptimer.LoopTimer(self.logger)
-
-    # def teleopPeriodic(self):
-    #     super().teleopPeriodic()
-    #     self.loop_timer.measure()
-
     def robotPeriodic(self):
-        #self.drive.odMain.display()
-        #self.drive.odTemp.display()
         #self.hatchMech.hatchPeriodic()
         self.limelight.readLimelightData()
         if(self.dashboard): self.updateDashboardPeriodic()
@@ -151,11 +129,10 @@ class MyRobot(CommandBasedRobot):
         self.autoSelector("level1","R")
         #self.autonChooser.getSelected().start()
 
-
     def updateDashboardInit(self):
         SmartDashboard.putData("Drive", self.drive)
-        #SmartDashboard.putData("Hatch", self.hatchMech)
-        #SmartDashboard.putData("Cargo", self.cargoMech)
+        SmartDashboard.putData("Hatch", self.hatchMech)
+        SmartDashboard.putData("Cargo", self.cargoMech)
         SmartDashboard.putData("Climber", self.climber)
         self.drive.dashboardInit()
         #self.hatchMech.dashboardInit()
@@ -181,11 +158,6 @@ class MyRobot(CommandBasedRobot):
         #sequences.dashboardPeriodic()
         #autonomous.dashboardPeriodic()
 
-    def telopInit(self):
-        #auton: Command = self.autonChooser.getSelected()
-        #auton.cancel()
-        pass
-
     def disabledInit(self):
         self.drive.disable()
         self.hatchMech.disable()
@@ -194,7 +166,6 @@ class MyRobot(CommandBasedRobot):
 
     def disabledPeriodic(self):
         self.disabledInit()
-
 
     def driverLeftButton(self, id):
         """ Return a button off of the left driver joystick that we want to map a command to. """
