@@ -1,23 +1,10 @@
-import math
-import wpilib
-import oi
-
 from wpilib import SmartDashboard
 import wpilib.buttons
 
 from wpilib.command import Command
 from wpilib.command import CommandGroup
-from wpilib.command import WaitCommand
 from commandbased import CommandBasedRobot
 
-from commands.zero import Zero
-from commands import sequences
-from commands import autonomous
-
-from commands.autonomous import DriveStraight
-
-from commands.drive.drivePath import DrivePath
-from commands.drive.rotateAuton import autonRotation
 
 from wpilib.sendablechooser import SendableChooser
 
@@ -27,17 +14,21 @@ from subsystems import CargoMech
 from subsystems import Climber
 from subsystems import Drive
 from subsystems import Limelight
-from commands import resetAll
-from subsystems import disableAll
 
-from commands.autoSingleHatch import LeftCargo as LeftCargo
-from commands.autoSingleHatch import RightCargo as RightCargo
-from commands.autoSingleHatch import CenterCargo as CenterCargo
-from commands.autoSingleHatch import LeftCargoLevel2 as LeftCargoLevel2
-from commands.autoSingleHatch import RightCargoLevel2 as RightCargoLevel2
-from commands.autoSingleHatch import CenterCargoLevel2Left as CenterCargoLevel2Left
-from commands.autoSingleHatch import CenterCargoLevel2Right as CenterCargoLevel2Right
-from commands.autoSingleHatch import DriveStraight as DriveStraight
+from commands.zero import Zero
+from commands import sequences
+from commands import autonomous
+
+from commands.autonomous import LeftCargo as LeftCargo
+from commands.autonomous import RightCargo as RightCargo
+from commands.autonomous import CenterCargo as CenterCargo
+from commands.autonomous import LeftCargoLevel2 as LeftCargoLevel2
+from commands.autonomous import RightCargoLevel2 as RightCargoLevel2
+from commands.autonomous import CenterCargoLevel2Left as CenterCargoLevel2Left
+from commands.autonomous import CenterCargoLevel2Right as CenterCargoLevel2Right
+from commands.autonomous import DriveStraight as DriveStraight
+
+import oi
 
 class MyRobot(CommandBasedRobot):
 
