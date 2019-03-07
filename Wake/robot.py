@@ -9,13 +9,13 @@ from commandbased import CommandBasedRobot
 from wpilib.sendablechooser import SendableChooser
 
 import map
+
 from subsystems import HatchMech
 from subsystems import CargoMech
 from subsystems import Climber
 from subsystems import Drive
 from subsystems import Limelight
 
-from commands.zero import Zero
 from commands import sequences
 from commands import autonomous
 
@@ -55,9 +55,16 @@ class MyRobot(CommandBasedRobot):
 
         # Construct subsystems prior to constructing commands
         self.limelight = Limelight.Limelight(self) #not a subsystem
-        self.hatch = HatchMech.HatchMech(self) #not a subsystem
-        self.cargo = CargoMech.CargoMech(self) #not a subsystem
-        self.climber = Climber.Climber(self) #not a subsystem
+
+        self.hatch = HatchMech.HatchMech() #not a subsystem
+        self.hatch.initialize()
+
+        self.cargo = CargoMech.CargoMech() #not a subsystem
+        self.cargo.initialize()
+
+        self.climber = Climber.Climber() #not a subsystem
+        self.climber.initialize(self)
+
         self.drive = Drive.Drive(self)
         self.compressor = wpilib.Compressor(0)
 
@@ -90,10 +97,6 @@ class MyRobot(CommandBasedRobot):
         #self.autonChooser.addOption("DrivePath", DrivePath())
         #self.autonChooser.addOption("AutonRotation", autonRotation())
         #SmartDashboard.putData("AutonChooser", self.autonChooser)
-
-        self.hatch.initialize()
-        self.cargo.initialize()
-        self.climber.initialize()
 
     def robotPeriodic(self):
         self.limelight.readLimelightData()
@@ -128,8 +131,6 @@ class MyRobot(CommandBasedRobot):
         #sequences.dashboardInit()
         #autonomous.dashboardInit()
 
-        #SmartDashboard.putData("Zero", Zero())
-
     def updateDashboardPeriodic(self):
         #SmartDashboard.putNumber("Timer", self.timer.get())
 
@@ -144,8 +145,8 @@ class MyRobot(CommandBasedRobot):
 
     def disabledInit(self):
         self.drive.disable()
-        self.hatchMech.disable()
-        self.cargoMech.disable()
+        self.hatch.disable()
+        self.cargo.disable()
         self.climber.disable()
 
     def disabledPeriodic(self):
@@ -163,20 +164,10 @@ class MyRobot(CommandBasedRobot):
         """ Return a button off of the operator gamepad that we want to map a command to. """
         return wpilib.buttons.JoystickButton(self.xbox, id)
 
-    def operator2Button(self, id):
-        """ Return a button off of the operator gamepad that we want to map a command to. """
-        return wpilib.buttons.JoystickButton(self.xbox2, id)
-
     def operatorAxis(self,id):
         """ Return a Joystick off of the operator gamepad that we want to map a command to. """
         #id is axis channel for taking value of axis
         return self.xbox.getRawAxis(id)
-        #wpilib.joystick.setAxisChannel(self.xbox, id)
-
-    def operator2Axis(self,id):
-        """ Return a Joystick off of the operator gamepad that we want to map a command to. """
-        #id is axis channel for taking value of axis
-        return self.xbox2.getRawAxis(id)
         #wpilib.joystick.setAxisChannel(self.xbox, id)
 
     def readOperatorButton(self,id):

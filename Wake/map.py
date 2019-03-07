@@ -38,11 +38,7 @@ wheelRight = 51
 
 #Solenoids
 
-hatchKick = 0
-hatchSlide = 1
-
-climberLock1 = 2
-climberLock2 = 3
+hatchKick = 1
 
 #DIO
 
@@ -113,27 +109,23 @@ def loadPreferences():
 
 #OPERATOR
 #axes
-setSpeedWrist = 1 #drive the wrist up and down using an axes
 intakeCargo = 2
 outtakeCargo = 3
+
 #buttons
-ShootPositionWrist = 1 #brings wrist in a position to outtake carog
-KickSimpleHatch = 2 #controlls original only hatch mech
-ToggleSimpleHatch = 3 #controlls original only hatch mech
-IntakePositionWrist = 4 #brings the wrist to intaking position on floor
-ToggleNewHatch = 5 #controls hatch mech on arm
-autoClimb = 7 #while held button that will initiate the auto climb
-#OPERATOR 2
-driveForwardClimber = 2
-driveBackwardClimber = 3
-liftClimber = 1
-lowerClimber = 4
+kickHatch = 2 #controlls original only hatch mech
+toggleHatch = 3 #controlls original only hatch mech
+
+driveForwardClimber = 4
+driveBackwardClimber = 5
+liftClimber = 6
+lowerClimber = 7
 disableAll = 8
 
 #AXES
 liftFrontClimber = 5
-lowerFrontClimber = 5
-liftBackClimber = 1
+lowerFrontClimber = 6
+liftBackClimber = 0
 lowerBackClimber = 1
 
 #DRIVE

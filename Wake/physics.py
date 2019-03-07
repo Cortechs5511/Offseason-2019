@@ -1,5 +1,4 @@
 import math
-#import numpy as np
 
 from pyfrc.physics import motor_cfgs, tankmodel
 from pyfrc.physics.units import units
@@ -33,7 +32,6 @@ class PhysicsEngine(object):
         self.deadZone=0.20
 
     def update_sim(self, hal_data, now, timeDiff):
-        # Simulate the drivetrain
         left = hal_data['CAN'][10]['value']
         right = hal_data['CAN'][20]['value']
 

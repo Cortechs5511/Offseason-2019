@@ -1,38 +1,27 @@
 import math
 
-import ctre
 from ctre import WPI_TalonSRX as Talon
 from ctre import WPI_VictorSPX as Victor
 
 import navx
 
-import wpilib
-from wpilib import SmartDashboard
 from wpilib.command.subsystem import Subsystem
 from wpilib.command import Command
-#from subsystems.disableAll import DisableAll
-from commands.drive.diffDrive import DiffDrive
-from commands.drive.drivePath import DrivePath
+from wpilib import SmartDashboard
+
+from wpilib import PIDController
+from wpilib import Preferences
+from wpilib import RobotBase
+from wpilib import Encoder
+
 from commands.drive.driveStraightCombined import DriveStraightCombined
 from commands.drive.driveStraightDistance import DriveStraightDistance
 from commands.drive.driveStraightTime import DriveStraightTime
-from commands.drive.driveVision import DriveVision
 from commands.drive.setFixedDT import SetFixedDT
 from commands.drive.setSpeedDT import SetSpeedDT
 from commands.drive.turnAngle import TurnAngle
-from commands.drive.measured import Measured
 from commands.drive.FlipButton import FlipButton
-#from commands.hatch import autoShimmy
-#from commands.drive.relativeTurn import RelativeTurn
-#from commands.climber.autoClimb import AutoClimb
 
-from CRLibrary.physics import DCMotorTransmission as DCMotor
-from CRLibrary.physics import DifferentialDrive as dDrive
-from CRLibrary.path import odometry as od
-from CRLibrary.path import Path
-from CRLibrary.util import units
-
-from subsystems.Limelight import Limelight
 from sim import simComms
 
 import map
@@ -61,21 +50,23 @@ class Drive(Subsystem):
         self.robot = robot
         self.flipped = False
         self.debug = True
-        self.preferences = wpilib.Preferences.getInstance()
+        self.preferences = Preferences.getInstance()
         timeout = 0
 
         TalonLeft = Talon(map.driveLeft1)
         TalonRight = Talon(map.driveRight1)
 
-        leftInverted = True
-        rightInverted = False
         if map.robotId == map.astroV1:
             leftInverted = True
             rightInverted = False
+        else:
+            leftInverted = True
+            rightInverted = False
+
         TalonLeft.setInverted(leftInverted)
         TalonRight.setInverted(rightInverted)
 
-        if not wpilib.RobotBase.isSimulation():
+        if not RobotBase.isSimulation():
             VictorLeft1 = Victor(map.driveLeft2)
             VictorLeft2 = Victor(map.driveLeft3)
             VictorLeft1.setName("Drive", "Victor Left 1")
@@ -123,18 +114,18 @@ class Drive(Subsystem):
 
         self.navx = navx.AHRS.create_spi()
 
-        self.leftEncoder = wpilib.Encoder(map.leftEncoder[0], map.leftEncoder[1])
+        self.leftEncoder = Encoder(map.leftEncoder[0], map.leftEncoder[1])
         self.leftEncoder.setDistancePerPulse(self.leftConv)
         self.leftEncoder.setSamplesToAverage(10)
 
-        self.rightEncoder = wpilib.Encoder(map.rightEncoder[0], map.rightEncoder[1])
+        self.rightEncoder = Encoder(map.rightEncoder[0], map.rightEncoder[1])
         self.rightEncoder.setDistancePerPulse(self.rightConv)
         self.rightEncoder.setSamplesToAverage(10)
 
         self.TolDist = 0.2 #feet
         [kP,kI,kD,kF] = [0.07, 0.00, 0.20, 0.00]
-        if wpilib.RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.40, 0.00, 1.50, 0.00]
-        distController = wpilib.PIDController(kP, kI, kD, kF, source=self.__getDistance__, output=self.__setDistance__)
+        if RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.40, 0.00, 1.50, 0.00]
+        distController = PIDController(kP, kI, kD, kF, source=self.__getDistance__, output=self.__setDistance__)
         distController.setInputRange(0, 50) #feet
         distController.setOutputRange(-0.9, 0.9)
         distController.setAbsoluteTolerance(self.TolDist)
@@ -144,8 +135,8 @@ class Drive(Subsystem):
 
         self.TolAngle = 2 #degrees
         [kP,kI,kD,kF] = [0.024, 0.00, 0.20, 0.00]
-        if wpilib.RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.019,0.00,0.2,0.00]
-        angleController = wpilib.PIDController(kP, kI, kD, kF, source=self.__getAngle__, output=self.__setAngle__)
+        if RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.019,0.00,0.2,0.00]
+        angleController = PIDController(kP, kI, kD, kF, source=self.__getAngle__, output=self.__setAngle__)
         angleController.setInputRange(-180,  180) #degrees
         angleController.setOutputRange(-0.9, 0.9)
         angleController.setAbsoluteTolerance(self.TolAngle)
@@ -237,7 +228,7 @@ class Drive(Subsystem):
         self.rightVal = self.rightEncoder.get()
 
     def getAngle(self):
-        if wpilib.RobotBase.isSimulation(): return self.yaw
+        if RobotBase.isSimulation(): return self.yaw
         else: return -1 * self.yaw
 
     def getRoll(self): return self.roll

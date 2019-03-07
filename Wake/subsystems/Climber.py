@@ -1,11 +1,13 @@
 from wpilib import SmartDashboard
+from wpilib import DigitalInput
+
 from ctre import WPI_TalonSRX as Talon
 from ctre import WPI_VictorSPX as Victor
 
 import oi
 import map
 
-class Climber(Subsystem):
+class Climber():
 
     def initialize(self, robot):
 
@@ -52,8 +54,8 @@ class Climber(Subsystem):
             motor.configVoltageCompSaturation(10,0) #Sets saturation value
             motor.enableVoltageCompensation(True) #Compensates for lower voltages
 
-        self.backSwitch = wpilib.DigitalInput(map.backBottomSensor)
-        self.frontSwitch = wpilib.DigitalInput(map.frontBottomSensor)
+        self.backSwitch = DigitalInput(map.backBottomSensor)
+        self.frontSwitch = DigitalInput(map.frontBottomSensor)
 
         self.MAX_ANGLE = 3 #degrees
         self.climbSpeed = 0.9 #90%
@@ -76,17 +78,17 @@ class Climber(Subsystem):
         '''TODO DOUBLE CHECK AND CHANGE AXES/BUTTONS IF NECESSARY'''
         deadband = 0.50
 
-        if self.joystick.getRawAxis(map.lowerFrontClimber) < -deadband: self.lower("front")
-        elif self.joystick.getRawAxis(map.lowerBackClimber) < -deadband: self.lower("back")
-        elif self.joystick.getRawButton(map.lowerClimber) == True: self.lower("both")
-        elif self.joystick.getRawAxis(map.liftFrontClimber) > deadband: self.climber.lift("front")
-        elif self.joystick.getRawAxis(map.liftBackClimber) > deadband: self.climber.lift("back")
-        elif self.joystick.getRawButton(map.liftClimber) == True: self.climber.lift("both")
+        if self.xbox.getRawAxis(map.lowerFrontClimber) < -deadband: self.lower("front")
+        elif self.xbox.getRawAxis(map.lowerBackClimber) < -deadband: self.lower("back")
+        elif self.xbox.getRawButton(map.lowerClimber) == True: self.lower("both")
+        elif self.xbox.getRawAxis(map.liftFrontClimber) > deadband: self.lift("front")
+        elif self.xbox.getRawAxis(map.liftBackClimber) > deadband: self.lift("back")
+        elif self.xbox.getRawButton(map.liftClimber) == True: self.lift("both")
         else: self.stopClimb()
 
-        if self.joystick.getRawButton(map.driveForwardClimber): self.climber.wheel("forward")
-        elif self.joystick.getRawButton(map.driveBackwardClimber): self.climber.wheel("backward")
-        else: self.climber.stopDrive()
+        if self.xbox.getRawButton(map.driveForwardClimber): self.wheel("forward")
+        elif self.xbox.getRawButton(map.driveBackwardClimber): self.wheel("backward")
+        else: self.stopDrive()
 
     def getLean(self):
         if map.robotId == map.astroV1: return self.robot.drive.getRoll()
