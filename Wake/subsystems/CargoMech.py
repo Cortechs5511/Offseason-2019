@@ -1,43 +1,30 @@
-import wpilib
 from wpilib import SmartDashboard
+from ctre import WPI_TalonSRX as Talon
 
-from wpilib.command.subsystem import Subsystem
-from wpilib.command import Command
-
-import ctre
-from commands.cargo.wristIntake import WristIntake
-from commands.cargo.wristMove import WristMove
-from commands.cargo import setSpeedCargo
 import map
 
-class CargoMech(Subsystem):
-    def __init__(self, Robot):
-        #Create all physical parts used by subsystem.
-        super().__init__('Cargo')
-        self.debug = True
-        self.robot = Robot
+class CargoMech():
+    def cargoInit(self, robot):
+        self.robot = robot
+        self.xbox = map.getJoystick(2)
+        self.intake = Talon(map.intake)
 
-        self.motorIntake = ctre.WPI_TalonSRX(map.intake)
-        self.SetSpeedCargo = setSpeedCargo.SetSpeedCargo
+        self.intakeSpeed = 0.9
 
     def intake(self, mode):
-        ''' Intake/Outtake/StopIntake the balls (turn wheels inward)'''
-        if mode == "intake": self.motorIntake.set(0.9)
-        elif mode == "outtake": self.motorIntake.set(-0.9)
+        ''' Intake/Outtake/Stop Intake the cargo (turn wheels inward)'''
+        if mode == "intake": self.motorIntake.set(self.intakeSpeed)
+        elif mode == "outtake": self.motorIntake.set(-1 * self.intakeSpeed)
         elif mode == "stop": self.motorIntake.set(0)
 
-    def dashboardInit(self):
-        pass
+    def periodic(self):
+        deadband = 0.4
 
-    def initDefaultCommand(self):
-        self.setDefaultCommand(self.SetSpeedCargo(timeout = 300))
+        if self.xbox.getRawAxis(map.intakeCargo)>deadband: self.intake("intake")
+        elif self.xbox.getRawAxis(map.outtakeCargo)>deadband: self.intake("outtake")
+        else: self.intake("stop")
 
-    def subsystemInit(self):
-        r = self.robot
-
-    def disable(self):
-        self.intake("stop")
-        self.wrist("stop")
-
-    def dashboardPeriodic(self):
-        pass
+    def disable(self): self.intake("stop")
+    
+    def dashboardInit(self): pass
+    def dashboardPeriodic(self): pass

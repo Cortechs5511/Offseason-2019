@@ -30,9 +30,6 @@ from subsystems import Limelight
 from commands import resetAll
 from subsystems import disableAll
 
-from commands.climber.liftRobot import LiftRobot
-from commands.climber.driveToEdge import DriveToEdge
-
 from commands.autoSingleHatch import LeftCargo as LeftCargo
 from commands.autoSingleHatch import RightCargo as RightCargo
 from commands.autoSingleHatch import CenterCargo as CenterCargo
@@ -41,8 +38,6 @@ from commands.autoSingleHatch import RightCargoLevel2 as RightCargoLevel2
 from commands.autoSingleHatch import CenterCargoLevel2Left as CenterCargoLevel2Left
 from commands.autoSingleHatch import CenterCargoLevel2Right as CenterCargoLevel2Right
 from commands.autoSingleHatch import DriveStraight as DriveStraight
-
-import rate
 
 class MyRobot(CommandBasedRobot):
 
@@ -68,9 +63,9 @@ class MyRobot(CommandBasedRobot):
         map.loadPreferences()
 
         # Construct subsystems prior to constructing commands
-        self.limelight = Limelight.Limelight(self)
-        self.hatchMech = HatchMech.HatchMech(self) #not a subsystem
-        self.cargoMech = CargoMech.CargoMech(self)
+        self.limelight = Limelight.Limelight(self) #not a subsystem
+        self.hatch = HatchMech.HatchMech(self) #not a subsystem
+        self.cargo = CargoMech.CargoMech(self) #not a subsystem
         self.climber = Climber.Climber(self) #not a subsystem
         self.drive = Drive.Drive(self)
         self.compressor = wpilib.Compressor(0)
@@ -137,15 +132,12 @@ class MyRobot(CommandBasedRobot):
 
     def teleopPeriodic(self):
         self.climber.periodic()
+        self.cargo.periodic()
 
     def updateDashboardInit(self):
-        SmartDashboard.putData("Drive", self.drive)
-        SmartDashboard.putData("Hatch", self.hatchMech)
-        SmartDashboard.putData("Cargo", self.cargoMech)
-        SmartDashboard.putData("Climber", self.climber)
         self.drive.dashboardInit()
         #self.hatchMech.dashboardInit()
-        #self.cargoMech.dashboardInit()
+        self.cargoMech.dashboardInit()
         self.climber.dashboardInit()
         #self.limelight.dashboardInit()
 
@@ -159,7 +151,7 @@ class MyRobot(CommandBasedRobot):
 
         self.drive.dashboardPeriodic()
         #self.hatchMech.dashboardPeriodic()
-        #self.cargoMech.dashboardPeriodic()
+        self.cargoMech.dashboardPeriodic()
         self.climber.dashboardPeriodic()
         #self.limelight.dashboardPeriodic()
 
