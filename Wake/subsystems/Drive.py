@@ -47,8 +47,9 @@ class Drive(Subsystem):
 
     def __init__(self, robot):
         super().__init__('Drive')
-        SmartDashboard.putNumber("DriveStraight_P", 0.035)
+        SmartDashboard.putNumber("DriveStraight_P", 0.04)
         SmartDashboard.putNumber("DriveStraight_I", 0)
+
 
         self.robot = robot
         self.flipped = False
@@ -138,7 +139,7 @@ class Drive(Subsystem):
 
         self.TolAngle = 2 #degrees
         [kP,kI,kD,kF] = [0.024, 0.00, 0.20, 0.00]
-        if RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.007, 0.00, 0.01, 0.00]
+        if RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.005, 0.00, 0.05, 0.00]
         angleController = PIDController(kP, kI, kD, kF, source=self.__getAngle__, output=self.__setAngle__)
         angleController.setInputRange(-180,  180) #degrees
         angleController.setOutputRange(-0.9, 0.9)
@@ -203,7 +204,7 @@ class Drive(Subsystem):
         self.updateSensors()
 
         if(self.mode=="Distance"): [left,right] = [self.distPID,self.distPID]
-        elif(self.mode=="Angle"): [left,right] = [-self.anglePID,self.anglePID]
+        elif(self.mode=="Angle"): [left,right] = [self.anglePID,-self.anglePID]
         elif(self.mode=="Combined"): [left,right] = [self.distPID+self.anglePID,self.distPID-self.anglePID]
         elif(self.mode=="DriveStraight"): [left, right] = [left+self.anglePID, right-self.anglePID]
         elif(self.mode=="Direct"): [left, right] = [left, right] #Add advanced math here

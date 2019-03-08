@@ -118,25 +118,25 @@ intakeCargo = 2
 outtakeCargo = 3
 
 #buttons
-kickHatch = 2 #controlls original only hatch mech
-toggleHatch = 3 #controlls original only hatch mech
+kickHatch = 6 #controlls original only hatch mech
+toggleHatch = 5 #controlls original only hatch mech
 
-driveForwardClimber = 4
-driveBackwardClimber = 5
-liftClimber = 6
-lowerClimber = 7
+driveForwardClimber = 2
+driveBackwardClimber = 3
+liftClimber = 4
+lowerClimber = 1
 disableAll = 8
 
 #AXES
 liftFrontClimber = 5
-lowerFrontClimber = 6
-liftBackClimber = 0
+lowerFrontClimber = 5
+liftBackClimber = 1
 lowerBackClimber = 1
 
 #DRIVE
 #axes
 drive = 1
 #buttons
-flip = 0
-halfSpeed = 3
-shimmy = 4
+flip = 3
+halfSpeed = 1
+shimmy = 15
