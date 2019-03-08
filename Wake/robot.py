@@ -5,10 +5,7 @@ from wpilib.command import Command
 from wpilib.command import CommandGroup
 from commandbased import CommandBasedRobot
 
-
-from commands.drive.driveStraightDistance import DriveStraightDistance
 from wpilib.sendablechooser import SendableChooser
-
 import map
 
 from subsystems import HatchMech

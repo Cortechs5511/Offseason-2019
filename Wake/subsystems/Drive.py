@@ -6,6 +6,7 @@ from ctre import WPI_VictorSPX as Victor
 import navx
 
 import wpilib
+
 from wpilib.command.subsystem import Subsystem
 from wpilib.command import Command
 from wpilib import SmartDashboard
@@ -15,14 +16,12 @@ from wpilib import Preferences
 from wpilib import RobotBase
 from wpilib import Encoder
 
-from commands.drive.driveStraightTime import DriveStraightTime
+from commands.drive.driveStraightCombined import DriveStraightCombined
 from commands.drive.setFixedDT import SetFixedDT
 from commands.drive.setSpeedDT import SetSpeedDT
 from commands.drive.turnAngle import TurnAngle
-from commands.drive.FlipButton import FlipButton
 
 from sim import simComms
-
 import map
 
 class Drive(Subsystem):
@@ -31,7 +30,7 @@ class Drive(Subsystem):
 
     prevDist = [0,0]
 
-    maxSpeed = 1
+    maxSpeed = 0.9
 
     yaw = 0
     pitch = 0
@@ -52,8 +51,7 @@ class Drive(Subsystem):
 
 
         self.robot = robot
-        self.flipped = False
-        self.debug = True
+
         self.preferences = Preferences.getInstance()
         timeout = 0
 
@@ -167,11 +165,8 @@ class Drive(Subsystem):
     def setMode(self, mode, name=None, distance=0, angle=0):
         self.distPID = 0
         self.anglePID = 0
-        if(mode=="Distance"):
-            self.distController.setSetpoint(distance)
-            self.angleController.disable()
-            self.distController.enable()
-        elif(mode=="Angle"):
+
+        if(mode=="Angle"):
             self.angleController.setSetpoint(angle)
             self.distController.disable()
             self.angleController.enable()
@@ -180,17 +175,11 @@ class Drive(Subsystem):
             self.angleController.setSetpoint(angle)
             self.distController.enable()
             self.angleController.enable()
-        elif(mode=="DriveStraight"):
-            self.angleController.setSetpoint(angle)
-            self.distController.disable()
-            self.angleController.enable()
         elif(mode=="Direct"):
             self.distController.disable()
             self.angleController.disable()
         self.mode = mode
 
-
-    def setDistance(self, distance): self.setMode("Distance",distance=distance)
     def setAngle(self, angle): self.setMode("Angle",angle=angle)
     def setCombined(self, distance, angle): self.setMode("Combined",distance=distance,angle=angle)
     def setDirect(self): self.setMode("Direct")
@@ -201,13 +190,9 @@ class Drive(Subsystem):
         return -1
 
     def tankDrive(self,left=0,right=0):
-        self.updateSensors()
-
-        if(self.mode=="Distance"): [left,right] = [self.distPID,self.distPID]
-        elif(self.mode=="Angle"): [left,right] = [self.anglePID,-self.anglePID]
-        elif(self.mode=="Combined"): [left,right] = [self.distPID+self.anglePID,self.distPID-self.anglePID]
-        elif(self.mode=="DriveStraight"): [left, right] = [left+self.anglePID, right-self.anglePID]
-        elif(self.mode=="Direct"): [left, right] = [left, right] #Add advanced math here
+        if(self.mode=="Angle"): [left,right] = [-self.anglePID,self.anglePID]
+        elif(self.mode=="Combined"): [left,right] = [self.distPID-self.anglePID,self.distPID+self.anglePID]
+        elif(self.mode=="Direct"): [left, right] = [left**2 * self.sign(left), right**2 * self.sign(right)]
         else: [left, right] = [0,0]
 
         left = min(abs(left),self.maxSpeed)*self.sign(left)
@@ -215,8 +200,13 @@ class Drive(Subsystem):
         self.__tankDrive__(left,right)
 
     def __tankDrive__(self,left,right):
-        self.left.set(right)
-        self.right.set(left)
+        deadband = 0.1
+
+        if(abs(left)>abs(deadband)): self.left.set(left)
+        else: self.left.set(0)
+
+        if(abs(right)>abs(deadband)): self.right.set(right)
+        else: self.right.set(0)
 
     def getOutputCurrent(self):
         return (self.right.getOutputCurrent()+self.left.getOutputCurrent())*3
@@ -237,10 +227,8 @@ class Drive(Subsystem):
     def getAngle(self):
         if RobotBase.isSimulation(): return self.yaw
         else:
-            if map.robotId == map.astroV1:
-                return self.yaw
-            else:
-                return (-1 * self.yaw)
+            if map.robotId == map.astroV1: return self.yaw
+            else: return (-1 * self.yaw)
 
     def getRoll(self): return self.roll
     def getPitch(self): return self.pitch
@@ -257,8 +245,6 @@ class Drive(Subsystem):
 
     def getAvgVelocity(self): return (self.getVelocity()[0]+self.getVelocity()[1])/2
     def getAvgAbsVelocity(self): return (abs(self.getVelocity()[0])+abs(self.getVelocity()[1]))/2
-
-    def isFlipped(self): return self.flipped
 
     def zeroEncoders(self):
         self.leftEncoder.reset()
@@ -279,8 +265,7 @@ class Drive(Subsystem):
     def initDefaultCommand(self):
         self.setDefaultCommand(SetSpeedDT(timeout = 300))
 
-    def dashboardInit(self):
-        pass
+    def dashboardInit(self): pass
 
     def dashboardPeriodic(self):
         SmartDashboard.putNumber("Left Counts", self.leftEncoder.get())

@@ -9,8 +9,8 @@ class DriveStraight(CommandGroup):
     def __init__(self):
         super().__init__('DriveStraight')
         DriveStraightCombined = driveStraightCombined.DriveStraightCombined
-        
-        self.addSequential(DriveStraightCombined(distance=212.8, angle=0, timeout=5))
+
+        self.addSequential(DriveStraightCombined(distance=90, angle=0, timeout=5)) #just off hab platform
 
 class LeftCargo(CommandGroup):
     def __init__(self):

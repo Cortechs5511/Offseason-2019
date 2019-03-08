@@ -51,7 +51,6 @@ class EjectHatch(Command):
 
     def execute(self): self.hatch.kick("out")
 
-
     def isFinished(self): return self.timeSinceInitialized()>0.25
 
     def interrupted(self): pass
