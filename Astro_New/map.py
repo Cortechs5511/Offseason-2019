@@ -126,18 +126,11 @@ def loadPreferences():
 
 #OPERATOR
 #axes
-setSpeedWrist = 1 #drive the wrist up and down using an axes
 intakeCargo = 2
 outtakeCargo = 3
 #buttons
-ShootPositionWrist = 1 #brings wrist in a position to outtake carog
-KickSimpleHatch = 2 #controlls original only hatch mech
-ToggleSimpleHatch = 3 #controlls original only hatch mech
-IntakePositionWrist = 4 #brings the wrist to intaking position on floor
-ToggleNewHatch = 5 #controls hatch mech on arm
-
-resetAutoClimb = 4#11 #when pressed this clears the auto climb cache to retry
-autoClimb = 5#12 #while held button that will run the auto climb
+kickHatch = 2 #controlls original only hatch mech
+toggleHatch = 3 #controlls original only hatch mech
 
 #DRIVE
 #axes
@@ -145,6 +138,7 @@ drive = 1
 #buttons
 flip = 0
 halfSpeed = 3
+
 driveForwardClimber = 7
 driveBackwardClimber = 8
 liftClimber = 9
@@ -153,7 +147,6 @@ liftFrontClimber = 13
 lowerFrontClimber = 14
 liftBackClimber = 12
 lowerBackClimber = 15
-
 
 def getJoystick(num):
 
