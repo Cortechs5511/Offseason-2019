@@ -5,7 +5,6 @@ from wpilib.command import Command
 from wpilib.command import CommandGroup
 from commandbased import CommandBasedRobot
 
-
 from wpilib.sendablechooser import SendableChooser
 
 import map
