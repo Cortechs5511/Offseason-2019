@@ -15,8 +15,6 @@ from wpilib import Preferences
 from wpilib import RobotBase
 from wpilib import Encoder
 
-from commands.drive.driveStraightCombined import DriveStraightCombined
-from commands.drive.driveStraightDistance import DriveStraightDistance
 from commands.drive.driveStraightTime import DriveStraightTime
 from commands.drive.setFixedDT import SetFixedDT
 from commands.drive.setSpeedDT import SetSpeedDT
@@ -43,7 +41,9 @@ class Drive(Subsystem):
     rightVal = 0
 
     leftConv = 6/12 * math.pi / 256
-    rightConv = -6/12 * math.pi / 256
+    if wpilib.RobotBase.isSimulation(): rightConv =  -6/12 * math.pi / 256
+    else: rightConv = 6/12 * math.pi / 256
+
 
     def __init__(self, robot):
         super().__init__('Drive')
@@ -127,7 +127,7 @@ class Drive(Subsystem):
         self.rightEncoder.setSamplesToAverage(10)
 
         self.TolDist = 0.2 #feet
-        [kP,kI,kD,kF] = [0.035, 0.00, 0.20, 0.00]
+        [kP,kI,kD,kF] = [0.02, 0.00, 0.20, 0.00]
         if wpilib.RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.25, 0.00, 1.00, 0.00]
         distController = PIDController(kP, kI, kD, kF, source=self.__getDistance__, output=self.__setDistance__)
         distController.setInputRange(0, 50) #feet
@@ -138,7 +138,7 @@ class Drive(Subsystem):
         self.distController.disable()
 
         self.TolAngle = 2 #degrees
-        [kP,kI,kD,kF] = [0.024, 0.00, 0.20, 0.00]
+        [kP,kI,kD,kF] = [0.004, 0.00, 0.01, 0.00]
         if RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.005, 0.0, 0.01, 0.00]
         angleController = PIDController(kP, kI, kD, kF, source=self.__getAngle__, output=self.__setAngle__)
         angleController.setInputRange(-180,  180) #degrees

@@ -6,6 +6,7 @@ from wpilib.command import CommandGroup
 from commandbased import CommandBasedRobot
 
 
+from commands.drive.driveStraightDistance import DriveStraightDistance
 from wpilib.sendablechooser import SendableChooser
 
 import map
@@ -18,6 +19,12 @@ from subsystems import Limelight
 
 from commands import sequences
 from commands import autonomous
+
+
+from commands.drive.driveStraightDistance import DriveStraightDistance
+
+from commands.drive.turnAngle import TurnAngle
+
 
 from commands.autonomous import LeftCargo as LeftCargo
 from commands.autonomous import RightCargo as RightCargo
@@ -89,6 +96,8 @@ class MyRobot(CommandBasedRobot):
         self.RightCargoLevel2 = RightCargoLevel2()
         self.CenterCargoLevel2Left = CenterCargoLevel2Left()
         self.CenterCargoLevel2Right = CenterCargoLevel2Right()
+        self.DriveStraightDistance = DriveStraightDistance()
+        self.TurnAngle = TurnAngle()
 
         #self.autonChooser = SendableChooser()
         #self.autonChooser.setDefaultOption("Do Nothing", WaitCommand(3))
@@ -96,7 +105,8 @@ class MyRobot(CommandBasedRobot):
         #self.autonChooser.addOption("DriveAuton", AutonCheck(9.75))
         #self.autonChooser.addOption("DrivePath", DrivePath())
         #self.autonChooser.addOption("AutonRotation", autonRotation())
-        #SmartDashboard.putData("AutonChooser", self.autonChooser)
+        SmartDashboard.putData("DriveStraightDistance", DriveStraightDistance(5))
+        SmartDashboard.putData("DriveStraightAngle", TurnAngle(90))
 
     def robotPeriodic(self):
         self.limelight.readLimelightData()
@@ -108,7 +118,7 @@ class MyRobot(CommandBasedRobot):
         self.timer.reset()
         self.timer.start()
 
-        self.autoSelector("level1","R")
+        self.autoSelector("level1","L")
         #self.autonChooser.getSelected().start()
 
     def autonomousPeriodic(self):
