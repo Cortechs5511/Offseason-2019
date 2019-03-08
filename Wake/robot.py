@@ -103,6 +103,7 @@ class MyRobot(CommandBasedRobot):
         if(self.dashboard): self.updateDashboardPeriodic()
 
     def autonomousInit(self):
+        super().autonomousInit()
         self.drive.zero()
         self.timer.reset()
         self.timer.start()
@@ -111,15 +112,16 @@ class MyRobot(CommandBasedRobot):
         #self.autonChooser.getSelected().start()
 
     def autonomousPeriodic(self):
-        pass
+        super().autonomousPeriodic()
 
     def teleopInit(self):
-        pass
+        super().teleopInit()
 
     def teleopPeriodic(self):
         self.climber.periodic()
         self.cargo.periodic()
         self.hatch.periodic()
+        super().teleopPeriodic()
 
     def updateDashboardInit(self):
         self.drive.dashboardInit()

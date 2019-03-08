@@ -13,11 +13,13 @@ class HatchMech():
 
     def periodic(self):
         if self.xbox.getRawButton(map.kickHatch) == True: self.kick("out")
-        elif self.xbox.getRawButton(map.toggleHatch) == True: self.kickToggle()
+        elif self.xbox.getRawButton(map.toggleHatch) == True: self.kick("toggle")
 
     def kick(self, mode):
         if mode == "in": self.piston.set(True)
         elif mode == "out": self.piston.set(False)
+        else:
+          self.piston.set(not self.piston.get())
 
     def isEjectorOut(self):
         return self.piston.get()

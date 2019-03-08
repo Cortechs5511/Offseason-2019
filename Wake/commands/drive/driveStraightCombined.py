@@ -29,4 +29,5 @@ class DriveStraightCombined(TimedCommand):
         self.end()
 
     def end(self):
+        self.DT.setMode("Direct")
         self.DT.tankDrive(0,0)

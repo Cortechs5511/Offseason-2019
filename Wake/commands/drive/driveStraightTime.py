@@ -29,5 +29,6 @@ class DriveStraightTime(TimedCommand):
         self.end()
 
     def end(self):
+        self.DT.setMode("Direct")
         self.DT.left.set(0)
         self.DT.right.set(0)

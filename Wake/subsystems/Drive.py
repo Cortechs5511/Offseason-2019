@@ -5,6 +5,7 @@ from ctre import WPI_VictorSPX as Victor
 
 import navx
 
+import wpilib
 from wpilib.command.subsystem import Subsystem
 from wpilib.command import Command
 from wpilib import SmartDashboard
@@ -46,6 +47,8 @@ class Drive(Subsystem):
 
     def __init__(self, robot):
         super().__init__('Drive')
+        SmartDashboard.putNumber("DriveStraight_P", 0.035)
+        SmartDashboard.putNumber("DriveStraight_I", 0)
 
         self.robot = robot
         self.flipped = False
@@ -123,11 +126,11 @@ class Drive(Subsystem):
         self.rightEncoder.setSamplesToAverage(10)
 
         self.TolDist = 0.2 #feet
-        [kP,kI,kD,kF] = [0.07, 0.00, 0.20, 0.00]
-        if RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.40, 0.00, 1.50, 0.00]
+        [kP,kI,kD,kF] = [0.035, 0.00, 0.20, 0.00]
+        if wpilib.RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.20, 0.00, 1.50, 0.00]
         distController = PIDController(kP, kI, kD, kF, source=self.__getDistance__, output=self.__setDistance__)
         distController.setInputRange(0, 50) #feet
-        distController.setOutputRange(-0.9, 0.9)
+        distController.setOutputRange(-0.7, 0.7)
         distController.setAbsoluteTolerance(self.TolDist)
         distController.setContinuous(False)
         self.distController = distController
@@ -135,7 +138,7 @@ class Drive(Subsystem):
 
         self.TolAngle = 2 #degrees
         [kP,kI,kD,kF] = [0.024, 0.00, 0.20, 0.00]
-        if RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.019,0.00,0.2,0.00]
+        if RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.007, 0.00, 0.01, 0.00]
         angleController = PIDController(kP, kI, kD, kF, source=self.__getAngle__, output=self.__setAngle__)
         angleController.setInputRange(-180,  180) #degrees
         angleController.setOutputRange(-0.9, 0.9)
@@ -143,6 +146,9 @@ class Drive(Subsystem):
         angleController.setContinuous(True)
         self.angleController = angleController
         self.angleController.disable()
+
+    def setGains(self, p, i, d, f):
+        self.distController.setPID(p,i,d,f)
 
     def subsystemInit(self):
         driveStraightButton : wpilib.buttons.JoystickButton = r.driverLeftButton(1)
@@ -229,7 +235,11 @@ class Drive(Subsystem):
 
     def getAngle(self):
         if RobotBase.isSimulation(): return self.yaw
-        else: return -1 * self.yaw
+        else:
+            if map.robotId == map.astroV1:
+                return self.yaw
+            else:
+                return (-1 * self.yaw)
 
     def getRoll(self): return self.roll
     def getPitch(self): return self.pitch
