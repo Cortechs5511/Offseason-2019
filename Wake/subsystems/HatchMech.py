@@ -18,8 +18,7 @@ class HatchMech():
     def kick(self, mode):
         if mode == "in": self.piston.set(True)
         elif mode == "out": self.piston.set(False)
-        else:
-          self.piston.set(not self.piston.get())
+        else: self.piston.set(not self.piston.get())
 
     def isEjectorOut(self):
         return self.piston.get()

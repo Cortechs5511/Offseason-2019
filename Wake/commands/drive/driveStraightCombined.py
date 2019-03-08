@@ -12,7 +12,7 @@ class DriveStraightCombined(TimedCommand):
         self.requires(self.getRobot().drive)
         self.DT = self.getRobot().drive
 
-        self.distance = distance
+        self.distance = distance/12
         self.angle = angle
 
     def initialize(self):
@@ -23,7 +23,7 @@ class DriveStraightCombined(TimedCommand):
         self.DT.tankDrive()
 
     def isFinished(self):
-        return (abs(self.distance-self.DT.getAvgDistance())<0.05 and self.DT.getAvgAbsVelocity()<0.05) or self.isTimedOut()
+        return (abs(self.distance-self.DT.getAvgDistance())<0.1 and self.DT.getAvgAbsVelocity()<0.1) or self.isTimedOut()
 
     def interrupted(self):
         self.end()

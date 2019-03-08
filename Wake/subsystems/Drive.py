@@ -128,7 +128,7 @@ class Drive(Subsystem):
 
         self.TolDist = 0.2 #feet
         [kP,kI,kD,kF] = [0.035, 0.00, 0.20, 0.00]
-        if wpilib.RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.20, 0.00, 1.50, 0.00]
+        if wpilib.RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.25, 0.00, 1.00, 0.00]
         distController = PIDController(kP, kI, kD, kF, source=self.__getDistance__, output=self.__setDistance__)
         distController.setInputRange(0, 50) #feet
         distController.setOutputRange(-0.7, 0.7)
@@ -139,7 +139,7 @@ class Drive(Subsystem):
 
         self.TolAngle = 2 #degrees
         [kP,kI,kD,kF] = [0.024, 0.00, 0.20, 0.00]
-        if RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.005, 0.00, 0.05, 0.00]
+        if RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.005, 0.0, 0.01, 0.00]
         angleController = PIDController(kP, kI, kD, kF, source=self.__getAngle__, output=self.__setAngle__)
         angleController.setInputRange(-180,  180) #degrees
         angleController.setOutputRange(-0.9, 0.9)
