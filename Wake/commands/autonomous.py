@@ -19,10 +19,17 @@ class LeftCargo(CommandGroup):
         TurnAngle = turnAngle.TurnAngle
         EjectHatch = HatchMech.EjectHatch
 
-        self.addSequential(DriveStraightCombined(distance=212.8, angle=0, timeout=5))
+        self.addSequential(DriveStraightCombined(distance=194.5, angle=0, timeout=5))
         self.addSequential(TurnAngle(angle=90, timeout=5))
         self.addSequential(DriveStraightCombined(distance=21.13, angle=90, timeout=5))
         self.addSequential(EjectHatch())
+
+class DriveStraightSide(CommandGroup):
+    def __init__(self):
+        super().__init__('DriveStraightSide')
+        DriveStraightCombined = driveStraightCombined.DriveStraightCombined
+
+        self.addSequential(DriveStraightCombined(distance=194, angle=0, timeout=6)) #just off hab platform
 
 class RightCargo(CommandGroup):
     def __init__(self):
@@ -31,7 +38,7 @@ class RightCargo(CommandGroup):
         TurnAngle = turnAngle.TurnAngle
         EjectHatch = HatchMech.EjectHatch
 
-        self.addSequential(DriveStraightCombined(distance=212.8, angle=0, timeout=5))
+        self.addSequential(DriveStraightCombined(distance=194.5, angle=0, timeout=5))
         self.addSequential(TurnAngle(angle=-90, timeout=5))
         self.addSequential(DriveStraightCombined(distance=21.13, angle=-90, timeout=5))
         self.addSequential(EjectHatch())

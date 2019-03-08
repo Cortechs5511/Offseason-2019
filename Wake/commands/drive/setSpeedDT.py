@@ -15,8 +15,8 @@ class SetSpeedDT(TimedCommand):
         self.requires(self.robot.drive)
         self.DT = self.robot.drive
 
-        self.Joystick0 = self.robot.joystick1 #this is pretty messed up lol
-        self.Joystick1 = self.robot.joystick0
+        self.Joystick0 = self.robot.joystick0 #this is pretty messed up lol
+        self.Joystick1 = self.robot.joystick1
 
     def initialize(self):
         self.DT.setDirect()
@@ -26,9 +26,15 @@ class SetSpeedDT(TimedCommand):
         right = -self.Joystick1.getY()
 
         if self.robot.readDriverRightButton(map.halfSpeed) or self.robot.readDriverLeftButton(map.halfSpeed):
-            [left, right] = [left/2, right/2]
+            [left, right] = [left*.75, right*.75]
 
-        self.DT.tankDrive(left, right)
+        if self.robot.readDriverRightButton(map.flip) or self.robot.readDriverLeftButton(map.flip):
+            [left, right] = [-right, -left]
+
+        self.DT.tankDrive((left * 0.85), (right * 0.85))
+
+    def isFinished(self):
+        return False
 
     def interrupted(self): self.end()
 

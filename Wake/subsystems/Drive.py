@@ -125,7 +125,7 @@ class Drive(Subsystem):
         self.rightEncoder.setSamplesToAverage(10)
 
         self.TolDist = 0.2 #feet
-        [kP,kI,kD,kF] = [0.02, 0.00, 0.20, 0.00]
+        [kP,kI,kD,kF] = [0.027, 0.00, 0.20, 0.00]
         if wpilib.RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.25, 0.00, 1.00, 0.00]
         distController = PIDController(kP, kI, kD, kF, source=self.__getDistance__, output=self.__setDistance__)
         distController.setInputRange(0, 50) #feet
@@ -136,7 +136,7 @@ class Drive(Subsystem):
         self.distController.disable()
 
         self.TolAngle = 2 #degrees
-        [kP,kI,kD,kF] = [0.004, 0.00, 0.01, 0.00]
+        [kP,kI,kD,kF] = [0.003, 0.00, 0.01, 0.00]
         if RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.005, 0.0, 0.01, 0.00]
         angleController = PIDController(kP, kI, kD, kF, source=self.__getAngle__, output=self.__setAngle__)
         angleController.setInputRange(-180,  180) #degrees
@@ -190,9 +190,9 @@ class Drive(Subsystem):
         return -1
 
     def tankDrive(self,left=0,right=0):
-        if(self.mode=="Angle"): [left,right] = [-self.anglePID,self.anglePID]
-        elif(self.mode=="Combined"): [left,right] = [self.distPID-self.anglePID,self.distPID+self.anglePID]
-        elif(self.mode=="Direct"): [left, right] = [left**2 * self.sign(left), right**2 * self.sign(right)]
+        if(self.mode=="Angle"): [left,right] = [self.anglePID,-self.anglePID]
+        elif(self.mode=="Combined"): [left,right] = [self.distPID+self.anglePID,self.distPID-self.anglePID]
+        elif(self.mode=="Direct"): [left, right] = [left, right]
         else: [left, right] = [0,0]
 
         left = min(abs(left),self.maxSpeed)*self.sign(left)
@@ -266,6 +266,12 @@ class Drive(Subsystem):
         self.setDefaultCommand(SetSpeedDT(timeout = 300))
 
     def dashboardInit(self): pass
+
+    def isCargoPassed(self):
+        if self.getAvgDistance() > 15.8:
+            return True
+        else:
+            return False
 
     def dashboardPeriodic(self):
         SmartDashboard.putNumber("Left Counts", self.leftEncoder.get())

@@ -20,12 +20,17 @@ class HatchMech(Subsystem):
         self.kick("in")
 
     def periodic(self):
+        #self.last = False
+        #curr = self.xbox.getRawButton(map.toggleHatch)
         if self.xbox.getRawButton(map.kickHatch) == True: self.kick("out")
-        elif self.xbox.getRawButton(map.toggleHatch) == True: self.toggle()
+        elif self.xbox.getRawButton(map.toggleHatch) == True: self.kick("in")
+        '''if curr and curr != self.last:
+            self.kick("toggle")
+            self.last = curr'''
 
     def kick(self, mode):
-        if mode == "in": self.piston.set(True)
-        elif mode == "out": self.piston.set(False)
+        if mode == "out": self.piston.set(True)
+        elif mode == "in": self.piston.set(False)
         else: self.piston.set(not self.piston.get())
 
     def isEjectorOut(self): return self.piston.get()

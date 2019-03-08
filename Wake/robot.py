@@ -28,6 +28,7 @@ from commands.autonomous import RightCargoLevel2 as RightCargoLevel2
 from commands.autonomous import CenterCargoLevel2Left as CenterCargoLevel2Left
 from commands.autonomous import CenterCargoLevel2Right as CenterCargoLevel2Right
 from commands.autonomous import DriveStraight as DriveStraight
+from commands.autonomous import DriveStraightSide as DriveStraightSide
 
 import oi
 
@@ -91,6 +92,8 @@ class MyRobot(CommandBasedRobot):
         self.CenterCargoLevel2Left = CenterCargoLevel2Left()
         self.CenterCargoLevel2Right = CenterCargoLevel2Right()
         self.TurnAngle = TurnAngle()
+        self.DriveStraightSide = DriveStraightSide()
+        self.SetSpeedDT = SetSpeedDT()
 
         #self.autonChooser = SendableChooser()
         #self.autonChooser.setDefaultOption("Do Nothing", WaitCommand(3))
@@ -100,9 +103,19 @@ class MyRobot(CommandBasedRobot):
         #self.autonChooser.addOption("AutonRotation", autonRotation())
         SmartDashboard.putData("DriveStraightAngle", TurnAngle(90))
 
+        # Set up auton chooser
+        self.autonChooser = SendableChooser()
+        self.autonChooser.setDefaultOption("Drive Straight", "DriveStraight")
+        self.autonChooser.addOption("Do Nothing", "DoNothing")
+        self.autonChooser.addOption("Level 1 Center","Level1Center")
+        self.autonChooser.addOption("Driver Control", "DriverControl")
+        self.autonChooser.addOption("Driver Straight Side", "DriveStraightSide")
+        SmartDashboard.putData("Auto mode", self.autonChooser)
+
     def robotPeriodic(self):
         self.limelight.readLimelightData()
         if(self.dashboard): self.updateDashboardPeriodic()
+        SmartDashboard.putBoolean("Passed Hatch", self.drive.isCargoPassed())
 
     def autonomousInit(self):
         super().autonomousInit()
@@ -110,15 +123,15 @@ class MyRobot(CommandBasedRobot):
         self.timer.reset()
         self.timer.start()
 
-        self.autoSelector("level1","L")
-        #self.autonChooser.getSelected().start()
+        #self.autoSelector("level1","L")
+        self.autoSelector(self.autonChooser.getSelected())
 
     def autonomousPeriodic(self):
         super().autonomousPeriodic()
 
         deadband = 0.25
-        if(abs(self.joystick0.getRawAxis(map.drive))>abs(deadband)): setSpeedDT()
-        if(abs(self.joystick1.getRawAxis(map.drive))>abs(deadband)): setSpeedDT()
+        if(abs(self.joystick0.getRawAxis(map.drive))>abs(deadband)): self.SetSpeedDT.start()
+        if(abs(self.joystick1.getRawAxis(map.drive))>abs(deadband)): self.SetSpeedDT.start()
 
     def teleopInit(self):
         super().teleopInit()
@@ -192,9 +205,10 @@ class MyRobot(CommandBasedRobot):
         """ Return button value from left joystick """
         return self.joystick0.getRawButton(id)
 
-    def autoSelector(self, preference, position):
+    def autoSelector(self, auto):
+        a = auto
         """"returns auto command group to run based on starting position and preference for level 1 or 2"""
-        pos = position
+        '''pos = position
         pref = preference
         if pos == "L":
             if pref == "level1":
@@ -220,7 +234,24 @@ class MyRobot(CommandBasedRobot):
         elif pos == "C":
             self.CenterCargo.start()
         else:
-            pass
+            pass'''
+
+        if a == "DriveStraight":
+            self.DriveStraight.start()
+        elif a == "DoNothing":
+            self.disabledInit()
+        elif a == "Level1Center":
+            self.CenterCargo.start()
+        elif a == "DriverControl":
+            self.driverControl()
+        elif a == "DriveStraightSide":
+            self.DriveStraightSide.start()
+        else:
+            self.disabledInit()
+
+    def driverControl(self):
+        self.SetSpeedDT.start()
+
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)
