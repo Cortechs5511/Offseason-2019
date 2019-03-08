@@ -122,6 +122,7 @@ class MyRobot(CommandBasedRobot):
 
     def teleopInit(self):
         super().teleopInit()
+        self.disabledInit()
 
     def teleopPeriodic(self):
         self.climber.periodic()
@@ -152,6 +153,7 @@ class MyRobot(CommandBasedRobot):
         #autonomous.dashboardPeriodic()
 
     def disabledInit(self):
+        self.scheduler.removeAll()
         self.drive.disable()
         self.hatch.disable()
         self.cargo.disable()

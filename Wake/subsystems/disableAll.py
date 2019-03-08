@@ -22,8 +22,9 @@ class DisableAll(Command):
         pass
 
     def execute(self):
+        self.robot.scheduler.removeAll()
         self.cargo.disable()
-        self.climber.stopDrive()
+        self.climber.disable()
         self.drive.disable()
         self.hatch.disable()
 

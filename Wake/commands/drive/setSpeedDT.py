@@ -7,8 +7,8 @@ from wpilib.command import Command
 from wpilib.command import TimedCommand
 from wpilib import SmartDashboard
 from wpilib.drive.differentialdrive import DifferentialDrive
-class SetSpeedDT(TimedCommand):
 
+class SetSpeedDT(TimedCommand):
     def __init__(self, timeout = 0):
         super().__init__('SetSpeedDT', timeoutInSeconds = timeout)
         self.robot = self.getRobot()
