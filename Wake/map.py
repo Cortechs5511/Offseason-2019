@@ -137,6 +137,5 @@ lowerBackClimber = 1
 #axes
 drive = 1
 #buttons
-flip = 3
 halfSpeed = 1
 shimmy = 15

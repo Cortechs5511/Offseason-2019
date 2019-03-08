@@ -17,8 +17,8 @@ from subsystems import Limelight
 from commands import sequences
 from commands import autonomous
 
+from commands.drive.setSpeedDT import SetSpeedDT
 from commands.drive.turnAngle import TurnAngle
-
 
 from commands.autonomous import LeftCargo as LeftCargo
 from commands.autonomous import RightCargo as RightCargo
@@ -115,6 +115,10 @@ class MyRobot(CommandBasedRobot):
 
     def autonomousPeriodic(self):
         super().autonomousPeriodic()
+
+        deadband = 0.25
+        if(abs(self.joystick0.getRawAxis(map.drive))>abs(deadband)): setSpeedDT()
+        if(abs(self.joystick1.getRawAxis(map.drive))>abs(deadband)): setSpeedDT()
 
     def teleopInit(self):
         super().teleopInit()
