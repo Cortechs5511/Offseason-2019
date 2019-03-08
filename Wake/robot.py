@@ -17,9 +17,6 @@ from subsystems import Limelight
 from commands import sequences
 from commands import autonomous
 
-
-from commands.drive.driveStraightDistance import DriveStraightDistance
-
 from commands.drive.turnAngle import TurnAngle
 
 
@@ -93,7 +90,6 @@ class MyRobot(CommandBasedRobot):
         self.RightCargoLevel2 = RightCargoLevel2()
         self.CenterCargoLevel2Left = CenterCargoLevel2Left()
         self.CenterCargoLevel2Right = CenterCargoLevel2Right()
-        self.DriveStraightDistance = DriveStraightDistance()
         self.TurnAngle = TurnAngle()
 
         #self.autonChooser = SendableChooser()
@@ -102,7 +98,6 @@ class MyRobot(CommandBasedRobot):
         #self.autonChooser.addOption("DriveAuton", AutonCheck(9.75))
         #self.autonChooser.addOption("DrivePath", DrivePath())
         #self.autonChooser.addOption("AutonRotation", autonRotation())
-        SmartDashboard.putData("DriveStraightDistance", DriveStraightDistance(5))
         SmartDashboard.putData("DriveStraightAngle", TurnAngle(90))
 
     def robotPeriodic(self):
