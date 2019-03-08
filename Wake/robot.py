@@ -56,7 +56,7 @@ class MyRobot(CommandBasedRobot):
         # Construct subsystems prior to constructing commands
         self.limelight = Limelight.Limelight(self) #not a subsystem
 
-        self.hatch = HatchMech.HatchMech() #not a subsystem
+        self.hatch = HatchMech.HatchMech(self)
         self.hatch.initialize()
 
         self.cargo = CargoMech.CargoMech() #not a subsystem
