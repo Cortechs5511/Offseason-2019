@@ -16,10 +16,11 @@ class CargoMech(Subsystem):
         self.debug = True
         self.robot = Robot
         #fix
-        if not wpilib.RobotBase.isSimulation():
-            self.motorIntake.configFactoryDefault()
+
         self.motorIntake = ctre.WPI_TalonSRX(map.intake)
         self.motorWrist = ctre.WPI_TalonSRX(map.wrist)
+        if not wpilib.RobotBase.isSimulation():
+            self.motorIntake.configFactoryDefault()
         self.motorIntake.setName("Cargo","Motor Intake")
         self.motorWrist.setName("Cargo", "Motor Wrist")
         self.SetSpeedCargo = setSpeedCargo.SetSpeedCargo

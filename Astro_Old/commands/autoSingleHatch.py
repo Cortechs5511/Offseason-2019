@@ -10,7 +10,6 @@ class DriveStraight(CommandGroup):
         DriveStraightDistance = driveStraightDistance.DriveStraightDistance
         self.addSequential(DriveStraightDistance(distance=212.8, timeout=15))
 
-
 class LeftCargo(CommandGroup):
     def __init__(self):
         super().__init__('LeftCargo')

@@ -38,8 +38,9 @@ class SetSpeedDT(TimedCommand):
         if self.robot.readDriverRightButton(map.halfSpeed) or self.robot.readDriverLeftButton(map.halfSpeed):
             left = left / 2
             right = right / 2
-        if (abs(left)<0.025) and (abs(right)<0.025):
-            gain = SmartDashboard.getNumber("gain",1)
+        if (abs(left)<0.05) and (abs(right)<0.05):
+            #gain = SmartDashboard.getNumber("gain",1)
+            self.DT.tankDrive(0 ,0)
         else:
             if self.robot.readDriverRightButton(map.flip) or self.robot.readDriverLeftButton(map.flip) :
                 self.DT.tankDrive (-right * self.maxspeed ,-left * self.maxspeed)

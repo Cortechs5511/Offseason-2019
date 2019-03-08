@@ -148,7 +148,8 @@ class MyRobot(CommandBasedRobot):
         self.timer.reset()
         self.timer.start()
         self.curr = 0
-        self.autoSelector("level1","R")
+        #self.autoSelector(self.position, side)
+        self.autoSelector("level1","L")
         #self.autonChooser.getSelected().start()
 
 

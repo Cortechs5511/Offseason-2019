@@ -68,7 +68,6 @@ class Drive(Subsystem):
         self.debug = True
         self.preferences = wpilib.Preferences.getInstance()
         timeout = 0
-
         self.accel = wpilib.BuiltInAccelerometer()
 
         TalonLeft = Talon(map.driveLeft1)
@@ -144,17 +143,19 @@ class Drive(Subsystem):
         self.rightEncoder.setSamplesToAverage(10)
 
         self.TolDist = 0.2 #feet
-        [kP,kI,kD,kF] = [0.07, 0.00, 0.20, 0.00]
-        if wpilib.RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.40, 0.00, 1.50, 0.00]
+        [kP,kI,kD,kF] = [0.035, 0.00, 0.20, 0.00]
+        if wpilib.RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.20, 0.00, 1.50, 0.00]
         distController = wpilib.PIDController(kP, kI, kD, kF, source=self.__getDistance__, output=self.__setDistance__)
         distController.setInputRange(0, 50) #feet
-        distController.setOutputRange(-0.9, 0.9)
+        distController.setOutputRange(-0.7, 0.7)
         distController.setAbsoluteTolerance(self.TolDist)
         distController.setContinuous(False)
         self.distController = distController
         self.distController.disable()
 
         self.TolAngle = 2 #degrees
+        SmartDashboard.putNumber("DriveStraight_P", 0.035)
+        SmartDashboard.putNumber("DriveStraight_I", 0)
         [kP,kI,kD,kF] = [0.024, 0.00, 0.20, 0.00]
         if wpilib.RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.019,0.00,0.2,0.00]
         angleController = wpilib.PIDController(kP, kI, kD, kF, source=self.__getAngle__, output=self.__setAngle__)
@@ -173,6 +174,10 @@ class Drive(Subsystem):
         self.model = dDrive.DifferentialDrive(29, 1.83, 0, units.inchesToMeters(3.0), units.inchesToMeters(14), Ltrans, Rtrans)
         self.maxVel = self.maxSpeed*self.model.getMaxAbsVelocity(0, 0, 12)
         self.Path = Path.Path(self, self.model, self.odTemp, self.getDistance)
+
+    def setGains(self, p, i, d, f):
+        self.distController.setPID(p,i,d,f)
+
 
     def subsystemInit(self):
         driveStraightButton : wpilib.buttons.JoystickButton = r.driverLeftButton(1)
@@ -307,7 +312,10 @@ class Drive(Subsystem):
         if wpilib.RobotBase.isSimulation():
             return self.yaw
         else:
-            return (-1 * self.yaw)
+            if map.robotId == map.astroV1:
+                return self.yaw
+            else:
+                return (-1 * self.yaw)
 
     '''LeaningForward - negative,LeaningBackward - Positive'''
     def getRoll(self): return self.roll

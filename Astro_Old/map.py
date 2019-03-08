@@ -12,20 +12,12 @@ astroV2: int = 2
 robotId: int = astroV2
 
 #Can ID
-if robotId == astroV2:
-    driveLeft1 = 20
-    driveLeft2 = 21
-    driveLeft3 = 22
-    driveRight1 = 10
-    driveRight2 = 11
-    driveRight3 = 12
-else:
-    driveLeft1 = 10
-    driveLeft2 = 11
-    driveLeft3 = 12
-    driveRight1 = 20
-    driveRight2 = 21
-    driveRight3 = 22
+driveLeft1 = 20
+driveLeft2 = 21
+driveLeft3 = 22
+driveRight1 = 10
+driveRight2 = 11
+driveRight3 = 12
 
 intake = 30
 wrist = 31
@@ -107,6 +99,19 @@ def loadPreferences():
   global robotId
   robotId = getConfigFloat("RobotId", astroV2)
   print("map.py robotId", robotId)
+  if robotId == astroV1:
+      global driveLeft1
+      global driveLeft2
+      global driveLeft3
+      global driveRight1
+      global driveRight2
+      global driveRight3
+      driveLeft1 = 10
+      driveLeft2 = 11
+      driveLeft3 = 12
+      driveRight1 = 20
+      driveRight2 = 21
+      driveRight3 = 22
 
 '''BUTTONS/AXES'''
 #call these constants when reading button states in subsystems
