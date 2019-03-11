@@ -155,7 +155,7 @@ class MyRobot(CommandBasedRobot):
 
     def updateDashboardPeriodic(self):
         #SmartDashboard.putNumber("Timer", self.timer.get())
-
+        SmartDashboard.putNumber("PressureSwitch", self.compressor.getPressureSwitchValue())
         self.drive.dashboardPeriodic()
         self.hatch.dashboardPeriodic()
         self.cargo.dashboardPeriodic()

@@ -268,7 +268,7 @@ class Drive(Subsystem):
     def dashboardInit(self): pass
 
     def isCargoPassed(self):
-        if self.getAvgDistance() > 15.8:
+        if self.getAvgDistance() > 16.1:
             return True
         else:
             return False
