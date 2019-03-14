@@ -467,6 +467,21 @@ Depends: python37
 Priority: optional
 
 
+Package: python37-robotpy-ctre
+Version: 2019.3.2
+Section: devel
+Architecture: cortexa9-vfpv3
+Maintainer: RobotPy Developers <robotpy@googlegroups.com>
+MD5Sum: 7c21c6227c22e266e5fb0ab119b4bcc5
+Size: 380372
+Filename: python37-robotpy-ctre_2019.3.2_cortexa9-vfpv3.ipk
+Description: RobotPy bindings for CTRE third party libraries
+OE: unknown
+Homepage: unknown
+Depends: python37
+Priority: optional
+
+
 Package: python37-robotpy-pathfinder
 Version: 0.2.5
 Section: devel
