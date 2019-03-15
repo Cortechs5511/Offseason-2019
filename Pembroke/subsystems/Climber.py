@@ -98,7 +98,7 @@ class Climber():
 
     def getLean(self):
         if map.robotId == map.astroV1: return self.robot.drive.getRoll()
-        else: return self.robot.drive.getPitch()
+        else: return -1* self.robot.drive.getPitch()
 
     def isLeaning(self, direction):
         '''TRUE TESTS TIPPING FORWARD, FORWARD TIP HAS NEGATIVE ANGLE'''
@@ -176,12 +176,12 @@ class Climber():
             self.wheelLeft.set(-1 * self.wheelSpeed)
             self.wheelRight.set(-1 * self.wheelSpeed)
 
-        if self.isLeaning(False):
+        '''if self.isLeaning(False):
             self.backLift.set(-1 * self.getCorrection())
             self.stopFront()
         elif self.isLeaning(True):
             self.backLift.set(self.getCorrection())
-            self.stopFront()
+            self.stopFront()'''
 
     def wheelForward(self):
         self.wheelLeft.set(self.wheelSpeed)
