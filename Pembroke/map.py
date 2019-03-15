@@ -19,6 +19,7 @@ driveRight1 = 20
 driveRight2 = 21
 driveRight3 = 22
 
+
 intake = 30
 wrist = 31
 
@@ -132,7 +133,7 @@ liftFrontClimber = 5
 lowerFrontClimber = 5
 liftBackClimber = 1
 lowerBackClimber = 1
-
+resetAutoClimb = 7
 #DRIVE
 #axes
 drive = 1
