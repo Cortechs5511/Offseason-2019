@@ -47,6 +47,7 @@ class Drive(Subsystem):
         super().__init__('Drive')
         SmartDashboard.putNumber("DriveStraight_P", 0.04)
         SmartDashboard.putNumber("DriveStraight_I", 0)
+        SmartDashboard.putNumber("DriveStraight_D", 0)
 
 
         self.robot = robot

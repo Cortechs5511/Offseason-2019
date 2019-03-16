@@ -29,6 +29,7 @@ from commands.autonomous import CenterCargoLevel2Left as CenterCargoLevel2Left
 from commands.autonomous import CenterCargoLevel2Right as CenterCargoLevel2Right
 from commands.autonomous import DriveStraight as DriveStraight
 from commands.autonomous import DriveStraightSide as DriveStraightSide
+from commands.drive.driveStraightDistance import DriveStraightDistance
 
 import oi
 
@@ -102,6 +103,8 @@ class MyRobot(CommandBasedRobot):
         #self.autonChooser.addOption("DrivePath", DrivePath())
         #self.autonChooser.addOption("AutonRotation", autonRotation())
         SmartDashboard.putData("DriveStraightAngle", TurnAngle(90))
+        SmartDashboard.putData("DriveStraight10", DriveStraightDistance(10,5))
+        SmartDashboard.putData("DriveStraight-10", DriveStraightDistance(-10,5))
 
         # Set up auton chooser
         self.autonChooser = SendableChooser()
@@ -148,6 +151,7 @@ class MyRobot(CommandBasedRobot):
         self.hatch.dashboardInit()
         self.cargo.dashboardInit()
         self.climber.dashboardInit()
+
         #self.limelight.dashboardInit()
 
         #sequences.dashboardInit()

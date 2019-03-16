@@ -48,7 +48,7 @@ class Drive(Subsystem):
         super().__init__('Drive')
         SmartDashboard.putNumber("DriveStraight_P", 0.04)
         SmartDashboard.putNumber("DriveStraight_I", 0)
-
+        SmartDashboard.putNumber("DriveStraight_D", 0)
 
         self.robot = robot
 
@@ -113,6 +113,11 @@ class Drive(Subsystem):
 
         self.left = TalonLeft
         self.right = TalonRight
+
+        self.left.configNominalOutputForward(0.1)
+        self.right.configNominalOutputForward(0.1)
+        self.right.configNominalOutputReverse(-0.1)
+        self.left.configNominalOutputReverse(-0.1)
 
         self.navx = navx.AHRS.create_spi()
 

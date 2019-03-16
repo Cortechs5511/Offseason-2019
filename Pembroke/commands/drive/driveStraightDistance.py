@@ -16,7 +16,8 @@ class DriveStraightDistance(TimedCommand):
     def initialize(self):
         p = SmartDashboard.getNumber("DriveStraight_P", 0.01)
         i = SmartDashboard.getNumber("DriveStraight_I", 0)
-        self.DT.setGains(p, i, 0, 0)
+        d = SmartDashboard.getNumber("DriveStraight_D", 0)
+        self.DT.setGains(p, i, d, 0)
         StartAngle = self.DT.getAngle()
         self.DT.setMode("Combined", name=None, distance=self.setpoint, angle=StartAngle)
         self.setpoint = self.setpoint + self.DT.getAvgDistance()

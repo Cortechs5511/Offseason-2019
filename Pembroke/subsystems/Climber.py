@@ -142,7 +142,7 @@ class Climber():
 
     def startState(self):
         self.state = 0
-        self.updateDashboardInit()
+        self.dashboardInit()
 
     def getState(self):
 
