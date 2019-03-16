@@ -1,6 +1,6 @@
-#new outreach
+#tankdrive is broken because it is based on having a complete drivers station, not just a  controller
+
 #imports important packages for running
-#this is andrew wang's code
 import wpilib
 import wpilib.drive
 from wpilib import SmartDashboard as sd
@@ -9,7 +9,6 @@ from robotpy_ext.misc.looptimer import LoopTimer
 
 #class of robot
 class MyRobot(wpilib.TimedRobot):
-
 #initialization
     def robotInit(self):
         self.loop_timer = LoopTimer(self.logger)
@@ -25,12 +24,13 @@ class MyRobot(wpilib.TimedRobot):
         # self.Intake1.follow(self.Intake2)
 
         #lift motors
-        '''self.Lift1 = ctre.WPI_TalonSRX(30)
+        self.Lift1 = ctre.WPI_TalonSRX(30)
         self.Lift1.setNeutralMode(2)
         self.Lift2 = ctre.WPI_TalonSRX(31)
         self.Lift2.setNeutralMode(2)
-        self.Lift1.follow(self.Lift2)'''
+        self.Lift1.follow(self.Lift2)
 
+        #leftdrive motors
         self.LeftDrive1 = ctre.WPI_TalonSRX(10)
         self.LeftDrive1.setInverted(True)
         self.LeftDrive1.setNeutralMode(2)
@@ -56,24 +56,24 @@ class MyRobot(wpilib.TimedRobot):
     #sets motors to follow each other
         self.RightDrive3.follow(self.RightDrive1)
         self.RightDrive2.follow(self.RightDrive1)
-    #creates two joysticks for drive control
-        self.Joystick0 =wpilib.Joystick(0)
-        self.Joystick1 =wpilib.Joystick(1)
-        self.Controller1 =wpilib.Joystick(2)
+    #sets up a controller
+        self.controller = wpilib.Joystick(0)
     #sets up encoders
         self.left_encoder = wpilib.Encoder(0,1)
         self.right_encoder = wpilib.Encoder(2,3)
     #switch between modes
         self.tankMode = False
         #self.modeButton = self.right_joystick.
+
     def teleopInit(self):
         self.count = 0
+
     def autonomousInit(self):
     #creates a time to run
         self.count = 0
         self.autonTimer = wpilib.Timer()
         self.autonTimer.start()
-
+    
     def teleopPeriodic(self):
         self.loop_timer.measure()
     #teleoporated period; man control
@@ -83,24 +83,23 @@ class MyRobot(wpilib.TimedRobot):
         self.ticks = self.getDistance()
         sd.putNumber("ticks",self.ticks)
     #limit breakers which set speeds based on axis units
-        left = -(self.Joystick0.getRawAxis(1))
-        right = -(self.Joystick1.getRawAxis(1))
-        rotation = (self.Joystick0.getRawAxis(4))
-        intakeButton = self.Controller1.getRawAxis(2)
-        outtakeButton = self.Controller1.getRawAxis(3)
-        #liftButtonUp = (self.Controller1.getRawButton(4))
-        #liftButtonDown = (self.Controller1.getRawButton(1))
+        left = -(self.controller.getRawAxis(1))
+        right = -(self.controller.getRawAxis(5))
+        rotation = (self.controller.getRawAxis(4))
+        intakeButton = self.controller.getRawAxis(2)
+        outtakeButton = self.controller.getRawAxis(3)
+        liftButtonUp = (self.controller.getRawButton(4))
+        liftButtonDown = (self.controller.getRawButton(1))
         #arcade tank toggle
         if self.tankMode == True:
-            self.drive(left, right)
+            self.tankDrive(left, right)
         else:
             self.arcadeDrive(left,rotation)
         '''#lift
         self.lift(liftButtonUp,liftButtonDown)
         '''
         self.intake(intakeButton > 0.5,outtakeButton > 0.5)
-
-
+        self.lift(liftButtonUp,liftButtonDown)
 
 #support functions
     #gets distance for ticks and converts
@@ -118,22 +117,18 @@ class MyRobot(wpilib.TimedRobot):
         remaining_distance = maxPoint - self.getDistance()
         #once this distance travelled is larger than the maxPoint, we know we've reached our goal, stopping it
         if self.getDistance() <= maxPoint:
-            self.drive(remaining_distance*constant+0.25,remaining_distance*constant+0.25)
+            self.tankDrive(remaining_distance*constant+0.25,remaining_distance*constant+0.25)
         else:
-            self.drive(0,0)
-
+            self.tankDrive(0,0)
     def intake(self,intakeIn,out):
         power = 0.0
         if intakeIn and not out:
             power = 0.5
         elif out and not intakeIn:
             power = -0.5
-
         self.Intake1.set(-power)
         self.Intake2.set(power)
-
-    #lift function
-    '''def lift(self,up,down):
+    def lift(self,up,down):
         if up and not down:
             self.Lift2.set(-0.5)
         if down and not up:
@@ -141,33 +136,9 @@ class MyRobot(wpilib.TimedRobot):
         if down and up:
             self.Lift2.set(0)
         if (not down) and (not up):
-            self.Lift2.set(0)'''
-
-    def mrbDrive(self, throttle, rotation):
-        left = 0
-        right = 0
-        power = 0.4
-        rotGain = 1.25
-
-        deflect = 0.75
-        if throttle > deflect:
-            left = power
-            right = power
-        elif throttle < -deflect:
-            left = -power
-            right = -power
-        elif rotation > deflect:
-            left = power * rotGain
-            right = -power * rotGain
-        elif rotation < -deflect:
-            left = -power * rotGain
-            right = power * rotGain
-
-        self.LeftDrive1.set(left)
-        self.RightDrive1.set(right)
-
+            self.Lift2.set(0)
     #tank drive
-    def drive(self, left, right):
+    def tankDrive(self, left, right):
         #breakers
         if abs(left) < 0.1:
             left = 0
@@ -178,46 +149,32 @@ class MyRobot(wpilib.TimedRobot):
         #sets powers
         self.LeftDrive1.set(left)
         self.RightDrive1.set(right)
-    #arcade drive
-    def arcadeDrive(self,throttle,rotation):
-        rotGain = 0.5
-        rotation = rotGain * rotation
-        leftPower = self.trimPower(throttle + rotation)
-        rightPower = self.trimPower(throttle - rotation)
-        self.LeftDrive1.set(leftPower)
-        self.RightDrive1.set(rightPower)
-        
-    def trimPower(self, power):
-        if power < -1:
-            return -1
-        if power > 1:
-            return 1
-        return power
-        
-    def arcadeDriveOld(self, left, right):
+
+    def arcadeDrive(self, movement, rotation):
         #breakers
-        if abs(left) <0.1:
-            left = 0
-            
-        left = left *0.9
-        right = left
+        if abs(movement) <0.1:
+            movement = 0
+        left = movement *0.9
+        right = movement *0.9
         if rotation <-0.1:
             #if the rotation is larger than 0.95, rotate in place
             if rotation <-0.95:
                 left = 0
-            left = left *(1-abs(rotation*0.4))
+            left = left *(1-abs(rotation*0.2))
         elif rotation >0.1:
             #if the rotation is larger than 0.95, rotate in place
             if rotation >0.95:
                 right = 0
-            right = right *(1-abs(rotation*0.4))
+            right = right *(1-abs(rotation*0.2))
         #sets up powers
         self.LeftDrive1.set(left)
         self.RightDrive1.set(right)
-
+    
     def disabledPeriodic(self):
         # a disabled period will reset the wrist and intake
-        self.drive(0,0)
+        self.tankDrive(0,0)
+        self.intake(0,0)
+        #no lift disable: YET :
 
 #run code
 if __name__ == '__main__':
