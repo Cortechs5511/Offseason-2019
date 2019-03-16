@@ -85,7 +85,7 @@ class MyRobot(wpilib.TimedRobot):
     #limit breakers which set speeds based on axis units
         left = -(self.Joystick0.getRawAxis(1))
         right = -(self.Joystick1.getRawAxis(1))
-        rotation = (self.Joystick0.getRawAxis(0))
+        rotation = (self.Joystick0.getRawAxis(4))
         intakeButton = self.Controller1.getRawAxis(2)
         outtakeButton = self.Controller1.getRawAxis(3)
         #liftButtonUp = (self.Controller1.getRawButton(4))
@@ -179,7 +179,22 @@ class MyRobot(wpilib.TimedRobot):
         self.LeftDrive1.set(left)
         self.RightDrive1.set(right)
     #arcade drive
-    def arcadeDrive(self,left,rotation):
+    def arcadeDrive(self,throttle,rotation):
+        rotGain = 0.5
+        rotation = rotGain * rotation
+        leftPower = self.trimPower(throttle + rotation)
+        rightPower = self.trimPower(throttle - rotation)
+        self.LeftDrive1.set(leftPower)
+        self.RightDrive1.set(rightPower)
+        
+    def trimPower(self, power):
+        if power < -1:
+            return -1
+        if power > 1:
+            return 1
+        return power
+        
+    def arcadeDriveOld(self, left, right):
         #breakers
         if abs(left) <0.1:
             left = 0
