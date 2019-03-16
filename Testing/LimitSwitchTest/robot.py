@@ -8,8 +8,9 @@ class MyRobot(TimedRobot):
     def robotInit(self):
         self.joystick  = Joystick(0)
         self.motor = Talon(10)
+        self.motor.configClearPositionOnLimitF(True)
     def teleopPeriodic(self):
-        self.y = self.joystick.getY()
+        self.y = self.joystick.getRawAxis(1)
         if abs(self.y) <0.1:
             self.y = 0
         self.motor.set(self.y)
