@@ -64,7 +64,7 @@ class MyRobot(wpilib.TimedRobot):
         self.left_encoder = wpilib.Encoder(0,1)
         self.right_encoder = wpilib.Encoder(2,3)
     #switch between modes
-        self.tankMode = True
+        self.tankMode = False
         #self.modeButton = self.right_joystick.
     def teleopInit(self):
         self.count = 0
@@ -181,18 +181,21 @@ class MyRobot(wpilib.TimedRobot):
     #arcade drive
     def arcadeDrive(self,left,rotation):
         #breakers
-        if abs(left) < 0.1:
+        if abs(left) <0.1:
             left = 0
-        left = left *0.254
+            
+        left = left *0.9
         right = left
-
         if rotation <-0.1:
             #if the rotation is larger than 0.95, rotate in place
-            #if rotation <-0.95:
-            right = right + (abs(rotation*0.5))
-        elif rotation > 0.1:
+            if rotation <-0.95:
+                left = 0
+            left = left *(1-abs(rotation*0.4))
+        elif rotation >0.1:
             #if the rotation is larger than 0.95, rotate in place
-            left = left + (abs(rotation*0.5))
+            if rotation >0.95:
+                right = 0
+            right = right *(1-abs(rotation*0.4))
         #sets up powers
         self.LeftDrive1.set(left)
         self.RightDrive1.set(right)
