@@ -115,6 +115,7 @@ class Drive(Subsystem):
         self.rightEncoder.setDistancePerPulse(self.rightConv)
         self.rightEncoder.setSamplesToAverage(10)
 
+        '''PID for Drive'''
         self.TolDist = 0.2 #feet
         [kP,kI,kD,kF] = [0.027, 0.00, 0.20, 0.00]
         if wpilib.RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.25, 0.00, 1.00, 0.00]
@@ -126,6 +127,7 @@ class Drive(Subsystem):
         self.distController = distController
         self.distController.disable()
 
+        '''PID for Angle'''
         self.TolAngle = 2 #degrees
         [kP,kI,kD,kF] = [0.003, 0.00, 0.01, 0.00]
         if RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.005, 0.0, 0.01, 0.00]

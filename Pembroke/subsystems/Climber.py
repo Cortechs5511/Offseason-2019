@@ -58,7 +58,7 @@ class Climber():
         self.frontSwitch = DigitalInput(map.frontBottomSensor)
 
         self.MAX_ANGLE = 3 #degrees
-        self.climbSpeed = 0.9 #90%
+        self.climbSpeed = 0.7 #90%
         self.wheelSpeed = 0.9 #90%
 
         self.backHold = -0.1 #holds back stationary if extended
@@ -109,6 +109,8 @@ class Climber():
         elif state == 2: self.lift("front")
         elif state == 3: self.wheel("forward")
         elif state == 4: self.lift("back")
+
+        self.climbSpeed = SmartDashboard.getNumber("ClimbSpeed", 0.9)
 
     def isFullyExtendedFrontTest(self):
         """ tells us if the front is fully extended """
@@ -377,6 +379,7 @@ class Climber():
         SmartDashboard.putBoolean("FullyRetractedBackTest2", True)
         SmartDashboard.putBoolean("FrontOverGroundTest2", True)
         SmartDashboard.putBoolean("BackOverGroundTest2", True)
+        SmartDashboard.putNumber("ClimbSpeed", self.climbSpeed)
 
         self.fullyExtendedFront = SmartDashboard.getBoolean("FullyExtendedFrontTest2", True)
         self.fullyExtendedBack = SmartDashboard.getBoolean("FullyExtendedBackTest2", True)
