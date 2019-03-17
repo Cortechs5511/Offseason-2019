@@ -31,6 +31,7 @@ from commands.autonomous import DriveStraight as DriveStraight
 from commands.autonomous import DriveStraightSide as DriveStraightSide
 
 from commands.drive.driveStraightDistance import DriveStraightDistance
+from commands.drive.driveStraightCombined import DriveStraightCombined
 
 import oi
 
@@ -104,8 +105,8 @@ class MyRobot(CommandBasedRobot):
         #self.autonChooser.addOption("DrivePath", DrivePath())
         #self.autonChooser.addOption("AutonRotation", autonRotation())
         SmartDashboard.putData("DriveStraightAngle", TurnAngle(90))
-        SmartDashboard.putData("DriveStraight10", DriveStraightDistance(7.75,5))
-        SmartDashboard.putData("DriveStraight-10", DriveStraightDistance(-7.75,5))
+        SmartDashboard.putData("DriveStraight10", DriveStraightCombined(7.75,0,5))
+        SmartDashboard.putData("DriveStraight-10", DriveStraightCombined(-7.75,0,5))
 
         # Set up auton chooser
         self.autonChooser = SendableChooser()

@@ -20,14 +20,13 @@ class DriveStraightDistance(TimedCommand):
         self.DT.setGains(p, i, d, 0)
         StartAngle = self.DT.getAngle()
         self.DT.setMode("Combined", name=None, distance=self.setpoint, angle=StartAngle)
-        self.setpoint = self.setpoint + self.DT.getAvgDistance()
-        self.DT.setDistance(self.setpoint)
+
 
     def execute(self):
         self.DT.tankDrive()
 
     def isFinished(self):
-        return (abs(self.setpoint-self.DT.getAvgDistance())<0.05 and self.DT.getAvgAbsVelocity()<0.05) or self.isTimedOut()
+        return (abs(self.setpoint-self.DT.getAvgDistance())<0.03 and self.DT.getAvgAbsVelocity()<0.05) or self.isTimedOut()
 
     def interrupted(self):
         self.end()

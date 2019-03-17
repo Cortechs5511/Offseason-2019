@@ -45,9 +45,9 @@ class Drive(Subsystem):
 
     def __init__(self, robot):
         super().__init__('Drive')
-        SmartDashboard.putNumber("DriveStraight_P", 0.04)
-        SmartDashboard.putNumber("DriveStraight_I", 0)
-        SmartDashboard.putNumber("DriveStraight_D", 0)
+        SmartDashboard.putNumber("DriveStraight_P", 0.07)
+        SmartDashboard.putNumber("DriveStraight_I", 0.01)
+        SmartDashboard.putNumber("DriveStraight_D", 0.3)
 
 
         self.robot = robot
@@ -115,7 +115,7 @@ class Drive(Subsystem):
         self.rightEncoder.setDistancePerPulse(self.rightConv)
         self.rightEncoder.setSamplesToAverage(10)
 
-        self.TolDist = 0.2 #feet
+        self.TolDist = 0.1 #feet
         [kP,kI,kD,kF] = [0.027, 0.00, 0.20, 0.00]
         if wpilib.RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.25, 0.00, 1.00, 0.00]
         distController = PIDController(kP, kI, kD, kF, source=self.__getDistance__, output=self.__setDistance__)
@@ -257,6 +257,13 @@ class Drive(Subsystem):
         self.setDefaultCommand(SetSpeedDT(timeout = 300))
 
     def dashboardInit(self): pass
+
+    def getMinimum(self, number, comparison):
+        if number < comparison:
+            return number
+        else:
+            return comparison
+
 
     def isCargoPassed(self):
         if self.getAvgDistance() > 16.1:

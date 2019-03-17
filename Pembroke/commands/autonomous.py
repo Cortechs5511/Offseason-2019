@@ -1,6 +1,7 @@
 from wpilib.command import CommandGroup
 
 from commands.drive import driveStraightCombined
+from commands.drive import driveStraightDistance
 from commands.drive import turnAngle
 
 from subsystems import HatchMech
@@ -8,9 +9,9 @@ from subsystems import HatchMech
 class DriveStraight(CommandGroup):
     def __init__(self):
         super().__init__('DriveStraight')
-        DriveStraightCombined = driveStraightCombined.DriveStraightCombined
+        DriveStraightDistance = driveStraightDistance.DriveStraightDistance
 
-        self.addSequential(DriveStraightCombined(distance=90, angle=0, timeout=5)) #just off hab platform
+        self.addSequential(DriveStraightDistance(distance=90, timeout=100)) #just off hab platform
 
 class LeftCargo(CommandGroup):
     def __init__(self):

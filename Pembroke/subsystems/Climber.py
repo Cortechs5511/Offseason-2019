@@ -16,8 +16,8 @@ class Climber():
 
         if map.robotId == map.astroV1:
             '''IDS AND DIRECTIONS FOR V1'''
-            self.backLift = Talon(map.backLift)
-            self.frontLift = Talon(map.frontLift)
+            self.backLift = Talon(map.frontLift)
+            self.frontLift = Talon(map.backLift)
             self.frontLift.setInverted(True)
             self.backLift.setInverted(True)
 
@@ -87,13 +87,22 @@ class Climber():
         '''TODO DOUBLE CHECK AND CHANGE AXES/BUTTONS IF NECESSARY'''
         deadband = 0.50
 
-        if self.xbox.getRawAxis(map.lowerFrontClimber) < -deadband: self.lower("front")
-        elif self.xbox.getRawAxis(map.lowerBackClimber) < -deadband: self.lower("back")
-        elif self.xbox.getRawButton(map.lowerClimber) == True: self.lower("both")
-        elif self.xbox.getRawAxis(map.liftFrontClimber) > deadband: self.lift("front")
-        elif self.xbox.getRawAxis(map.liftBackClimber) > deadband: self.lift("back")
-        elif self.xbox.getRawButton(map.liftClimber) == True: self.lift("both")
-        else: self.stopClimb()
+        if map.robotId == 1:
+            if self.xbox.getRawAxis(map.lowerFrontClimber) < -deadband: self.lower("back")
+            elif self.xbox.getRawAxis(map.lowerBackClimber) < -deadband: self.lower("front")
+            elif self.xbox.getRawButton(map.lowerClimber) == True: self.lower("both")
+            elif self.xbox.getRawAxis(map.liftFrontClimber) > deadband: self.lift("back")
+            elif self.xbox.getRawAxis(map.liftBackClimber) > deadband: self.lift("front")
+            elif self.xbox.getRawButton(map.liftClimber) == True: self.lift("both")
+            else: self.stopClimb()
+        else:
+            if self.xbox.getRawAxis(map.lowerFrontClimber) < -deadband: self.lower("front")
+            elif self.xbox.getRawAxis(map.lowerBackClimber) < -deadband: self.lower("back")
+            elif self.xbox.getRawButton(map.lowerClimber) == True: self.lower("both")
+            elif self.xbox.getRawAxis(map.liftFrontClimber) > deadband: self.lift("front")
+            elif self.xbox.getRawAxis(map.liftBackClimber) > deadband: self.lift("back")
+            elif self.xbox.getRawButton(map.liftClimber) == True: self.lift("both")
+            else: self.stopClimb()
 
         if self.xbox.getRawButton(map.driveForwardClimber): self.wheel("forward")
         elif self.xbox.getRawButton(map.driveBackwardClimber): self.wheel("backward")
