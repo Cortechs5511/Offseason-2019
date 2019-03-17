@@ -10,10 +10,7 @@ class DriveStraight(CommandGroup):
     def __init__(self):
         super().__init__('DriveStraight')
         DriveStraightDistance = driveStraightDistance.DriveStraightDistance
-
-        self.addSequential(DriveStraightDistance(distance=90, timeout=100)) #just off hab platform
-
-class LeftCargo(CommandGroup):
+        self.addSequential(DriveStraightDistance(distance=90, timeout=100)) #just off hab platformclass LeftCargo(CommandGroup):
     def __init__(self):
         super().__init__('LeftCargo')
         DriveStraightCombined = driveStraightCombined.DriveStraightCombined
