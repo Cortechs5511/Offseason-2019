@@ -21,7 +21,6 @@ class DriveStraightDistance(TimedCommand):
         StartAngle = self.DT.getAngle()
         self.DT.setMode("Combined", name=None, distance=self.setpoint, angle=StartAngle)
 
-
     def execute(self):
         self.DT.tankDrive()
 

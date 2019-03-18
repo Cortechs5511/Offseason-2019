@@ -51,6 +51,7 @@ class Drive(Subsystem):
 
 
         self.robot = robot
+        self.nominalPID = 0.2
 
         self.preferences = Preferences.getInstance()
         timeout = 0
@@ -184,7 +185,8 @@ class Drive(Subsystem):
 
     def tankDrive(self,left=0,right=0):
         if(self.mode=="Angle"): [left,right] = [self.anglePID,-self.anglePID]
-        elif(self.mode=="Combined"): [left,right] = [self.distPID+self.anglePID,self.distPID-self.anglePID]
+        elif(self.mode=="Combined"):
+             [left,right] = [self.getMaximum(self.distPID+self.anglePID,self.nominalPID), self.getMaximum(self.distPID-self.anglePID,self.nominalPID)]
         elif(self.mode=="Direct"): [left, right] = [left, right]
         else: [left, right] = [0,0]
 
@@ -260,12 +262,11 @@ class Drive(Subsystem):
 
     def dashboardInit(self): pass
 
-    def getMinimum(self, number, comparison):
-        if number < comparison:
+    def getMaximum(self, number, comparison):
+        if math.fabs(number) > math.fabs(comparison):
             return number
         else:
             return comparison
-
 
     def isCargoPassed(self):
         if self.getAvgDistance() > 16.1:

@@ -1,6 +1,6 @@
 import math
 import wpilib
-
+from wpilib import SmartDashboard
 from wpilib.command import Command
 from wpilib.command import TimedCommand
 
@@ -16,6 +16,10 @@ class DriveStraightCombined(TimedCommand):
         self.angle = angle
 
     def initialize(self):
+        p = SmartDashboard.getNumber("DriveStraight_P", 0.01)
+        i = SmartDashboard.getNumber("DriveStraight_I", 0)
+        d = SmartDashboard.getNumber("DriveStraight_D", 0)
+        self.DT.setGains(p, i, d, 0)
         self.distance = self.distance + self.DT.getAvgDistance()
         self.DT.setCombined(distance=self.distance, angle=self.angle)
 
