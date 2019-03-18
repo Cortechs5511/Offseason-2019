@@ -83,23 +83,25 @@ class MyRobot(wpilib.TimedRobot):
         self.ticks = self.getDistance()
         sd.putNumber("ticks",self.ticks)
     #limit breakers which set speeds based on axis units
-        left = -(self.controller.getRawAxis(1))
-        right = -(self.controller.getRawAxis(5))
-        rotation = (self.controller.getRawAxis(4))
-        intakeButton = self.controller.getRawAxis(2)
-        outtakeButton = self.controller.getRawAxis(3)
-        liftButtonUp = (self.controller.getRawButton(4))
-        liftButtonDown = (self.controller.getRawButton(1))
+        self.left = -(self.controller.getRawAxis(1))
+        self.right = -(self.controller.getRawAxis(5))
+        sd.putNumber("Left power", self.left)
+        sd.putNumber("Right power",self.right)
+        self.rotation = (self.controller.getRawAxis(4))
+        self.intakeButton = self.controller.getRawAxis(2)
+        self.outtakeButton = self.controller.getRawAxis(3)
+        self.liftButtonUp = (self.controller.getRawButton(4))
+        self.liftButtonDown = (self.controller.getRawButton(1))
         #arcade tank toggle
         if self.tankMode == True:
-            self.tankDrive(left, right)
+            self.tankDrive(self.left, self.right)
         else:
-            self.arcadeDrive(left,rotation)
+            self.arcadeDrive(self.left,self.rotation)
         '''#lift
         self.lift(liftButtonUp,liftButtonDown)
         '''
-        self.intake(intakeButton > 0.5,outtakeButton > 0.5)
-        self.lift(liftButtonUp,liftButtonDown)
+        self.intake(self.intakeButton > 0.5,self.outtakeButton > 0.5)
+        self.lift(self.liftButtonUp,self.liftButtonDown)
 
 #support functions
     #gets distance for ticks and converts
@@ -167,6 +169,7 @@ class MyRobot(wpilib.TimedRobot):
                 right = 0
             right = right *(1-abs(rotation*0.2))
         #sets up powers
+        
         self.LeftDrive1.set(left)
         self.RightDrive1.set(right)
     
