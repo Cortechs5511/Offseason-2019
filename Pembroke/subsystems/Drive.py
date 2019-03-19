@@ -45,13 +45,13 @@ class Drive(Subsystem):
 
     def __init__(self, robot):
         super().__init__('Drive')
-        SmartDashboard.putNumber("DriveStraight_P", 0.07)
-        SmartDashboard.putNumber("DriveStraight_I", 0.01)
-        SmartDashboard.putNumber("DriveStraight_D", 0.3)
+        SmartDashboard.putNumber("DriveStraight_P", 0.1)
+        SmartDashboard.putNumber("DriveStraight_I", 0.0)
+        SmartDashboard.putNumber("DriveStraight_D", 0.4)
 
 
         self.robot = robot
-        self.nominalPID = 0.2
+        self.nominalPID = 0.15
 
         self.preferences = Preferences.getInstance()
         timeout = 0
@@ -130,7 +130,7 @@ class Drive(Subsystem):
 
         '''PID for Angle'''
         self.TolAngle = 2 #degrees
-        [kP,kI,kD,kF] = [0.003, 0.00, 0.01, 0.00]
+        [kP,kI,kD,kF] = [0.025, 0.00, 0.01, 0.00]
         if RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.005, 0.0, 0.01, 0.00]
         angleController = PIDController(kP, kI, kD, kF, source=self.__getAngle__, output=self.__setAngle__)
         angleController.setInputRange(-180,  180) #degrees
@@ -150,7 +150,9 @@ class Drive(Subsystem):
     def periodic(self):
         self.updateSensors()
 
-    def __getDistance__(self): return self.getAvgDistance()
+    def __getDistance__(self):
+        return self.getAvgDistance()
+
     def __setDistance__(self,output): self.distPID = output
 
     def __getAngle__(self): return self.getAngle()
@@ -186,7 +188,13 @@ class Drive(Subsystem):
     def tankDrive(self,left=0,right=0):
         if(self.mode=="Angle"): [left,right] = [self.anglePID,-self.anglePID]
         elif(self.mode=="Combined"):
-             [left,right] = [self.getMaximum(self.distPID+self.anglePID,self.nominalPID), self.getMaximum(self.distPID-self.anglePID,self.nominalPID)]
+            nom = self.nominalPID
+            if self.distPID < 0:
+                nom = -nom
+            left= self.getMaximum(self.distPID+self.anglePID,nom)
+            right = self.getMaximum(self.distPID-self.anglePID,nom)
+            #left= self.getMaximum(self.distPID,nom)
+            #right = self.getMaximum(self.distPID,nom)
         elif(self.mode=="Direct"): [left, right] = [left, right]
         else: [left, right] = [0,0]
 

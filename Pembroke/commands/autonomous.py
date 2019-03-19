@@ -11,10 +11,13 @@ class DriveStraight(CommandGroup):
         super().__init__('DriveStraight')
         DriveStraightDistance = driveStraightDistance.DriveStraightDistance
         self.addSequential(DriveStraightDistance(distance=90, timeout=100)) #just off hab platformclass LeftCargo(CommandGroup):
+
+class LeftCargo(CommandGroup):
     def __init__(self):
         super().__init__('LeftCargo')
-        DriveStraightCombined = driveStraightCombined.DriveStraightCombined
         TurnAngle = turnAngle.TurnAngle
+
+        DriveStraightCombined = driveStraightCombined.DriveStraightCombined
         EjectHatch = HatchMech.EjectHatch
 
         self.addSequential(DriveStraightCombined(distance=194.5, angle=0, timeout=5))

@@ -17,15 +17,19 @@ class DriveStraightDistance(TimedCommand):
         p = SmartDashboard.getNumber("DriveStraight_P", 0.01)
         i = SmartDashboard.getNumber("DriveStraight_I", 0)
         d = SmartDashboard.getNumber("DriveStraight_D", 0)
-        self.DT.setGains(p, i, d, 0)
+        self.DT.setGains(p, 0, d, 0)
         StartAngle = self.DT.getAngle()
         self.DT.setMode("Combined", name=None, distance=self.setpoint, angle=StartAngle)
 
     def execute(self):
+        curr = self.DT.getAvgDistance()
+        #IZONE
         self.DT.tankDrive()
 
     def isFinished(self):
-        return (abs(self.setpoint-self.DT.getAvgDistance())<0.03 and self.DT.getAvgAbsVelocity()<0.05) or self.isTimedOut()
+        distErr = self.setpoint-self.DT.getAvgDistance()
+        SmartDashboard.putNumber("PID DistErr", distErr)
+        return (abs(distErr)<0.1 and self.DT.getAvgAbsVelocity()<0.1) or self.isTimedOut()
 
     def interrupted(self):
         self.end()

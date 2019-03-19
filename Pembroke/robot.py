@@ -20,8 +20,8 @@ from commands import autonomous
 from commands.drive.setSpeedDT import SetSpeedDT
 from commands.drive.turnAngle import TurnAngle
 
-from commands.autonomous import LeftCargo as LeftCargo
-from commands.autonomous import RightCargo as RightCargo
+#from commands.autonomous import LeftCargo as LeftCargo
+#from commands.autonomous import RightCargo as RightCargo
 from commands.autonomous import CenterCargo as CenterCargo
 from commands.autonomous import LeftCargoLevel2 as LeftCargoLevel2
 from commands.autonomous import RightCargoLevel2 as RightCargoLevel2
@@ -87,8 +87,8 @@ class MyRobot(CommandBasedRobot):
 
         self.updateDashboardInit()
         self.DriveStraight = DriveStraight()
-        self.LeftCargo = LeftCargo()
-        self.RightCargo = RightCargo()
+        #self.LeftCargo = LeftCargo()
+        #self.RightCargo = RightCargo()
         self.CenterCargo = CenterCargo()
         self.LeftCargoLevel2 =LeftCargoLevel2()
         self.RightCargoLevel2 = RightCargoLevel2()
