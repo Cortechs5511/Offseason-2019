@@ -154,22 +154,17 @@ class MyRobot(wpilib.TimedRobot):
 
     def arcadeDrive(self, movement, rotation):
         #breakers
-        if abs(movement) <0.1:
-            movement = 0
-        left = movement *0.9
-        right = movement *0.9
-        if rotation <-0.1:
-            #if the rotation is larger than 0.95, rotate in place
-            if rotation <-0.95:
-                left = 0
-            left = left *(1-abs(rotation*0.2))
-        elif rotation >0.1:
-            #if the rotation is larger than 0.95, rotate in place
-            if rotation >0.95:
-                right = 0
-            right = right *(1-abs(rotation*0.2))
-        #sets up powers
-        
+        if abs(rotation) < 0.1:
+            left = movement
+            right = movement
+        else:
+            right = -rotation
+            left = rotation
+            if abs(movement) < 0.1:
+                pass
+            else:
+                right = right * movement
+                left = left * movement
         self.LeftDrive1.set(left)
         self.RightDrive1.set(right)
     
