@@ -14,10 +14,15 @@ class DriveStraightDistance(TimedCommand):
         self.setpoint = distance/12
 
     def initialize(self):
-        p = SmartDashboard.getNumber("DriveStraight_P", 0.01)
+        self.DT.zeroEncoders()
+        p = SmartDashboard.getNumber("DriveStraight_P", 0.1)
         i = SmartDashboard.getNumber("DriveStraight_I", 0)
-        d = SmartDashboard.getNumber("DriveStraight_D", 0)
+        d = SmartDashboard.getNumber("DriveStraight_D", 0.4)
+        angleP = SmartDashboard.getNumber('DriveStraightAngle_P', 0.025)
+        angleI = SmartDashboard.getNumber('DriveStraightAngle_I', 0.0)
+        angleD = SmartDashboard.getNumber('DriveStraightAngle_D', 0.01)
         self.DT.setGains(p, 0, d, 0)
+        self.DT.setGainsAngle(angleP, angleI, angleD, 0)
         StartAngle = self.DT.getAngle()
         self.DT.setMode("Combined", name=None, distance=self.setpoint, angle=StartAngle)
 
@@ -29,7 +34,7 @@ class DriveStraightDistance(TimedCommand):
     def isFinished(self):
         distErr = self.setpoint-self.DT.getAvgDistance()
         SmartDashboard.putNumber("PID DistErr", distErr)
-        return (abs(distErr)<0.1 and self.DT.getAvgAbsVelocity()<0.1) or self.isTimedOut()
+        return (abs(distErr)<0.1 and self.DT.getAvgAbsVelocity()<0.2) or self.isTimedOut()
 
     def interrupted(self):
         self.end()

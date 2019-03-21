@@ -12,6 +12,12 @@ class DriveStraight(CommandGroup):
         DriveStraightDistance = driveStraightDistance.DriveStraightDistance
         self.addSequential(DriveStraightDistance(distance=90, timeout=100)) #just off hab platformclass LeftCargo(CommandGroup):
 
+class Turn90(CommandGroup):
+    def __init__(self):
+        super().__init__('Turn90')
+        TurnAngle = turnAngle.TurnAngle
+        self.addSequential(TurnAngle(angle=90, timeout=20))
+
 class LeftCargo(CommandGroup):
     def __init__(self):
         super().__init__('LeftCargo')
@@ -30,7 +36,8 @@ class DriveStraightSide(CommandGroup):
         super().__init__('DriveStraightSide')
         DriveStraightCombined = driveStraightCombined.DriveStraightCombined
 
-        self.addSequential(DriveStraightCombined(distance=194, angle=0, timeout=6)) #just off hab platform
+        self.addSequential(DriveStraightCombined(distance=194, angle=0, timeout=10)) #just off hab platform
+
 
 class RightCargo(CommandGroup):
     def __init__(self):

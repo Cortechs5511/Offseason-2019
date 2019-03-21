@@ -14,6 +14,10 @@ class TurnAngle(TimedCommand):
         self.angle = angle
 
     def initialize(self):
+        p = SmartDashboard.getNumber("DriveAngle_P", 0.02)
+        i = SmartDashboard.getNumber("DriveAngle_I", 0)
+        d = SmartDashboard.getNumber("DriveAngle_D", 0.01)
+        self.DT.setGainsAngle(p, 0, d, 0)
         self.DT.setAngle(self.angle)
 
     def execute(self):

@@ -48,10 +48,16 @@ class Drive(Subsystem):
         SmartDashboard.putNumber("DriveStraight_P", 0.1)
         SmartDashboard.putNumber("DriveStraight_I", 0.0)
         SmartDashboard.putNumber("DriveStraight_D", 0.4)
-
+        SmartDashboard.putNumber("DriveAngle_P", 0.006)
+        SmartDashboard.putNumber("DriveAngle_I", 0.0)
+        SmartDashboard.putNumber("DriveAngle_D", 0.025)
+        SmartDashboard.putNumber("DriveStraightAngle_P", 0.025)
+        SmartDashboard.putNumber("DriveStraightAngle_I", 0.0)
+        SmartDashboard.putNumber("DriveStraightAngle_D", 0.01)
 
         self.robot = robot
         self.nominalPID = 0.15
+        self.nominalPIDAngle = 0.11
 
         self.preferences = Preferences.getInstance()
         timeout = 0
@@ -122,7 +128,7 @@ class Drive(Subsystem):
         if wpilib.RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.25, 0.00, 1.00, 0.00]
         distController = PIDController(kP, kI, kD, kF, source=self.__getDistance__, output=self.__setDistance__)
         distController.setInputRange(0, 50) #feet
-        distController.setOutputRange(-0.7, 0.7)
+        distController.setOutputRange(-0.6, 0.6)
         distController.setAbsoluteTolerance(self.TolDist)
         distController.setContinuous(False)
         self.distController = distController
@@ -142,6 +148,9 @@ class Drive(Subsystem):
 
     def setGains(self, p, i, d, f):
         self.distController.setPID(p,i,d,f)
+
+    def setGainsAngle(self, p, i, d, f):
+        self.angleController.setPID(p,i,d,f)
 
     def subsystemInit(self):
         driveStraightButton : wpilib.buttons.JoystickButton = r.driverLeftButton(1)
@@ -186,7 +195,12 @@ class Drive(Subsystem):
         return -1
 
     def tankDrive(self,left=0,right=0):
-        if(self.mode=="Angle"): [left,right] = [self.anglePID,-self.anglePID]
+        if(self.mode=="Angle"):
+            nom = self.nominalPIDAngle
+            if self.anglePID < 0:
+                nom = -nom
+            left= self.getMaximum(self.anglePID, nom)
+            right = self.getMaximum(-self.anglePID, -nom)
         elif(self.mode=="Combined"):
             nom = self.nominalPID
             if self.distPID < 0:

@@ -20,8 +20,8 @@ from commands import autonomous
 from commands.drive.setSpeedDT import SetSpeedDT
 from commands.drive.turnAngle import TurnAngle
 
-#from commands.autonomous import LeftCargo as LeftCargo
-#from commands.autonomous import RightCargo as RightCargo
+from commands.autonomous import LeftCargo as LeftCargo
+from commands.autonomous import RightCargo as RightCargo
 from commands.autonomous import CenterCargo as CenterCargo
 from commands.autonomous import LeftCargoLevel2 as LeftCargoLevel2
 from commands.autonomous import RightCargoLevel2 as RightCargoLevel2
@@ -29,6 +29,7 @@ from commands.autonomous import CenterCargoLevel2Left as CenterCargoLevel2Left
 from commands.autonomous import CenterCargoLevel2Right as CenterCargoLevel2Right
 from commands.autonomous import DriveStraight as DriveStraight
 from commands.autonomous import DriveStraightSide as DriveStraightSide
+from commands.autonomous import Turn90 as Turn90
 
 from commands.drive.driveStraightDistance import DriveStraightDistance
 from commands.drive.driveStraightCombined import DriveStraightCombined
@@ -87,8 +88,8 @@ class MyRobot(CommandBasedRobot):
 
         self.updateDashboardInit()
         self.DriveStraight = DriveStraight()
-        #self.LeftCargo = LeftCargo()
-        #self.RightCargo = RightCargo()
+        self.LeftCargo = LeftCargo()
+        self.RightCargo = RightCargo()
         self.CenterCargo = CenterCargo()
         self.LeftCargoLevel2 =LeftCargoLevel2()
         self.RightCargoLevel2 = RightCargoLevel2()
@@ -97,6 +98,7 @@ class MyRobot(CommandBasedRobot):
         self.TurnAngle = TurnAngle()
         self.DriveStraightSide = DriveStraightSide()
         self.SetSpeedDT = SetSpeedDT()
+        self.Turn90 = Turn90()
 
         #self.autonChooser = SendableChooser()
         #self.autonChooser.setDefaultOption("Do Nothing", WaitCommand(3))
@@ -111,10 +113,14 @@ class MyRobot(CommandBasedRobot):
         # Set up auton chooser
         self.autonChooser = SendableChooser()
         self.autonChooser.setDefaultOption("Drive Straight", "DriveStraight")
+        self.autonChooser.addOption("Left Cargo", "LeftCargo")
+        self.autonChooser.addOption("Right Cargo", "RightCargo")
         self.autonChooser.addOption("Do Nothing", "DoNothing")
         self.autonChooser.addOption("Level 1 Center","Level1Center")
         self.autonChooser.addOption("Driver Control", "DriverControl")
         self.autonChooser.addOption("Driver Straight Side", "DriveStraightSide")
+        self.autonChooser.addOption("Level 1 Center","Level1Center")
+
         SmartDashboard.putData("Auto mode", self.autonChooser)
 
     def robotPeriodic(self):
@@ -251,6 +257,12 @@ class MyRobot(CommandBasedRobot):
             self.driverControl()
         elif a == "DriveStraightSide":
             self.DriveStraightSide.start()
+        elif a == "Turn90":
+            self.Turn90.start()
+        elif a== "RightCargo":
+            self.RightCargo.start()
+        elif a== "LeftCargo":
+            self.LeftCargo.start()
         else:
             self.disabledInit()
 
