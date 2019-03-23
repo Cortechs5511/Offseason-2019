@@ -7,3 +7,4 @@ Testing/NavxTest/.vscode/settings.json
 **/.pytest_cache
 Testing/NeoTest/tests/pyfrc_test.py
 Testing/NeoTest/.deploy_cfg
+Testing/CargoArmTest/.deploy_cfg
