@@ -137,6 +137,12 @@ resetAutoClimb = 7
 #DRIVE
 #axes
 drive = 1
+wristUp = 13
+wristDown = 14
+wristUpVolts = 12
+wristDownVolts = 15
+wristUpMagic = 11
+wristDownMagic = 16
 #buttons
 halfSpeed = 1
 flip = 3
