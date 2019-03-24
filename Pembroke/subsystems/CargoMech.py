@@ -52,10 +52,10 @@ class CargoMech():
         self.wrist.configPeakOutputForward(0.6, self.kTimeoutMs)
         self.wrist.configPeakOutputReverse(-0.25, self.kTimeoutMs)
 
-        self.kF = self.getNumber("WristkF" , 0)
-        self.kP = self.getNumber("WristkP" , 0)
-        self.kI = self.getNumber("WristkI" , 0)
-        self.kD = self.getNumber("WristkD" , 0)
+        self.kF = self.getFeedForward(self.getNumber("Wrist F Gain" , 0))
+        self.kP = self.getNumber("Wrist kP" , 0)
+        self.kI = self.getNumber("Wrist kI" , 0)
+        self.kD = self.getNumber("Wrist kD" , 0)
 
         # set closed loop gains in slot0 - see documentation */
         self.wrist.selectProfileSlot(self.kSlotIdx, self.kPIDLoopIdx)
@@ -183,6 +183,18 @@ class CargoMech():
         # clear line cache
         self.sb.clear()
 
+    def getAngle(self):
+        pos = self.getPosition()
+        angle = abs(pos * 90/self.targetPosDown)
+        return angle
+
+    def getPosition(self):
+        return self.wrist.getQuadraturePosition()
+
+    def getFeedForward(self, gain):
+        angle = self.getAngle()
+        return angle*gain
+
     def getNumber(self, key, defVal):
         val = SmartDashboard.getNumber(key, None)
         if val == None:
@@ -194,7 +206,7 @@ class CargoMech():
         #SmartDashboard.putNumber("WristUpSpeed" , 0.5)
         #SmartDashboard.putNumber("WristDownSpeed" , 0.2)
         #SmartDashboard.putNumber("WristUpVoltage" , 5)
-        #SmartDashboard.putNumber("WristDownVoltage" , 2)
+        #SmartDashboard.putNumber("WristDownVoltage" , 2) 
         pass
 
     def dashboardPeriodic(self):
@@ -202,8 +214,8 @@ class CargoMech():
         self.wristDown = self.getNumber("WristDownSpeed" , 0.2)
         self.wristUpVolts = self.getNumber("WristUpVoltage" , 5)
         self.wristDownVolts = self.getNumber("WristDownVoltage" , 2)
-        self.kF = self.getNumber("WristkF" , 0)
-        self.kP = self.getNumber("WristkP" , 0)
-        self.kI = self.getNumber("WristkI" , 0)
-        self.kD = self.getNumber("WristkD" , 0)
+        self.kF = self.getFeedForward(self.getNumber("Wrist F Gain" , 0))
+        self.kP = self.getNumber("Wrist kP" , 0)
+        self.kI = self.getNumber("Wrist kI" , 0)
+        self.kD = self.getNumber("Wrist kD" , 0)
         SmartDashboard.putNumber("Wrist Position", self.wrist.getQuadraturePosition())

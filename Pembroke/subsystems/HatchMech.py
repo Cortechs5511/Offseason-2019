@@ -16,27 +16,37 @@ class HatchMech(Subsystem):
 
     def initialize(self):
         self.xbox = oi.getJoystick(2)
-        self.piston = Solenoid(map.hatchKick)
+        self.kicker = Solenoid(map.hatchKick)
+        self.slider = Solenoid(map.hatchSlide)
         self.kick("in")
+        self.slide("in")
 
     def periodic(self):
         #self.last = False
         #curr = self.xbox.getRawButton(map.toggleHatch)
         if self.xbox.getRawButton(map.kickHatch) == True: self.kick("out")
         elif self.xbox.getRawButton(map.toggleHatch) == True: self.kick("in")
+
+        if self.xbox.getRawButton(map.extendHatch) == True: self.slide("out")
+        elif self.xbox.getRawButton(map.retractHatch) == True: self.slide("in")
         '''if curr and curr != self.last:
             self.kick("toggle")
             self.last = curr'''
 
     def kick(self, mode):
-        if mode == "out": self.piston.set(True)
-        elif mode == "in": self.piston.set(False)
-        else: self.piston.set(not self.piston.get())
+        if mode == "out": self.kicker.set(True)
+        elif mode == "in": self.kicker.set(False)
+        else: self.kicker.set(not self.kicker.get())
 
-    def isEjectorOut(self): return self.piston.get()
+    def slide(self, mode):
+        if mode == "out": self.slider.set(True)
+        elif mode == "in": self.slider.set(False)
+        else: self.kicker.set(not self.slider.get())
+
+    def isEjectorOut(self): return self.kicker.get()
 
     def toggle(self):
-        if self.piston.get(): self.kick("out")
+        if self.kicker.get(): self.kick("out")
         else: self.kick("in")
 
     def disable(self): self.kick("in")

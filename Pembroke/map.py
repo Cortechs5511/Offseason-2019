@@ -32,6 +32,7 @@ wheelRight = 51
 #Solenoids
 
 hatchKick = 1
+hatchSlide = 2
 
 #DIO
 
@@ -121,6 +122,8 @@ outtakeCargo = 3
 #buttons
 kickHatch = 6 #controlls original only hatch mech
 toggleHatch = 5 #controlls original only hatch mech
+extendHatch = 0 # FIND BUTTON
+retractHatch = 0 # FIND BUTTON
 
 driveForwardClimber = 2
 driveBackwardClimber = 3
