@@ -65,7 +65,7 @@ class Climber():
         self.backHold = -0.1 #holds back stationary if extended
         self.frontHold = -0.1 #holds front stationary if extended
 
-        self.kP = 0.2 #proportional gain for angle to power
+        self.kP = 0.1 #proportional gain for angle to power
 
         self.test = True
         self.state = -1
@@ -252,7 +252,7 @@ class Climber():
             return self.state
 
     def getLean(self):
-        if map.robotId == map.astroV1: return -1*self.robot.drive.getRoll()
+        if map.robotId == map.astroV1: return -1* self.robot.drive.getRoll()
         else: return -1* self.robot.drive.getPitch()
 
     def isLeaning(self, direction):
@@ -269,7 +269,7 @@ class Climber():
 
     def getCorrection(self):
         '''CORRECTION IS POSITIVE'''
-        multiplier = 1 - (self.kP * abs(self.getLean()))
+        multiplier = (self.kP * abs(self.getLean()))
         return (multiplier * self.climbSpeed)
 
     def retract(self, mode):

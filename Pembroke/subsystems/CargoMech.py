@@ -17,6 +17,7 @@ class CargoMech():
         self.targetPosUp = -300 #!!!!!
         self.targetPosDown = -1600 #!!!!!
         self.maxVolts = 10
+        self.simpleGain = 0
         self.xbox = oi.getJoystick(2)
         self.joystick0 = oi.getJoystick(0)
         self.motor = Talon(map.intake)
@@ -77,10 +78,10 @@ class CargoMech():
 
     def moveWrist(self,mode):
         '''move wrist in and out of robot'''
-        if mode == "up": self.wrist.set(self.wristUp)
-        elif mode == "down": self.wrist.set(-1 * self.wristDown)
-        elif mode == "upVolts": self.wrist.set(self.wristUpVolts / self.maxVolts)
-        elif mode == "downVolts": self.wrist.set(-1 * self.wristDownVolts / self.maxVolts)
+        if mode == "up": self.wrist.set(Talon.ControlMode.PercentOutput,self.wristUp)
+        elif mode == "down": self.wrist.set(Talon.ControlMode.PercentOutput,-1 * self.wristDown)
+        elif mode == "upVolts": self.wrist.set(Talon.ControlMode.PercentOutput,self.wristUpVolts / self.maxVolts)
+        elif mode == "downVolts": self.wrist.set(Talon.ControlMode.PercentOutput, -1 * self.wristDownVolts / self.maxVolts)
         elif mode == "upMagic":
 
             if self.lastMode != mode:
@@ -195,6 +196,18 @@ class CargoMech():
         angle = self.getAngle()
         return angle*gain
 
+    def getPowerSimple(self, direction):
+        '''true direction is up into robot
+        false direction is down out of robot'''
+        angle = self.getAngle()
+        if angle > 80:
+            if direction == False:
+                power = 0
+        if angle < 10:
+            if direction:
+                power = 0
+        power = self.simpleGain * angle
+
     def getNumber(self, key, defVal):
         val = SmartDashboard.getNumber(key, None)
         if val == None:
@@ -203,10 +216,6 @@ class CargoMech():
         return val
 
     def dashboardInit(self):
-        #SmartDashboard.putNumber("WristUpSpeed" , 0.5)
-        #SmartDashboard.putNumber("WristDownSpeed" , 0.2)
-        #SmartDashboard.putNumber("WristUpVoltage" , 5)
-        #SmartDashboard.putNumber("WristDownVoltage" , 2) 
         pass
 
     def dashboardPeriodic(self):

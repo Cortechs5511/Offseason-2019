@@ -122,21 +122,21 @@ outtakeCargo = 3
 #buttons
 kickHatch = 6 #controlls original only hatch mech
 toggleHatch = 5 #controlls original only hatch mech
-extendHatch = 0 # FIND BUTTON
-retractHatch = 0 # FIND BUTTON
+extendHatch = 7 # FIND BUTTON
+retractHatch = 8 # FIND BUTTON
 
 driveForwardClimber = 2
 driveBackwardClimber = 3
 liftClimber = 4
 lowerClimber = 1
-disableAll = 8
+disableAll = 0
 
 #AXES
 liftFrontClimber = 5
 lowerFrontClimber = 5
 liftBackClimber = 1
 lowerBackClimber = 1
-resetAutoClimb = 7
+resetAutoClimb = 0
 #DRIVE
 #axes
 drive = 1
