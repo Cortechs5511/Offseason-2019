@@ -20,18 +20,25 @@ class HatchMech(Subsystem):
         self.slider = Solenoid(map.hatchSlide)
         self.kick("in")
         self.slide("in")
+        self.lastKick = False
+        self.lastSlide = False
 
     def periodic(self):
-        #self.last = False
-        #curr = self.xbox.getRawButton(map.toggleHatch)
-        if self.xbox.getRawButton(map.kickHatch) == True: self.kick("out")
-        elif self.xbox.getRawButton(map.toggleHatch) == True: self.kick("in")
 
-        if self.xbox.getRawButton(map.extendHatch) == True: self.slide("out")
-        elif self.xbox.getRawButton(map.retractHatch) == True: self.slide("in")
-        '''if curr and curr != self.last:
-            self.kick("toggle")
-            self.last = curr'''
+        #if self.xbox.getRawButton(map.kickHatch) == True: self.kick("out")
+        #elif self.xbox.getRawButton(map.toggleHatch) == True: self.kick("in")
+
+        #if self.xbox.getRawButton(map.extendHatch) == True: self.slide("out")
+        #elif self.xbox.getRawButton(map.retractHatch) == True: self.slide("in")
+
+        currKick = self.xbox.getRawButton(map.kickHatch)
+        currSlide = self.xbox.getRawButton(map.toggleHatch)
+
+        if currKick and currKick != self.lastKick: self.kick("toggle")
+        if currSlide and currSlide != self.lastSlide: self.slide("toggle")
+
+        self.lastKick = currKick
+        self.lastSlide = currSlide
 
     def kick(self, mode):
         if mode == "out": self.kicker.set(True)
@@ -41,7 +48,7 @@ class HatchMech(Subsystem):
     def slide(self, mode):
         if mode == "out": self.slider.set(True)
         elif mode == "in": self.slider.set(False)
-        else: self.kicker.set(not self.slider.get())
+        else: self.slider.set(not self.slider.get())
 
     def isEjectorOut(self): return self.kicker.get()
 
