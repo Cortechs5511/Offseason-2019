@@ -122,8 +122,9 @@ outtakeCargo = 3
 #buttons
 kickHatch = 6 #controlls original only hatch mech
 toggleHatch = 5 #controlls original only hatch mech
-extendHatch = 7 # FIND BUTTON
-retractHatch = 8 # FIND BUTTON
+wristUp =7
+wristDown = 8
+
 
 driveForwardClimber = 2
 driveBackwardClimber = 3
@@ -140,8 +141,8 @@ resetAutoClimb = 0
 #DRIVE
 #axes
 drive = 1
-wristUp = 13
-wristDown = 14
+#wristUp = 13
+#wristDown = 14
 wristUpVolts = 12
 wristDownVolts = 15
 wristUpMagic = 11

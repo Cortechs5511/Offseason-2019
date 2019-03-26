@@ -57,8 +57,8 @@ class Climber():
         self.backSwitch = DigitalInput(map.backBottomSensor)
         self.frontSwitch = DigitalInput(map.frontBottomSensor)
 
-        self.MAX_ANGLE = 1 #degrees
-        self.TARGET_ANGLE = 2 #degrees
+        self.MAX_ANGLE = 2 #degrees
+        self.TARGET_ANGLE = 0 #degrees
         self.climbSpeed = 0.7 #90%
         self.wheelSpeed = 0.9 #90%
 
@@ -94,7 +94,7 @@ class Climber():
         elif self.xbox.getRawAxis(map.liftFrontClimber) > deadband: self.lift("front")
         elif self.xbox.getRawAxis(map.liftBackClimber) > deadband: self.lift("back")
         elif self.xbox.getRawButton(map.liftClimber) == True: self.lift("both")
-        else: self.stopClimb()
+        else: self.extend("hold")
 
         if self.xbox.getRawButton(map.driveForwardClimber): self.wheel("forward")
         elif self.xbox.getRawButton(map.driveBackwardClimber): self.wheel("backward")
@@ -277,10 +277,10 @@ class Climber():
 
         if mode == "front":
             if self.isLeaning(False):
-                self.backLift.set(-1.2 * cSpeed)
+                self.backLift.set(-1 * cSpeed)
                 self.frontLift.set(self.climbSpeed)
             elif self.isLeaning(True):
-                self.backLift.set(1.2 * cSpeed)
+                self.backLift.set(1 * cSpeed)
                 self.frontLift.set(self.climbSpeed)
             else:
                 self.stopBack()
@@ -293,7 +293,7 @@ class Climber():
 
         elif mode == "both":
             if self.isLeaning(True):
-                self.backLift.set(cSpeed)
+                self.backLift.set(1 * cSpeed)
                 self.frontLift.set(self.climbSpeed)
             elif self.isLeaning(False):
                 self.backLift.set(self.climbSpeed)
@@ -307,10 +307,10 @@ class Climber():
 
         if mode == "front":
             if self.isLeaning(False):
-                self.backLift.set(-1.5 * cSpeed)
+                self.backLift.set(-1 * cSpeed)
                 self.frontLift.set(self.climbSpeed)
             elif self.isLeaning(True):
-                self.backLift.set(1.5 * cSpeed)
+                self.backLift.set(1 * cSpeed)
                 self.frontLift.set(self.climbSpeed)
             else:
                 self.stopBack()
@@ -328,8 +328,21 @@ class Climber():
                 self.backLift.set(-1 * cSpeed)
                 self.frontLift.set(-1 * self.climbSpeed)
             else:
-                self.backLift.set(-1 * self.climbSpeed)
+                self.backLift.set(-1.17 * self.climbSpeed)
                 self.frontLift.set(-1 * self.climbSpeed)
+
+        elif mode == "hold":
+            #if self.isLeaning(False):
+                #self.backLift.set(-0.7 * cSpeed)
+                #self.frontLift.set(0)
+            #elif self.isLeaning(True):
+                #self.frontLift.set(-1 * cSpeed)
+                #self.backLift.set(0)
+
+            self.backLift.set(0)
+            self.frontLift.set(0)
+
+
 
     def wheel(self, direction):
         '''FORWARD MOVES ROBOT FORWARD, BACKWARD MOVES ROBOT BACKWARD'''
@@ -381,6 +394,13 @@ class Climber():
     def dashboardInit(self):
         pass
 
+    def getNumber(self, key, defVal):
+        val = SmartDashboard.getNumber(key, None)
+        if val == None:
+            val = defVal
+            SmartDashboard.putNumber(key, val)
+        return val
+
     def dashboardPeriodic(self):
         SmartDashboard.putNumber("Lean", self.getLean())
         SmartDashboard.putBoolean("FullyExtendedFrontTest2", False)
@@ -390,6 +410,7 @@ class Climber():
         SmartDashboard.putBoolean("FrontOverGroundTest2", True)
         SmartDashboard.putBoolean("BackOverGroundTest2", True)
         SmartDashboard.putNumber("ClimbSpeed", self.climbSpeed)
+        self.kP = self.getNumber("Climber kP", 0.4)
 
         self.fullyExtendedFront = SmartDashboard.getBoolean("FullyExtendedFrontTest2", True)
         self.fullyExtendedBack = SmartDashboard.getBoolean("FullyExtendedBackTest2", True)
