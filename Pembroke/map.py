@@ -34,6 +34,11 @@ wheelRight = 51
 hatchKick = 1
 hatchSlide = 2
 
+#PWM
+
+frontLiftPwm = 0
+backLiftPwm = 1
+
 #DIO
 
 leftEncoder = (0,1)

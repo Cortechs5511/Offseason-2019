@@ -4,22 +4,35 @@ from wpilib import DigitalInput
 from ctre import WPI_TalonSRX as Talon
 from ctre import WPI_VictorSPX as Victor
 
+from wpilib import Spark
+
 import oi
 import map
 
 class Climber():
 
     def initialize(self, robot):
+        self.usingNeo = True
 
         self.robot = robot
         self.xbox = oi.getJoystick(2)
 
+        if self.usingNeo:
+          # NOTE: If using Spark Max in PWM mode to control Neo brushless
+          # motors you MUST configure the speed controllers manually
+          # using a USB cable and the Spark Max client software!
+          self.frontLift : Spark = Spark(map.frontLiftPwm)
+          self.backLift : Spark = Spark(map.backLiftPwm)
+          self.frontLift.setInverted(False)
+          self.backLift.setInverted(False)
+
         if map.robotId == map.astroV1:
             '''IDS AND DIRECTIONS FOR V1'''
-            self.backLift = Talon(map.backLift)
-            self.frontLift = Talon(map.frontLift)
-            self.frontLift.setInverted(True)
-            self.backLift.setInverted(True)
+            if not self.usingNeo:
+              self.backLift = Talon(map.backLift)
+              self.frontLift = Talon(map.frontLift)
+              self.frontLift.setInverted(True)
+              self.backLift.setInverted(True)
 
             self.wheelLeft = Victor(map.wheelLeft)
             self.wheelRight = Victor(map.wheelRight)
@@ -28,31 +41,30 @@ class Climber():
 
         else:
             '''IDS AND DIRECTIONS FOR V2'''
-            self.backLift = Talon(map.frontLift)
-            self.frontLift = Talon(map.backLift)
-            self.frontLift.setInverted(False)
-            self.backLift.setInverted(True)
+            if not self.usingNeo:
+              self.backLift = Talon(map.frontLift)
+              self.frontLift = Talon(map.backLift)
+              self.frontLift.setInverted(False)
+              self.backLift.setInverted(True)
 
             self.wheelLeft = Talon(map.wheelLeft)
             self.wheelRight = Talon(map.wheelRight)
             self.wheelRight.setInverted(True)
             self.wheelLeft.setInverted(False)
 
-        self.backLift.setNeutralMode(2)
-        self.frontLift.setNeutralMode(2)
-        self.wheelLeft.setNeutralMode(2)
-        self.wheelRight.setNeutralMode(2)
-
-        for motor in [self.backLift, self.frontLift, self.wheelLeft, self.wheelRight]:
+        if not self.usingNeo:
+          for motor in [self.backLift, self.frontLift]:
             motor.clearStickyFaults(0)
             motor.setSafetyEnabled(False)
-
-        for motor in [self.backLift, self.frontLift]:
             motor.configContinuousCurrentLimit(30,0) #Amps per motor
             motor.enableCurrentLimit(True)
-
             motor.configVoltageCompSaturation(10,0) #Sets saturation value
             motor.enableVoltageCompensation(True) #Compensates for lower voltages
+
+        for motor in [self.wheelLeft, self.wheelRight]:
+            motor.clearStickyFaults(0)
+            motor.setSafetyEnabled(False)
+            motor.setNeutralMode(2)
 
         self.backSwitch = DigitalInput(map.backBottomSensor)
         self.frontSwitch = DigitalInput(map.frontBottomSensor)
