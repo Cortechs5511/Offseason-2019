@@ -59,13 +59,13 @@ class Climber():
 
         self.MAX_ANGLE = 2 #degrees
         self.TARGET_ANGLE = 0 #degrees
-        self.climbSpeed = 0.7 #90%
+        self.climbSpeed = 0.85 #90%
         self.wheelSpeed = 0.9 #90%
 
-        self.backHold = -0.1 #holds back stationary if extended
+        self.backHold = -0.15 #holds back stationary if extended ADJUST**
         self.frontHold = -0.1 #holds front stationary if extended
 
-        self.kP = 0.1 #proportional gain for angle to power
+        self.kP = 0.4 #proportional gain for angle to power
 
         self.test = True
         self.state = -1
@@ -141,7 +141,10 @@ class Climber():
         return self.frontOverGround
 
     def isBackOverGroundTest(self):
-        return self.backOverGround
+        return not self.backOverGround
+
+    def isBackOverGround(self):
+        return not self.backSwitch.get()
 
     def startState(self):
         self.state = 0
@@ -339,8 +342,12 @@ class Climber():
                 #self.frontLift.set(-1 * cSpeed)
                 #self.backLift.set(0)
 
-            self.backLift.set(0)
-            self.frontLift.set(0)
+            if self.isBackOverGround():
+                self.backLift.set(0)
+                self.frontLift.set(0)
+            else:
+                self.stopBack() #sets static speed to hold back up
+                self.stopFront()
 
 
 
