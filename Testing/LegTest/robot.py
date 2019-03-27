@@ -10,8 +10,9 @@ class MyRobot(wpilib.TimedRobot):
     """
 
     def robotInit(self):
+      self.debug: bool = True
       # Assumes Spark Max controllers are in PWM mode
-      self.gamepad: Joystick = Joystick(2)
+      self.gamepad: Joystick = Joystick(0)
       self.frontLeg: Spark = Spark(0)
       self.backLeg: Spark = Spark(1)
       self.frontExtendPower: float = 0.5
@@ -49,22 +50,30 @@ class MyRobot(wpilib.TimedRobot):
       self.backExtendPower = MyRobot.getNumber("Back Extend Power", self.backExtendPower)
       
     def teleopPeriodic(self):
+      frontPower: float = 0
+      backPower: float = 0
+
       if self.gamepad.getRawButton(1):
         # Let A button on gamepad lower robot (retract legs)
         self.loadRetractPowerValues()
-        self.frontLeg.set(self.frontRetractPower)
-        self.backLeg.set(self.backRetractPower)
+        frontPower = self.frontRetractPower
+        backPower = self.backRetractPower
       elif self.gamepad.getRawButton(4):
         # Let Y button lift robot (extend legs)
         self.loadExtendPowerValues()
-        self.frontLeg.set(self.frontExtendPower)
-        self.backLeg.set(self.backExtendPower)
+        frontPower = self.frontExtendPower
+        backPower = self.backExtendPower
       else:
         # Use Y axis on gamepad to control leg motors
-        frontPower: float = MyRobot.deadZoneCheck(-self.gamepad.getRawAxis(1))
-        backPower: float = MyRobot.deadZoneCheck(-self.gamepad.getRawAxis(3))
-        self.frontLeg.set(frontPower)
-        self.backLeg.set(backPower)
+        frontPower = MyRobot.deadZoneCheck(-self.gamepad.getRawAxis(1))
+        backPower = MyRobot.deadZoneCheck(-self.gamepad.getRawAxis(3))
+
+      # Display and apply power output
+      if self.debug:
+        SmartDashboard.putNumber("Front Motor Out", frontPower)  
+        SmartDashboard.putNumber("Back Motor Out", backPower)
+      self.frontLeg.set(frontPower)
+      self.backLeg.set(backPower)
 
 if  __name__ == '__main__':
     wpilib.run(MyRobot)
