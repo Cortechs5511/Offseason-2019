@@ -12,7 +12,7 @@ class MyRobot(wpilib.TimedRobot):
     def robotInit(self):
       self.debug: bool = True
       # Assumes Spark Max controllers are in PWM mode
-      self.gamepad: Joystick = Joystick(0)
+      self.gamepad: Joystick = Joystick(2)
       self.frontLeg: Spark = Spark(0)
       self.backLeg: Spark = Spark(1)
       self.frontExtendPower: float = 0.5
