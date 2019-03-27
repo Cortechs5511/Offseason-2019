@@ -8,3 +8,5 @@ Testing/NavxTest/.vscode/settings.json
 Testing/NeoTest/tests/pyfrc_test.py
 Testing/NeoTest/.deploy_cfg
 Testing/CargoArmTest/.deploy_cfg
+Testing/LegTest/.deploy_cfg
+Testing/LegTest/tests/pyfrc_test.py
