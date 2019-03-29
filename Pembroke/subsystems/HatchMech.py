@@ -16,6 +16,8 @@ class HatchMech(Subsystem):
 
     def initialize(self):
         self.xbox = oi.getJoystick(2)
+        self.joystick0 = oi.getJoystick(0)
+        self.joystick1 = oi.getJoystick(1)
         self.kicker = Solenoid(map.hatchKick)
         self.slider = Solenoid(map.hatchSlide)
         self.kick("in")
@@ -39,6 +41,8 @@ class HatchMech(Subsystem):
 
         self.lastKick = currKick
         self.lastSlide = currSlide
+
+        if self.joystick0.getRawButton(map.drivehatch) or self.joystick1.getRawButton(map.drivehatch): self.kick("out")
 
     def kick(self, mode):
         if mode == "out": self.kicker.set(True)

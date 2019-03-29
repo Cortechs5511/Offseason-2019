@@ -23,13 +23,8 @@ from commands.drive.turnAngle import TurnAngle
 from commands.autonomous import LeftCargo as LeftCargo
 from commands.autonomous import RightCargo as RightCargo
 from commands.autonomous import CenterCargo as CenterCargo
-from commands.autonomous import LeftCargoLevel2 as LeftCargoLevel2
-from commands.autonomous import RightCargoLevel2 as RightCargoLevel2
-from commands.autonomous import CenterCargoLevel2Left as CenterCargoLevel2Left
-from commands.autonomous import CenterCargoLevel2Right as CenterCargoLevel2Right
 from commands.autonomous import DriveStraight as DriveStraight
 from commands.autonomous import DriveStraightSide as DriveStraightSide
-from commands.autonomous import Turn90 as Turn90
 
 from commands.drive.driveStraightDistance import DriveStraightDistance
 from commands.drive.driveStraightCombined import DriveStraightCombined
@@ -60,7 +55,7 @@ class MyRobot(CommandBasedRobot):
         map.loadPreferences()
 
         # Construct subsystems prior to constructing commands
-        self.limelight = Limelight.Limelight(self) #not a subsystem
+        #self.limelight = Limelight.Limelight(self) #not a subsystem
 
         self.hatch = HatchMech.HatchMech(self)
         self.hatch.initialize()
@@ -88,27 +83,12 @@ class MyRobot(CommandBasedRobot):
 
         self.updateDashboardInit()
         self.DriveStraight = DriveStraight()
+        self.DriveStraightSide = DriveStraightSide()
         self.LeftCargo = LeftCargo()
         self.RightCargo = RightCargo()
         self.CenterCargo = CenterCargo()
-        self.LeftCargoLevel2 =LeftCargoLevel2()
-        self.RightCargoLevel2 = RightCargoLevel2()
-        self.CenterCargoLevel2Left = CenterCargoLevel2Left()
-        self.CenterCargoLevel2Right = CenterCargoLevel2Right()
-        self.TurnAngle = TurnAngle()
-        self.DriveStraightSide = DriveStraightSide()
         self.SetSpeedDT = SetSpeedDT()
         self.Turn90 = Turn90()
-
-        #self.autonChooser = SendableChooser()
-        #self.autonChooser.setDefaultOption("Do Nothing", WaitCommand(3))
-        #self.autonChooser.addOption("FrontHatch", AutoFrontHatch())
-        #self.autonChooser.addOption("DriveAuton", AutonCheck(9.75))
-        #self.autonChooser.addOption("DrivePath", DrivePath())
-        #self.autonChooser.addOption("AutonRotation", autonRotation())
-        SmartDashboard.putData("DriveStraightAngle", TurnAngle(90))
-        SmartDashboard.putData("DriveStraight10", DriveStraightCombined(7.75,0,5))
-        SmartDashboard.putData("DriveStraight-10", DriveStraightCombined(-7.75,0,5))
 
         # Set up auton chooser
         self.autonChooser = SendableChooser()
@@ -117,14 +97,12 @@ class MyRobot(CommandBasedRobot):
         self.autonChooser.addOption("Right Cargo", "RightCargo")
         self.autonChooser.addOption("Do Nothing", "DoNothing")
         self.autonChooser.addOption("Level 1 Center","Level1Center")
-        self.autonChooser.addOption("Driver Control", "DriverControl")
-        self.autonChooser.addOption("Driver Straight Side", "DriveStraightSide")
-        self.autonChooser.addOption("Level 1 Center","Level1Center")
+        self.autonChooser.addOption("Drive Straight Side", "DriveStraightSide")
 
         SmartDashboard.putData("Auto mode", self.autonChooser)
 
     def robotPeriodic(self):
-        self.limelight.readLimelightData()
+        #self.limelight.readLimelightData()
         if(self.dashboard): self.updateDashboardPeriodic()
         SmartDashboard.putBoolean("Passed Hatch", self.drive.isCargoPassed())
 
@@ -134,7 +112,6 @@ class MyRobot(CommandBasedRobot):
         self.timer.reset()
         self.timer.start()
 
-        #self.autoSelector("level1","L")
         self.autoSelector(self.autonChooser.getSelected())
 
     def autonomousPeriodic(self):
@@ -155,9 +132,9 @@ class MyRobot(CommandBasedRobot):
         super().teleopPeriodic()
 
     def updateDashboardInit(self):
-        self.drive.dashboardInit()
-        self.hatch.dashboardInit()
-        self.cargo.dashboardInit()
+        #self.drive.dashboardInit()
+        #self.hatch.dashboardInit()
+        #self.cargo.dashboardInit()
         self.climber.dashboardInit()
         #self.limelight.dashboardInit()
 
@@ -167,9 +144,9 @@ class MyRobot(CommandBasedRobot):
     def updateDashboardPeriodic(self):
         #SmartDashboard.putNumber("Timer", self.timer.get())
         SmartDashboard.putNumber("PressureSwitch", self.compressor.getPressureSwitchValue())
-        self.drive.dashboardPeriodic()
-        self.hatch.dashboardPeriodic()
-        self.cargo.dashboardPeriodic()
+        #self.drive.dashboardPeriodic()
+        #self.hatch.dashboardPeriodic()
+        #self.cargo.dashboardPeriodic()
         self.climber.dashboardPeriodic()
         #self.limelight.dashboardPeriodic()
 
@@ -218,34 +195,6 @@ class MyRobot(CommandBasedRobot):
 
     def autoSelector(self, auto):
         a = auto
-        """"returns auto command group to run based on starting position and preference for level 1 or 2"""
-        '''pos = position
-        pref = preference
-        if pos == "L":
-            if pref == "level1":
-                self.LeftCargo.start()
-            elif pref == "level2side":
-                self.LeftCargoLevel2.start()
-            elif pref == "level2center":
-                self.CenterCargoLevel2Left.start()
-            elif pref == "drivestraight":
-                self.DriveStraight.start()
-            else: pass
-        elif pos == "R":
-            if pref == "level1":
-                self.RightCargo.start()
-            elif pref == "level2side":
-                self.RightCargoLevel2.start()
-            elif pref== "level2center":
-                self.CenterCargoLevel2Right.start()
-            elif pref =="drivestraight":
-                self.DriveStraight.start()
-            else:
-                pass
-        elif pos == "C":
-            self.CenterCargo.start()
-        else:
-            pass'''
 
         if a == "DriveStraight":
             self.DriveStraight.start()
@@ -257,8 +206,6 @@ class MyRobot(CommandBasedRobot):
             self.driverControl()
         elif a == "DriveStraightSide":
             self.DriveStraightSide.start()
-        elif a == "Turn90":
-            self.Turn90.start()
         elif a== "RightCargo":
             self.RightCargo.start()
         elif a== "LeftCargo":

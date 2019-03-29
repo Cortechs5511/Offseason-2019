@@ -45,12 +45,14 @@ class Drive(Subsystem):
 
     def __init__(self, robot):
         super().__init__('Drive')
-        SmartDashboard.putNumber("DriveStraight_P", 0.1)
+        SmartDashboard.putNumber("DriveStraight_P", 0.075)
         SmartDashboard.putNumber("DriveStraight_I", 0.0)
-        SmartDashboard.putNumber("DriveStraight_D", 0.4)
-        SmartDashboard.putNumber("DriveAngle_P", 0.006)
+        SmartDashboard.putNumber("DriveStraight_D", 0.42)
+
+        SmartDashboard.putNumber("DriveAngle_P", 0.009)
         SmartDashboard.putNumber("DriveAngle_I", 0.0)
         SmartDashboard.putNumber("DriveAngle_D", 0.025)
+
         SmartDashboard.putNumber("DriveStraightAngle_P", 0.025)
         SmartDashboard.putNumber("DriveStraightAngle_I", 0.0)
         SmartDashboard.putNumber("DriveStraightAngle_D", 0.01)
