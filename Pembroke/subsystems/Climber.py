@@ -12,27 +12,15 @@ import map
 class Climber():
 
     def initialize(self, robot):
-        self.usingNeo = True
-
         self.robot = robot
         self.xbox = oi.getJoystick(2)
 
-        if self.usingNeo:
-          # NOTE: If using Spark Max in PWM mode to control Neo brushless
-          # motors you MUST configure the speed controllers manually
-          # using a USB cable and the Spark Max client software!
-          self.frontLift : Spark = Spark(map.frontLiftPwm)
-          self.backLift : Spark = Spark(map.backLiftPwm)
-          self.frontLift.setInverted(False)
-          self.backLift.setInverted(False)
-
         if map.robotId == map.astroV1:
             '''IDS AND DIRECTIONS FOR V1'''
-            if not self.usingNeo:
-              self.backLift = Talon(map.backLift)
-              self.frontLift = Talon(map.frontLift)
-              self.frontLift.setInverted(True)
-              self.backLift.setInverted(True)
+            self.backLift = Talon(map.backLift)
+            self.frontLift = Talon(map.frontLift)
+            self.frontLift.setInverted(True)
+            self.backLift.setInverted(True)
 
             self.wheelLeft = Victor(map.wheelLeft)
             self.wheelRight = Victor(map.wheelRight)
@@ -41,19 +29,17 @@ class Climber():
 
         else:
             '''IDS AND DIRECTIONS FOR V2'''
-            if not self.usingNeo:
-              self.backLift = Talon(map.frontLift)
-              self.frontLift = Talon(map.backLift)
-              self.frontLift.setInverted(False)
-              self.backLift.setInverted(True)
+            self.backLift = Talon(map.frontLift)
+            self.frontLift = Talon(map.backLift)
+            self.frontLift.setInverted(False)
+            self.backLift.setInverted(True)
 
             self.wheelLeft = Talon(map.wheelLeft)
             self.wheelRight = Talon(map.wheelRight)
             self.wheelRight.setInverted(True)
             self.wheelLeft.setInverted(False)
 
-        if not self.usingNeo:
-          for motor in [self.backLift, self.frontLift]:
+        for motor in [self.backLift, self.frontLift]:
             motor.clearStickyFaults(0)
             motor.setSafetyEnabled(False)
             motor.configContinuousCurrentLimit(30,0) #Amps per motor
@@ -87,7 +73,12 @@ class Climber():
         POSITIVE POWER TO WHEELS MOVES ROBOT FORWARD
         '''
 
+        self.started = False
+
     def periodic(self):
+
+        if self.xbox.getRawButton(map.liftClimber): self.started = True
+
         deadband = 0.50
         if self.xbox.getRawAxis(map.lowerFrontClimber) < -deadband: self.retract("front")
         elif self.xbox.getRawAxis(map.lowerBackClimber) < -deadband: self.retract("back")
@@ -104,102 +95,35 @@ class Climber():
     def isBackOverGround(self):
         return not self.backSwitch.get()
 
+    def isFrontOverGround(self):
+        return not self.frontSwitch.get()
+
     def getLean(self):
         if map.robotId == map.astroV1: return -1* self.robot.drive.getRoll()
-        else: return -1* self.robot.drive.getPitch()
-
-    def isLeaning(self, direction):
-        '''TRUE TESTS TIPPING FORWARD, FORWARD TIP HAS NEGATIVE ANGLE'''
-        maxTarget = self.MAX_ANGLE + self.TARGET_ANGLE
-        minTarget = -self.MAX_ANGLE + self.TARGET_ANGLE
-
-        if direction==True and self.getLean() > maxTarget: return True
-        elif direction==False and self.getLean() < minTarget: return True
-        else: return False
+        else: return -1 * self.robot.drive.getPitch()
 
     def backRetracted(self): return not self.isBackOverGround()
-    def frontRetracted(self): return not self.isBackOverGround()
 
     def getCorrection(self):
-        '''CORRECTION IS POSITIVE'''
-        multiplier = (self.kP * abs(self.getLean()))
-        return (multiplier * self.climbSpeed)
+        return (self.kP * -self.getLean())
 
-    def retract(self, mode):
-        cSpeed = self.getCorrection()
+    def setSpeeds(self, back, front):
+        self.backLift.set(back * self.climbSpeed)
+        self.frontLift.set(front * self.climbSpeed)
 
-        if mode == "front":
-            if self.isLeaning(False):
-                self.backLift.set(-1 * cSpeed)
-                self.frontLift.set(self.climbSpeed)
-            elif self.isLeaning(True):
-                self.backLift.set(1 * cSpeed)
-                self.frontLift.set(self.climbSpeed)
-            else:
-                self.stopBack()
-                self.frontLift.set(self.climbSpeed)
+    def retract(self):
+        correction = getCorrection()
+        if mode=="front": self.setSpeeds(self.backHold, 1)
+        elif mode=="back": self.setSpeed(1, 0)
+        elif mode=="both": self.setSpeeds(1 + correction, 1)
+        else: self.setSpeeds(0, 0)
 
-        elif mode == "back":
-            #if self.isLeaning(False): self.frontLift.set(cSpeed) , don't correct front
-            self.stopFront()
-            self.backLift.set(self.climbSpeed)
-
-        elif mode == "both":
-            if self.isLeaning(True):
-                self.backLift.set(1 * cSpeed)
-                self.frontLift.set(self.climbSpeed)
-            elif self.isLeaning(False):
-                self.backLift.set(self.climbSpeed)
-                self.frontLift.set(cSpeed)
-            else:
-                self.backLift.set(self.climbSpeed)
-                self.frontLift.set(self.climbSpeed)
-
-    def extend(self, mode):
-        cSpeed = self.getCorrection()
-
-        if mode == "front":
-            if self.isLeaning(False):
-                self.backLift.set(-1 * cSpeed)
-                self.frontLift.set(self.climbSpeed)
-            elif self.isLeaning(True):
-                self.backLift.set(1 * cSpeed)
-                self.frontLift.set(self.climbSpeed)
-            else:
-                self.stopBack()
-                self.frontLift.set(self.climbSpeed)
-
-        elif mode == "back":
-            self.stopFront()
-            self.backLift.set(-1 * self.climbSpeed)
-
-        elif mode == "both":
-            if self.isLeaning(True):
-                self.backLift.set(-1 * self.climbSpeed)
-                self.frontLift.set(-1 * cSpeed)
-            elif self.isLeaning(False):
-                self.backLift.set(-1 * cSpeed)
-                self.frontLift.set(-1 * self.climbSpeed)
-            else:
-                self.backLift.set(-1.17 * self.climbSpeed)
-                self.frontLift.set(-1 * self.climbSpeed)
-
-        elif mode == "hold":
-            #if self.isLeaning(False):
-                #self.backLift.set(-0.7 * cSpeed)
-                #self.frontLift.set(0)
-            #elif self.isLeaning(True):
-                #self.frontLift.set(-1 * cSpeed)
-                #self.backLift.set(0)
-
-            if self.isBackOverGround():
-                self.backLift.set(0)
-                self.frontLift.set(0)
-            else:
-                self.stopBack() #sets static speed to hold back up
-                self.stopFront()
-
-
+    def extend(self):
+        correction = getCorretion()
+        if mode=="front": self.setSpeeds(correction, -1)
+        elif mode=="back": self.setSpeeds(-1, 0)
+        elif mode=="both": self.setSpeeds(-1 + correction, -1)
+        else: self.setSpeeds(0, 0)
 
     def wheel(self, direction):
         '''FORWARD MOVES ROBOT FORWARD, BACKWARD MOVES ROBOT BACKWARD'''
@@ -210,23 +134,11 @@ class Climber():
             self.wheelLeft.set(-1 * self.wheelSpeed)
             self.wheelRight.set(-1 * self.wheelSpeed)
 
-        if self.isLeaning(False):
-            self.backLift.set(-1 * self.getCorrection())
-            self.stopFront()
-        elif self.isLeaning(True):
-            self.backLift.set(self.getCorrection())
-            self.stopFront()
-
-    def wheelForward(self):
-        self.wheelLeft.set(self.wheelSpeed)
-        self.wheelRight.set(self.wheelSpeed)
-
-    def wheelBack(self):
-        self.wheelLeft.set(-1 * self.wheelSpeed)
-        self.wheelRight.set(-1 * self.wheelSpeed)
+        correction = getCorrection()
+        self.setSpeeds(self.backHold+correction, 0)
 
     def stopFront(self):
-        if(self.frontRetracted()): self.frontLift.set(0)
+        if(not self.started): self.frontLift.set(0)
         else: self.frontLift.set(self.frontHold)
 
     def stopBack(self):
@@ -246,10 +158,14 @@ class Climber():
         self.stopDrive()
 
     def dashboardInit(self):
-        SmartDashboard.putNumber("Climber kP", 0.4)
-        SmartDashboard.putNumber("ClimbSpeed", 0.9)
+        SmartDashboard.putNumber("Climber kP", 0.2)
+        SmartDashboard.putNumber("ClimbSpeed", 0.5)
+        SmartDashboard.putNumber("BackHold", -0.15)
+        SmartDashboard.putNumber("FrontHold", -0.15)
 
     def dashboardPeriodic(self):
-        self.climbSpeed = SmartDashboard.getNumber("ClimbSpeed", 0.9)
-        self.kP = SmartDashboard.getNumber("Climber kP", 0.4)
+        self.climbSpeed = SmartDashboard.getNumber("ClimbSpeed", 0.5)
+        self.kP = SmartDashboard.getNumber("Climber kP", 0.2)
+        self.backHold = SmartDashboard.getNumber("BackHold", -0.15)
+        self.frontHold = SmartDashboard.getNumber("FrontHold", -0.15)
         SmartDashboard.putNumber("Lean", self.getLean())
