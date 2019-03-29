@@ -125,7 +125,7 @@ intakeCargo = 2
 outtakeCargo = 3
 
 #buttons
-kickHatch = 6 #controlls original only hatch mech
+kickHatch = 2 #controlls original only hatch mech
 toggleHatch = 5 #controlls original only hatch mech
 wristUp =7
 wristDown = 8
@@ -154,5 +154,5 @@ wristUpMagic = 11
 wristDownMagic = 16
 #buttons
 halfSpeed = 1
-flip = 3
+flip = 4
 shimmy = 15
