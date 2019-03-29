@@ -15,6 +15,9 @@ class SetFixedDT(TimedCommand):
         self.leftSpeed = leftSpeed
         self.rightSpeed = rightSpeed
 
+    def initialize(self):
+        self.DT.setMode("Direct")
+
     def execute(self):
         self.DT.tankDrive(self.leftSpeed,self.rightSpeed)
 

@@ -36,8 +36,8 @@ hatchSlide = 2
 
 #PWM
 
-frontLiftPwm = 0
-backLiftPwm = 1
+frontLiftPwm = 2
+backLiftPwm = 0
 
 #DIO
 
@@ -127,6 +127,7 @@ outtakeCargo = 3
 #buttons
 kickHatch = 6 #controlls original only hatch mech
 toggleHatch = 5 #controlls original only hatch mech
+drivehatch = 2
 wristUp =7
 wristDown = 8
 
@@ -154,5 +155,5 @@ wristUpMagic = 11
 wristDownMagic = 16
 #buttons
 halfSpeed = 1
-flip = 3
+flip = 4
 shimmy = 15

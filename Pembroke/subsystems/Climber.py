@@ -14,6 +14,7 @@ class Climber():
     def initialize(self, robot):
         self.robot = robot
         self.xbox = oi.getJoystick(2)
+        self.joystick0 = oi.getJoystick(0)
 
         if map.robotId == map.astroV1:
             '''IDS AND DIRECTIONS FOR V1'''
@@ -80,13 +81,19 @@ class Climber():
         if self.xbox.getRawButton(map.liftClimber): self.started = True
 
         deadband = 0.50
-        if self.xbox.getRawAxis(map.lowerFrontClimber) < -deadband: self.retract("front")
-        elif self.xbox.getRawAxis(map.lowerBackClimber) < -deadband: self.retract("back")
-        elif self.xbox.getRawButton(map.lowerClimber) == True: self.retract("both")
-        elif self.xbox.getRawAxis(map.liftFrontClimber) > deadband: self.extend("front")
-        elif self.xbox.getRawAxis(map.liftBackClimber) > deadband: self.extend("back")
-        elif self.xbox.getRawButton(map.liftClimber) == True: self.extend("both")
-        else: self.extend("hold")
+        frontAxis = self.xbox.getRawAxis(map.liftFrontClimber)
+        backAxis = self.xbox.getRawAxis(map.liftBackClimber)
+
+        if abs(frontAxis) > deadband or abs(backAxis):
+            if  frontAxis> deadband: self.extend("front")
+            elif frontAxis < -deadband: self.retract("front")
+            if backAxis > deadband: self.extend("back")
+            elif backAxis < -deadband: self.retract("back")
+            else: self.extend("hold")
+        else:
+            if self.xbox.getRawButton(map.lowerClimber) == True: self.retract("both")
+            elif self.xbox.getRawButton(map.liftClimber) == True: self.extend("both")
+            else: self.extend("hold")
 
         if self.xbox.getRawButton(map.driveForwardClimber): self.wheel("forward")
         elif self.xbox.getRawButton(map.driveBackwardClimber): self.wheel("backward")
@@ -142,8 +149,8 @@ class Climber():
         else: self.frontLift.set(self.frontHold)
 
     def stopBack(self):
-        if(self.backRetracted()): self.backLift.set(0)
-        else: self.backLift.set(self.backHold)
+        if(self.backRetracted()): self.backSet(0)
+        else: self.backSet(self.backHold)
 
     def stopClimb(self):
         self.stopFront()
@@ -156,6 +163,18 @@ class Climber():
     def disable(self):
         self.stopClimb()
         self.stopDrive()
+
+    def frontSet(self, power):
+        #Negative Power - Legs down
+        if self.usingNeo:
+            power = -power
+        self.frontLift.set(power)
+
+    def backSet(self, power):
+        #Negative Power - Legs down
+        if self.usingNeo:
+            power = -power
+        self.backLift.set(power)
 
     def dashboardInit(self):
         SmartDashboard.putNumber("Climber kP", 0.2)
