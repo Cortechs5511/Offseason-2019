@@ -36,8 +36,8 @@ hatchSlide = 2
 
 #PWM
 
-frontLiftPwm = 0
-backLiftPwm = 1
+frontLiftPwm = 2
+backLiftPwm = 0
 
 #DIO
 

@@ -12,7 +12,7 @@ import map
 class Climber():
 
     def initialize(self, robot):
-        self.usingNeo = True
+        self.usingNeo = False
 
         self.robot = robot
         self.xbox = oi.getJoystick(2)
@@ -23,7 +23,7 @@ class Climber():
           # using a USB cable and the Spark Max client software!
           self.frontLift : Spark = Spark(map.frontLiftPwm)
           self.backLift : Spark = Spark(map.backLiftPwm)
-          self.frontLift.setInverted(False)
+          self.frontLift.setInverted(True)
           self.backLift.setInverted(False)
 
         if map.robotId == map.astroV1:
@@ -106,7 +106,7 @@ class Climber():
 
     def getLean(self):
         if map.robotId == map.astroV1: return -1* self.robot.drive.getRoll()
-        else: return -1* self.robot.drive.getPitch()
+        else: return -1 *  self.robot.drive.getPitch()
 
     def isLeaning(self, direction):
         '''TRUE TESTS TIPPING FORWARD, FORWARD TIP HAS NEGATIVE ANGLE'''
