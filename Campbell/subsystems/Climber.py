@@ -15,13 +15,24 @@ class Climber():
         self.robot = robot
         self.xbox = oi.getJoystick(2)
         self.joystick0 = oi.getJoystick(0)
+        self.usingNeo = True
+
+        if self.usingNeo:
+          # NOTE: If using Spark Max in PWM mode to control Neo brushless
+          # motors you MUST configure the speed controllers manually
+          # using a USB cable and the Spark Max client software!
+          self.frontLift : Spark = Spark(map.frontLiftPwm)
+          self.backLift : Spark = Spark(map.backLiftPwm)
+          self.frontLift.setInverted(False)
+          self.backLift.setInverted(False)
 
         if map.robotId == map.astroV1:
-            '''IDS AND DIRECTIONS FOR V1'''
-            self.backLift = Talon(map.backLift)
-            self.frontLift = Talon(map.frontLift)
-            self.frontLift.setInverted(True)
-            self.backLift.setInverted(True)
+            if not self.usingNeo:
+                '''IDS AND DIRECTIONS FOR V1'''
+                self.backLift = Talon(map.backLift)
+                self.frontLift = Talon(map.frontLift)
+                self.frontLift.setInverted(True)
+                self.backLift.setInverted(True)
 
             self.wheelLeft = Victor(map.wheelLeft)
             self.wheelRight = Victor(map.wheelRight)
@@ -29,24 +40,28 @@ class Climber():
             self.wheelLeft.setInverted(True)
 
         else:
-            '''IDS AND DIRECTIONS FOR V2'''
-            self.backLift = Talon(map.frontLift)
-            self.frontLift = Talon(map.backLift)
-            self.frontLift.setInverted(False)
-            self.backLift.setInverted(False)
+            if not self.usingNeo:
+                '''IDS AND DIRECTIONS FOR V2'''
+                self.backLift = Talon(map.frontLift)
+                self.frontLift = Talon(map.backLift)
+                self.frontLift.setInverted(False)
+                self.backLift.setInverted(False)
+                self.backLift.setNeutralMode(2)
+                self.frontLift.setNeutralMode(2)
 
             self.wheelLeft = Talon(map.wheelLeft)
             self.wheelRight = Talon(map.wheelRight)
             self.wheelRight.setInverted(True)
             self.wheelLeft.setInverted(False)
 
-        for motor in [self.backLift, self.frontLift]:
-            motor.clearStickyFaults(0)
-            motor.setSafetyEnabled(False)
-            motor.configContinuousCurrentLimit(30,0) #Amps per motor
-            motor.enableCurrentLimit(True)
-            motor.configVoltageCompSaturation(10,0) #Sets saturation value
-            motor.enableVoltageCompensation(True) #Compensates for lower voltages
+        if not self.usingNeo:
+            for motor in [self.backLift, self.frontLift]:
+                motor.clearStickyFaults(0)
+                motor.setSafetyEnabled(False)
+                motor.configContinuousCurrentLimit(30,0) #Amps per motor
+                motor.enableCurrentLimit(True)
+                motor.configVoltageCompSaturation(10,0) #Sets saturation value
+                motor.enableVoltageCompensation(True) #Compensates for lower voltages
 
         for motor in [self.wheelLeft, self.wheelRight]:
             motor.clearStickyFaults(0)
@@ -59,14 +74,15 @@ class Climber():
         self.upSwitch = DigitalInput(map.upSensor)
 
         self.MAX_ANGLE = 2 #degrees
-        self.TARGET_ANGLE = 0 #degrees
-        self.climbSpeed = 0.5
+        self.TARGET_ANGLE = -1 #degrees
+        self.climbSpeed = 0.9
         self.wheelSpeed = 0.5
 
-        self.backHold = -0.15 #holds back stationary if extended ADJUST**
-        self.frontHold = -0.1 #holds front stationary if extended
 
-        self.kP = 0.4 #proportional gain for angle to power
+        self.backHold = -0.15 #holds back stationary if extended ADJUST**
+        self.frontHold = -0.15 #holds front stationary if extended
+
+        self.kP = 0.35 #proportional gain for angle to power
 
         '''
         NEGATIVE POWER TO ELEVATOR LIFTS ROBOT, LOWERS LEGS
@@ -98,21 +114,28 @@ class Climber():
             else:
                 if self.xbox.getRawButton(map.driveForwardClimber): self.wheel("forward")
                 elif self.xbox.getRawButton(map.driveBackwardClimber): self.wheel("backward")
-                else: self.disable()
+                else:
+                    self.extend("hold")
+                    self.stopDrive()
 
     def up(self):
-        return not self.upSwitch.get()
+        return self.upSwitch.get()
+        #return False
 
     def getLean(self):
-        if map.robotId == map.astroV1: return -1* self.robot.drive.getRoll()
+        if map.robotId == map.astroV1: return self.robot.drive.getRoll()
         else: return self.robot.drive.getPitch()
 
     def getCorrection(self):
         return (self.kP * -self.getLean())
 
     def setSpeeds(self, back, front):
-        self.backLift.set(back * self.climbSpeed)
-        self.frontLift.set(front * self.climbSpeed)
+        if self.usingNeo:
+            self.backLift.set(-1 * back * self.climbSpeed)
+            self.frontLift.set(-1 * front * self.climbSpeed)
+        else:
+            self.backLift.set(back * self.climbSpeed)
+            self.frontLift.set(front * self.climbSpeed)
 
     def retract(self, mode):
         correction = self.getCorrection()
@@ -138,8 +161,8 @@ class Climber():
             self.wheelLeft.set(-1 * self.wheelSpeed)
             self.wheelRight.set(-1 * self.wheelSpeed)
 
-        correction = self.getCorrection()
-        self.setSpeeds(self.backHold+correction, 0)
+        #correction = self.getCorrection()
+        #self.setSpeeds(self.backHold+correction, 0)
 
     def stopClimb(self):
         self.setSpeeds(0, 0)
@@ -164,3 +187,4 @@ class Climber():
         self.backHold = SmartDashboard.getNumber("BackHold", self.backHold)
         self.frontHold = SmartDashboard.getNumber("FrontHold", self.frontHold)
         SmartDashboard.putNumber("Lean", self.getLean())
+        SmartDashboard.putNumber("FloorSensor", self.up())

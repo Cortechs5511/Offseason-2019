@@ -20,6 +20,8 @@ class CargoMech():
         self.targetPosDown = -1500 #!!!!!
         self.maxVolts = 10
         self.simpleGain = 0.1
+        self.wristUpVolts = 5
+        self.wristDownVolts = 2
         self.simpleGainGravity = 0.05
         self.xbox = oi.getJoystick(2)
         self.joystick0 = oi.getJoystick(0)

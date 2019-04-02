@@ -36,7 +36,7 @@ hatchSlide = 2
 
 #PWM
 
-frontLiftPwm = 2
+frontLiftPwm = 1
 backLiftPwm = 0
 
 #DIO
@@ -44,7 +44,7 @@ backLiftPwm = 0
 leftEncoder = (0,1)
 rightEncoder = (2,3)
 
-upSensor = 5
+upSensor = 4
 frontBottomSensor = 6
 frontTopSensor = 7
 backBottomSensor = 8

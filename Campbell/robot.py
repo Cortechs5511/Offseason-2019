@@ -7,6 +7,7 @@ from commandbased import CommandBasedRobot
 
 from wpilib.sendablechooser import SendableChooser
 import map
+from wpilib import CameraServer
 
 from subsystems import HatchMech
 from subsystems import CargoMech
@@ -47,6 +48,7 @@ class MyRobot(CommandBasedRobot):
         This is a good place to set up your subsystems and anything else that
         you will need to access later.
         '''
+        wpilib.CameraServer.launch()
 
         Command.getRobot = lambda x=0: self
 
@@ -116,7 +118,7 @@ class MyRobot(CommandBasedRobot):
     def autonomousPeriodic(self):
         super().autonomousPeriodic()
 
-        deadband = 0.25
+        deadband = 0.1
         if(abs(self.joystick0.getRawAxis(map.drive))>abs(deadband)): self.SetSpeedDT.start()
         if(abs(self.joystick1.getRawAxis(map.drive))>abs(deadband)): self.SetSpeedDT.start()
 
@@ -131,7 +133,7 @@ class MyRobot(CommandBasedRobot):
         super().teleopPeriodic()
 
     def updateDashboardInit(self):
-        #self.drive.dashboardInit()
+        self.drive.dashboardInit()
         #self.hatch.dashboardInit()
         #self.cargo.dashboardInit()
         self.climber.dashboardInit()
@@ -143,7 +145,7 @@ class MyRobot(CommandBasedRobot):
     def updateDashboardPeriodic(self):
         #SmartDashboard.putNumber("Timer", self.timer.get())
         SmartDashboard.putNumber("PressureSwitch", self.compressor.getPressureSwitchValue())
-        #self.drive.dashboardPeriodic()
+        self.drive.dashboardPeriodic()
         #self.hatch.dashboardPeriodic()
         #self.cargo.dashboardPeriodic()
         self.climber.dashboardPeriodic()
