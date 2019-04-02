@@ -44,7 +44,9 @@ backLiftPwm = 0
 leftEncoder = (0,1)
 rightEncoder = (2,3)
 
-upSensor = 4
+backFloor = 4
+frontFloor = 5
+
 frontBottomSensor = 6
 frontTopSensor = 7
 backBottomSensor = 8
