@@ -81,11 +81,10 @@ class Climber():
         self.MAX_ANGLE = 2 #degrees
         self.TARGET_ANGLE = -1 #degrees
         self.climbSpeed = 0.9
-        self.wheelSpeed = 0.5
+        self.wheelSpeed = 0.9
 
-
-        self.backHold = -0.15 #holds back stationary if extended ADJUST**
-        self.frontHold = -0.15 #holds front stationary if extended
+        self.backHold = -0.12 #holds back stationary if extended ADJUST**
+        self.frontHold = -0.12 #holds front stationary if extended
 
         self.kP = 0.35 #proportional gain for angle to power
 
@@ -127,6 +126,7 @@ class Climber():
             self.startState()
         else: state = self.getState()
 
+
         if state == 0: self.extend("both")
         elif state == 1: self.wheel("forward")
         elif state == 2: self.retract("front")
@@ -155,7 +155,7 @@ class Climber():
     def retract(self, mode):
         correction = self.getCorrection()
         if mode=="front": self.setSpeeds(self.backHold, 1)
-        elif mode=="back": self.setSpeeds(1, 0)
+        elif mode=="back": self.setSpeeds(0.4, 0)
         elif mode=="both": self.setSpeeds(1 + correction, 1)
         else: self.setSpeeds(0, 0)
 
