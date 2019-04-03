@@ -99,7 +99,7 @@ class Climber():
         self.started = False
 
     def periodic(self):
-
+        state = -1
         if self.xbox.getRawButton(map.liftClimber): self.started = True
 
         deadband = 0.50
@@ -107,6 +107,11 @@ class Climber():
         backAxis = self.xbox.getRawAxis(map.liftBackClimber)
 
         if abs(frontAxis) > deadband or abs(backAxis) > deadband:
+            if self.state != -1:
+                self.state = -1
+                self.disable()
+            else:
+                self.stopDrive()
             if  frontAxis> deadband: self.extend("front")
             elif frontAxis < -deadband: self.retract("front")
 
@@ -123,16 +128,29 @@ class Climber():
                     self.stopDrive()
 
         if self.xbox.getRawButton(map.resetAutoClimb):
-            self.startClimb()
+            if self.state != -1:
+                self.startClimbAuto()
+            else:
+                print("already running auto climb")
         elif self.xbox.getRawButton(map.stopAutoClimb):
             self.stopClimbAuto()
         else: state = self.getState()
 
         #if state == 0: self.extend("both")
-        if state == 1: self.wheel("forward")
-        elif state == 2: self.retract("front")
-        elif state == 3: self.wheel("forward")
-        elif state == 4: self.retract("back")
+        if state == 1: 
+            self.wheel("forward")
+            self.stopClimb()
+        elif state == 2:
+            self.retract("front")
+            self.stopDrive()
+        elif state == 3:
+            self.wheel("forward")
+            self.stopClimb()
+        elif state == 4:
+            self.retract("back")
+            self.stopDrive()
+        elif state == -1:
+            self.disable()
 
     def up(self):
         return self.backSwitch.get()
@@ -180,7 +198,7 @@ class Climber():
         #correction = self.getCorrection()
         #self.setSpeeds(self.backHold+correction, 0)
 
-    def startClimb(self):
+    def startClimbAuto(self):
         self.state = 1
 
     def stopClimbAuto(self):
@@ -242,7 +260,7 @@ class Climber():
             print("Transition to State 5")
             self.state = 5
 
-            return self.state
+        return self.state
 
     def stopClimb(self):
         self.setSpeeds(0, 0)
@@ -257,11 +275,16 @@ class Climber():
 
     def isFullyExtendedFront(self):
         """ tells us if the front is fully extended """
-        return not self.switchTopFront.get()
+        #return not self.switchTopFront.get()
+        '''sensors were removed so it will always return true'''
+        return True
+
 
     def isFullyExtendedBack(self):
         """ tells us if the back is fully extended, so it can stop """
-        return not self.switchTopBack.get()
+        #return not self.switchTopBack.get()
+        '''returns true, sensor was removed'''
+        return True
 
     def isFullyRetractedFront(self):
         return not self.switchBottomFront.get()
