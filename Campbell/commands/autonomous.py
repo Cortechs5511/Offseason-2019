@@ -22,10 +22,14 @@ class LeftCargo(CommandGroup):
         EjectHatch = HatchMech.EjectHatch
         SetFixedDT = setFixedDT.SetFixedDT
 
-        self.addSequential(DriveStraightCombined(distance=194.5, angle=0, timeout=5))
+        self.addSequential(DriveStraightCombined(distance=50, angle=0, timeout=3, p=0.05, i=0, d=.28))
+        self.addSequential(DriveStraightCombined(distance=144.5, angle=0, timeout=5))
         self.addSequential(TurnAngle(angle=90, timeout=2.5))
         self.addSequential(SetFixedDT(0.3,0.3, timeout=3))
         self.addSequential(EjectHatch())
+        self.addSequential(SetFixedDT(-0.3,-0.3, timeout=1))
+        self.addSequential(TurnAngle(angle=0, timeout=2.5))
+        self.addSequential(SetFixedDT(-0.3,-0.3, timeout=3))
 
 class DriveStraightSide(CommandGroup):
     def __init__(self):

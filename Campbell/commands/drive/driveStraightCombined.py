@@ -6,7 +6,7 @@ from wpilib.command import TimedCommand
 
 class DriveStraightCombined(TimedCommand):
 
-    def __init__(self, distance = 10, angle = 0, timeout = 0):
+    def __init__(self, distance = 10, angle = 0, timeout = 0, p=1000, i=1000, d=1000):
         super().__init__('DriveStraightCombined', timeoutInSeconds = timeout)
 
         self.requires(self.getRobot().drive)
@@ -14,12 +14,28 @@ class DriveStraightCombined(TimedCommand):
 
         self.distance = distance/12
         self.angle = angle
+        self.pCheck = p
+        self.iCheck = i
+        self.dCheck = d
 
     def initialize(self):
         self.DT.zeroEncoders()
-        p = SmartDashboard.getNumber("DriveStraight_P", 0.1)
-        i = SmartDashboard.getNumber("DriveStraight_I", 0)
-        d = SmartDashboard.getNumber("DriveStraight_D", 0.4)
+        # GETTING VALUE FROM DASHBOARD IF P,I,D ARGUMENTS ARE NOT GIVEN WHEN COMMAND IS CALLED
+        if self.pCheck == 1000:
+            p = SmartDashboard.getNumber("DriveStraight_P", 0.1)
+        else:
+            p = self.pCheck
+
+        if self.iCheck == 1000:
+            i = SmartDashboard.getNumber("DriveStraight_I", 0)
+        else:
+            i = self.iCheck
+
+        if self.dCheck == 1000:
+            d = SmartDashboard.getNumber("DriveStraight_D", 0.4)
+        else:
+            d = self.dCheck
+
         angleP = SmartDashboard.getNumber('DriveStraightAngle_P', 0.025)
         angleI = SmartDashboard.getNumber('DriveStraightAngle_I', 0.0)
         angleD = SmartDashboard.getNumber('DriveStraightAngle_D', 0.01)

@@ -123,12 +123,13 @@ class Climber():
                     self.stopDrive()
 
         if self.xbox.getRawButton(map.resetAutoClimb):
-            self.startState()
+            self.startClimb()
+        elif self.xbox.getRawButton(map.stopAutoClimb):
+            self.stopClimb()
         else: state = self.getState()
 
-
-        if state == 0: self.extend("both")
-        elif state == 1: self.wheel("forward")
+        #if state == 0: self.extend("both")
+        if state == 1: self.wheel("forward")
         elif state == 2: self.retract("front")
         elif state == 3: self.wheel("forward")
         elif state == 4: self.retract("back")
@@ -180,7 +181,10 @@ class Climber():
         #self.setSpeeds(self.backHold+correction, 0)
 
     def startClimb(self):
-        self.state = 0
+        self.state = 1
+
+    def stopClimb(self):
+        self.state = -1
 
     def getState(self):
 

@@ -48,6 +48,7 @@ class Drive(Subsystem):
         SmartDashboard.putNumber("DriveStraight_P", 0.075)
         SmartDashboard.putNumber("DriveStraight_I", 0.0)
         SmartDashboard.putNumber("DriveStraight_D", 0.42)
+        # OLD GAINS 0.075, 0, 0.42
 
         SmartDashboard.putNumber("DriveAngle_P", 0.009)
         SmartDashboard.putNumber("DriveAngle_I", 0.0)
