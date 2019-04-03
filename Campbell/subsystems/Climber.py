@@ -125,7 +125,7 @@ class Climber():
         if self.xbox.getRawButton(map.resetAutoClimb):
             self.startClimb()
         elif self.xbox.getRawButton(map.stopAutoClimb):
-            self.stopClimb()
+            self.stopClimbAuto()
         else: state = self.getState()
 
         #if state == 0: self.extend("both")
@@ -183,7 +183,7 @@ class Climber():
     def startClimb(self):
         self.state = 1
 
-    def stopClimb(self):
+    def stopClimbAuto(self):
         self.state = -1
 
     def getState(self):
@@ -199,46 +199,46 @@ class Climber():
 
         '''checking any illogical scenarios, if they occur end autoclimb'''
 
-        if self.state==1 and (not self.isFullyExtendedBothTest() or self.isBackOverGroundTest()):
+        if self.state==1 and (not self.isFullyExtendedBoth() or self.isBackOverGround()):
             print("STATE 1 Error")
             self.state = -1
 
-        if self.state==2 and (not self.isFullyExtendedBackTest() or self.isBackOverGroundTest() or not self.isFrontOverGroundTest()):
+        if self.state==2 and (not self.isFullyExtendedBack() or self.isBackOverGround() or not self.isFrontOverGround()):
             print("STATE 2 Error")
             self.state = -1
 
-        if self.state==3 and (not self.isFrontOverGroundTest() or not self.isFullyExtendedBackTest() or not self.isFullyRetractedFrontTest()):
+        if self.state==3 and (not self.isFrontOverGround() or not self.isFullyExtendedBack() or not self.isFullyRetractedFront()):
             print("STATE 3 Error")
             self.state = -1
 
-        if self.state==4 and (not self.isFrontOverGroundTest() or not self.isBackOverGroundTest() or not self.isFullyRetractedFrontTest()):
+        if self.state==4 and (not self.isFrontOverGround() or not self.isBackOverGround() or not self.isFullyRetractedFront()):
             print("STATE 4 Error")
             self.state = -1
 
-        if self.state==5 and (not self.isFrontOverGroundTest() or not self.isBackOverGroundTest() or not self.isFullyRetractedBothTest()):
+        if self.state==5 and (not self.isFrontOverGround() or not self.isBackOverGround() or not self.isFullyRetractedBoth()):
             print("STATE 5 Error")
             self.state=-1
 
 
         '''checking milestones to transition to next steps'''
 
-        if self.state==0 and self.isFullyExtendedBothTest() and not self.isFrontOverGroundTest() and not self.isBackOverGroundTest():
+        if self.state==0 and self.isFullyExtendedBoth() and not self.isFrontOverGround() and not self.isBackOverGround():
             print("Transition to State 1")
             self.state = 1
 
-        if self.state==1 and self.isFrontOverGroundTest():
+        if self.state==1 and self.isFrontOverGround():
             print("Transition to State 2")
             self.state = 2
 
-        if self.state==2 and self.isFullyRetractedFrontTest():
+        if self.state==2 and self.isFullyRetractedFront():
             print("Transition to State 3")
             self.state = 3
 
-        if self.state==3 and self.isBackOverGroundTest():
+        if self.state==3 and self.isBackOverGround():
             print("Transition to State 4")
             self.state = 4
 
-        if self.state==4 and self.isFullyRetractedBackTest():
+        if self.state==4 and self.isFullyRetractedBack():
             print("Transition to State 5")
             self.state = 5
 
@@ -274,6 +274,12 @@ class Climber():
 
     def isBackOverGround(self):
         return not self.backSwitch.get()
+
+    def isFullyExtendedBoth(self):
+        return (self.isFullyExtendedBack() and self.isFullyExtendedFront())
+    
+    def isFullyRetractedBoth(self):
+        return (self.isFullyRetractedBack() and self.isFullyRetractedFront())
 
     def dashboardInit(self):
         SmartDashboard.putNumber("Climber kP", self.kP)
