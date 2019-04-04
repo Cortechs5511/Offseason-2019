@@ -8,6 +8,7 @@ from wpilib import Spark
 
 import oi
 import map
+import wpilib
 
 class Climber():
 
@@ -17,6 +18,8 @@ class Climber():
         self.xbox = oi.getJoystick(2)
         self.joystick0 = oi.getJoystick(0)
         self.usingNeo = True
+
+        self.frontRetractStart = 0
 
         if self.usingNeo:
           # NOTE: If using Spark Max in PWM mode to control Neo brushless
@@ -83,7 +86,7 @@ class Climber():
         self.climbSpeed = 0.9
         self.wheelSpeed = 0.9
 
-        self.backHold = -0.12 #holds back stationary if extended ADJUST**
+        self.backHold = -0.10 #holds back stationary if extended ADJUST**
         self.frontHold = -0.12 #holds front stationary if extended
 
         self.kP = 0.35 #proportional gain for angle to power
@@ -115,34 +118,57 @@ class Climber():
             if  frontAxis> deadband: self.extend("front")
             elif frontAxis < -deadband: self.retract("front")
 
-            if backAxis > deadband: self.extend("back")
-            elif backAxis < -deadband: self.retract("back")
+            if backAxis > deadband:
+                self.extend("back")
+            elif backAxis < -deadband:
+                self.retract("back")
+            return
         else:
-            if self.xbox.getRawButton(map.lowerClimber) == True: self.retract("both")
-            elif self.xbox.getRawButton(map.liftClimber) == True: self.extend("both")
+            if self.xbox.getRawButton(map.lowerClimber) == True:
+                self.retract("both")
+                return
+            elif self.xbox.getRawButton(map.liftClimber) == True:
+                self.extend("both")
+                return
             else:
-                if self.xbox.getRawButton(map.driveForwardClimber): self.wheel("forward")
-                elif self.xbox.getRawButton(map.driveBackwardClimber): self.wheel("backward")
+                if self.xbox.getRawButton(map.driveForwardClimber):
+                    self.wheel("forward")
+                    return
+                elif self.xbox.getRawButton(map.driveBackwardClimber):
+                    self.wheel("backward")
+                    return
                 else:
-                    self.extend("hold")
-                    self.stopDrive()
+                    if state == -1:
+                        self.extend("hold")
+                        self.stopDrive()
+                    else:
+                        pass
 
         if self.xbox.getRawButton(map.resetAutoClimb):
-            if self.state != -1:
+            if self.state == -1:
                 self.startClimbAuto()
             else:
                 print("already running auto climb")
         elif self.xbox.getRawButton(map.stopAutoClimb):
             self.stopClimbAuto()
-        else: state = self.getState()
+        else:
+            state = self.getState()
 
         #if state == 0: self.extend("both")
         if state == 1: 
             self.wheel("forward")
             self.stopClimb()
         elif state == 2:
-            self.retract("front")
-            self.stopDrive()
+            now = wpilib.Timer.getFPGATimestamp()
+            if (now - self.frontRetractStart) >= 2.5:
+                self.extend("hold")
+                if self.isFrontOverGround():
+                    self.wheel('backward', speed=0.4)
+                else:
+                    self.stopDrive()
+            else:
+                self.retract("front")
+                self.stopDrive()
         elif state == 3:
             self.wheel("forward")
             self.stopClimb()
@@ -150,10 +176,14 @@ class Climber():
             self.retract("back")
             self.stopDrive()
         elif state == -1:
-            self.disable()
+            #self.disable()
+            pass
 
-    def up(self):
-        return self.backSwitch.get()
+    def frontUp(self):
+        return not self.frontSwitch.get()
+
+    def backUp(self):
+        return not self.backSwitch.get()
         #return False
 
     def getLean(self):
@@ -174,7 +204,7 @@ class Climber():
     def retract(self, mode):
         correction = self.getCorrection()
         if mode=="front": self.setSpeeds(self.backHold, 1)
-        elif mode=="back": self.setSpeeds(0.4, 0)
+        elif mode=="back": self.setSpeeds(0.7, 0)
         elif mode=="both": self.setSpeeds(1 + correction, 1)
         else: self.setSpeeds(0, 0)
 
@@ -183,17 +213,29 @@ class Climber():
         if mode=="front": self.setSpeeds(correction, -1)
         elif mode=="back": self.setSpeeds(-1, 0)
         elif mode=="both": self.setSpeeds(-1 + correction, -1)
-        elif self.up() == True: self.setSpeeds(self.backHold, self.frontHold)
-        else: self.setSpeeds(0, 0)
+        elif not self.isBackOverGround() and not self.isFrontOverGround():
+            self.setSpeeds(self.backHold, self.frontHold)
+            print('holding both')
+        elif not self.isFrontOverGround():
+            self.setSpeeds(0, self.frontHold)
+            print('holding front')
+        elif not self.isBackOverGround():
+            self.setSpeeds(self.backHold, 0)
+            print('holding back')
+        else:
+            self.setSpeeds(0, 0)
+            print('holding none')
+        
 
-    def wheel(self, direction):
+    def wheel(self, direction, speed=0):
+        if(speed==0): speed = self.wheelSpeed
         '''FORWARD MOVES ROBOT FORWARD, BACKWARD MOVES ROBOT BACKWARD'''
         if direction == "forward":
-            self.wheelLeft.set(self.wheelSpeed)
-            self.wheelRight.set(self.wheelSpeed)
+            self.wheelLeft.set(speed)
+            self.wheelRight.set(speed)
         elif direction == "backward":
-            self.wheelLeft.set(-1 * self.wheelSpeed)
-            self.wheelRight.set(-1 * self.wheelSpeed)
+            self.wheelLeft.set(-1 * speed)
+            self.wheelRight.set(-1 * speed)
 
         #correction = self.getCorrection()
         #self.setSpeeds(self.backHold+correction, 0)
@@ -217,23 +259,28 @@ class Climber():
 
         '''checking any illogical scenarios, if they occur end autoclimb'''
 
-        if self.state==1 and (not self.isFullyExtendedBoth() or self.isBackOverGround()):
+        #if self.state==1 and (not self.isFullyExtendedBoth() or self.isBackOverGround()):
+        if self.state ==1 and (not self.isFullyExtendedBoth()):
             print("STATE 1 Error")
             self.state = -1
 
-        if self.state==2 and (not self.isFullyExtendedBack() or self.isBackOverGround() or not self.isFrontOverGround()):
+        #if self.state==2 and (not self.isFullyExtendedBack() or self.isBackOverGround() or not self.isFrontOverGround()):
+        if self.state ==2 and (not self.isFullyExtendedBack()):
             print("STATE 2 Error")
             self.state = -1
 
-        if self.state==3 and (not self.isFrontOverGround() or not self.isFullyExtendedBack() or not self.isFullyRetractedFront()):
+        #if self.state==3 and (not self.isFrontOverGround() or not self.isFullyExtendedBack() or not self.isFullyRetractedFront()):
+        if self.state == 3 and (not self.isFullyExtendedBack() or not self.isFullyRetractedFront()):
             print("STATE 3 Error")
             self.state = -1
 
-        if self.state==4 and (not self.isFrontOverGround() or not self.isBackOverGround() or not self.isFullyRetractedFront()):
+        #if self.state==4 and (not self.isFrontOverGround() or not self.isBackOverGround() or not self.isFullyRetractedFront()):
+        if self.state == 4 and (not self.isFullyRetractedFront()):
             print("STATE 4 Error")
             self.state = -1
 
-        if self.state==5 and (not self.isFrontOverGround() or not self.isBackOverGround() or not self.isFullyRetractedBoth()):
+        #if self.state==5 and (not self.isFrontOverGround() or not self.isBackOverGround() or not self.isFullyRetractedBoth()):
+        if self.state == 5 and (not self.isFullyRetractedBack()):
             print("STATE 5 Error")
             self.state=-1
 
@@ -247,6 +294,7 @@ class Climber():
         if self.state==1 and self.isFrontOverGround():
             print("Transition to State 2")
             self.state = 2
+            self.frontRetractStart = wpilib.Timer.getFPGATimestamp()
 
         if self.state==2 and self.isFullyRetractedFront():
             print("Transition to State 3")
@@ -272,6 +320,7 @@ class Climber():
     def disable(self):
         self.stopClimb()
         self.stopDrive()
+        self.state = -1
 
     def isFullyExtendedFront(self):
         """ tells us if the front is fully extended """
@@ -317,9 +366,10 @@ class Climber():
         SmartDashboard.putBoolean("Fully Retracted Back",self.isFullyRetractedBack())
         SmartDashboard.putBoolean("Front Over Ground", self.isFrontOverGround())
         SmartDashboard.putBoolean("Back Over Ground", self.isBackOverGround())
+        SmartDashboard.putNumber("self.state", self.state)
         self.climbSpeed = SmartDashboard.getNumber("ClimbSpeed", self.climbSpeed)
         self.kP = SmartDashboard.getNumber("Climber kP", self.kP)
         self.backHold = SmartDashboard.getNumber("BackHold", self.backHold)
         self.frontHold = SmartDashboard.getNumber("FrontHold", self.frontHold)
         SmartDashboard.putNumber("Lean", self.getLean())
-        SmartDashboard.putNumber("FloorSensor", self.up())
+        SmartDashboard.putNumber("FloorSensor", self.backUp())
