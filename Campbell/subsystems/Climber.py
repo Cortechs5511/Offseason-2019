@@ -87,7 +87,7 @@ class Climber():
         self.wheelSpeed = 0.9
 
         self.backHold = -0.10 #holds back stationary if extended ADJUST**
-        self.frontHold = -0.12 #holds front stationary if extended
+        self.frontHold = -0.10 #holds front stationary if extended
 
         self.kP = 0.35 #proportional gain for angle to power
 
@@ -160,7 +160,7 @@ class Climber():
             self.stopClimb()
         elif state == 2:
             now = wpilib.Timer.getFPGATimestamp()
-            if (now - self.frontRetractStart) >= 2.5:
+            if (now - self.frontRetractStart) >= 3:
                 self.extend("hold")
                 if self.isFrontOverGround():
                     self.wheel('backward', speed=0.4)
@@ -195,8 +195,8 @@ class Climber():
 
     def setSpeeds(self, back, front):
         if self.usingNeo:
-            self.backLift.set(-1 * back * self.climbSpeed)
-            self.frontLift.set(-1 * front * self.climbSpeed)
+            self.backLift.set(back * self.climbSpeed)
+            self.frontLift.set(front * self.climbSpeed)
         else:
             self.backLift.set(back * self.climbSpeed)
             self.frontLift.set(front * self.climbSpeed)
