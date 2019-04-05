@@ -22,7 +22,7 @@ class LeftCargo(CommandGroup):
         EjectHatch = HatchMech.EjectHatch
         SetFixedDT = setFixedDT.SetFixedDT
 
-        self.addSequential(DriveStraightCombined(distance=50, angle=0, timeout=3, p=0.05, i=0, d=.28))
+        self.addSequential(DriveStraightCombined(distance=50, angle=0, timeout=3.5, p=0.06, i=0, d=.336))
         self.addSequential(DriveStraightCombined(distance=144.5, angle=0, timeout=5))
         self.addSequential(TurnAngle(angle=90, timeout=2.5))
         self.addSequential(SetFixedDT(0.3,0.3, timeout=3))
@@ -47,7 +47,8 @@ class RightCargo(CommandGroup):
         EjectHatch = HatchMech.EjectHatch
         SetFixedDT = setFixedDT.SetFixedDT
 
-        self.addSequential(DriveStraightCombined(distance=194.5, angle=0, timeout=5))
+        self.addSequential(DriveStraightCombined(distance=50, angle=0, timeout=3.5, p=0.06, i=0, d=.336))
+        self.addSequential(DriveStraightCombined(distance=144.5, angle=0, timeout=5))
         self.addSequential(TurnAngle(angle=-90, timeout=2.5))
         self.addSequential(SetFixedDT(0.3,0.3, timeout=3))
         self.addSequential(EjectHatch())
@@ -58,18 +59,23 @@ class CenterCargo(CommandGroup):
         DriveStraightCombined = driveStraightCombined.DriveStraightCombined
         EjectHatch = HatchMech.EjectHatch
 
-        self.addSequential(DriveStraightCombined(distance=173.25, angle=0, timeout=.75))
+        self.addSequential(DriveStraightCombined(distance=50, angle=0, timeout=3.5, p=0.06, i=0, d=.336))
+        self.addSequential(DriveStraightCombined(distance=88.25, angle=0, timeout=.75))
         #self.addSequential(EjectHatch())
 
 class CenterCargoPart2(CommandGroup):
     def __init__(self):
-        super().__init__('CenterCargo')
+        super().__init__('CenterCargoPart2')
         DriveStraightCombined = driveStraightCombined.DriveStraightCombined
         EjectHatch = HatchMech.EjectHatch
         TurnAngle = turnAngle.TurnAngle
+        SetFixedDT = setFixedDT.SetFixedDT
 
-        self.addSequential(DriveStraightCombined(distance=-10, angle=0, timeout=.75))
+        self.addSequential(EjectHatch())
+        self.addSequential(SetFixedDT(0,0, timeout=1))
+        self.addSequential(SetFixedDT(-0.3,-0.3, timeout=2))
+        '''self.addSequential(DriveStraightCombined(distance=-10, angle=0, timeout=.75))
         self.addSequential(TurnAngle(angle=60, timeout=2))
         self.addSequential(DriveStraightCombined(distance=-142.81, angle=0, timeout=5))
         self.addSequential(TurnAngle(angle=0, timeout=2))
-        self.addSequential(DriveStraightCombined(distance=-10, angle=0, timeout=.75))
+        self.addSequential(DriveStraightCombined(distance=-10, angle=0, timeout=.75))'''
