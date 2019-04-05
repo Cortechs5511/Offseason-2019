@@ -26,6 +26,7 @@ from commands.autonomous import RightCargo as RightCargo
 from commands.autonomous import CenterCargo as CenterCargo
 from commands.autonomous import DriveStraight as DriveStraight
 from commands.autonomous import DriveStraightSide as DriveStraightSide
+from commands.autonomous import CenterCargoPart2 as CenterCargoPart2
 
 from commands.drive.driveStraightDistance import DriveStraightDistance
 from commands.drive.driveStraightCombined import DriveStraightCombined
@@ -49,6 +50,7 @@ class MyRobot(CommandBasedRobot):
         you will need to access later.
         '''
         wpilib.CameraServer.launch()
+        self.lastAuto = False
 
         Command.getRobot = lambda x=0: self
 
@@ -90,6 +92,7 @@ class MyRobot(CommandBasedRobot):
         self.RightCargo = RightCargo()
         self.CenterCargo = CenterCargo()
         self.SetSpeedDT = SetSpeedDT()
+        self.CenterCargoPart2 = CenterCargoPart2()
 
         # Set up auton chooser
         self.autonChooser = SendableChooser()
@@ -118,6 +121,12 @@ class MyRobot(CommandBasedRobot):
     def autonomousPeriodic(self):
         super().autonomousPeriodic()
 
+        #starts second part of auto for center if button is pressed
+        '''currAuto = self.xbox.getRawButton(map.autoStart)
+        if currAuto and currAuto != self.lastAuto: self.CenterCargoPart2().start()
+        self.lastAuto = currAuto'''
+
+        #driver takes control of drivetrain
         deadband = 0.1
         if(abs(self.joystick0.getRawAxis(map.drive))>abs(deadband)): self.SetSpeedDT.start()
         if(abs(self.joystick1.getRawAxis(map.drive))>abs(deadband)): self.SetSpeedDT.start()

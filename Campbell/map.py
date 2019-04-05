@@ -147,7 +147,8 @@ lowerFrontClimber = 5
 liftBackClimber = 1
 lowerBackClimber = 1
 resetAutoClimb = 9
-stopAutoClimb = 10
+stopAutoClimb = 11
+autoStart = 10
 #DRIVE
 #axes
 drive = 1
