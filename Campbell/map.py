@@ -147,7 +147,7 @@ lowerFrontClimber = 5
 liftBackClimber = 1
 lowerBackClimber = 1
 resetAutoClimb = 9
-stopAutoClimb = 11
+#stopAutoClimb = 11
 autoStart = 10
 #DRIVE
 #axes
@@ -156,7 +156,7 @@ drive = 1
 #wristDown = 14
 wristUpVolts = 12
 wristDownVolts = 15
-wristUpMagic = 11
+#wristUpMagic = 11
 wristDownMagic = 16
 #buttons
 halfSpeed = 1

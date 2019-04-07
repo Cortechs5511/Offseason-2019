@@ -123,7 +123,7 @@ class MyRobot(CommandBasedRobot):
 
         #starts second part of auto for center if button is pressed
         currAuto = self.xbox.getRawButton(map.autoStart)
-        if currAuto and currAuto != self.lastAuto: self.CenterCargoPart2().start()
+        if currAuto and currAuto != self.lastAuto: self.CenterCargoPart2.start()
         self.lastAuto = currAuto
 
         #driver takes control of drivetrain
@@ -149,7 +149,6 @@ class MyRobot(CommandBasedRobot):
         #self.cargo.dashboardInit()
         self.climber.dashboardInit()
         #self.limelight.dashboardInit()
-
         #sequences.dashboardInit()
         #autonomous.dashboardInit()
 

@@ -30,7 +30,7 @@ class Drive(Subsystem):
 
     prevDist = [0,0]
 
-    maxSpeed = 0.95
+    maxSpeed = 0.85
 
     yaw = 0
     pitch = 0

@@ -20,6 +20,8 @@ class Climber():
         self.usingNeo = True
 
         self.frontRetractStart = 0
+        self.wheelsStart = 0 
+        self.wheelsStart2 = 0
 
         if self.usingNeo:
           # NOTE: If using Spark Max in PWM mode to control Neo brushless
@@ -90,6 +92,7 @@ class Climber():
         self.frontHold = -0.10 #holds front stationary if extended
 
         self.kP = 0.35 #proportional gain for angle to power
+        self.autoClimbIndicator = False
 
         '''
         NEGATIVE POWER TO ELEVATOR LIFTS ROBOT, LOWERS LEGS
@@ -149,17 +152,23 @@ class Climber():
                 self.startClimbAuto()
             else:
                 print("already running auto climb")
-        elif self.xbox.getRawButton(map.stopAutoClimb):
-            self.stopClimbAuto()
+        #elif self.xbox.getRawButton(map.stopAutoClimb):
+            #self.stopClimbAuto()
         else:
             state = self.getState()
 
         #if state == 0: self.extend("both")
         if state == 1: 
-            self.wheel("forward")
+            now = wpilib.Timer.getFPGATimestamp()
+            if (now - self.wheelsStart) >= 2:
+                    self.autoClimbIndicator = True
+                    self.stopDrive()
+            else:
+                self.wheel("forward")
             self.stopClimb()
         elif state == 2:
             now = wpilib.Timer.getFPGATimestamp()
+            self.autoClimbIndicator = True
             if (now - self.frontRetractStart) >= 3:
                 self.extend("hold")
                 if self.isFrontOverGround():
@@ -170,6 +179,13 @@ class Climber():
                 self.retract("front")
                 self.stopDrive()
         elif state == 3:
+            now = wpilib.Timer.getFPGATimestamp()
+            self.autoClimbIndicator = True
+            if (now - self.wheelsStart2) >= 2:
+                    self.stopDrive()
+            else:
+                self.wheel("forward")
+            self.stopClimb()
             self.wheel("forward")
             self.stopClimb()
         elif state == 4:
@@ -213,13 +229,13 @@ class Climber():
         if mode=="front": self.setSpeeds(correction, -1)
         elif mode=="back": self.setSpeeds(-1, 0)
         elif mode=="both": self.setSpeeds(-1 + correction, -1)
-        elif not self.isBackOverGround() and not self.isFrontOverGround():
+        elif not self.isBackOverGround() and not self.isFrontOverGround() and not self.isFullyRetractedFront() and not self.isFullyRetractedBack():
             self.setSpeeds(self.backHold, self.frontHold)
             print('holding both')
-        elif not self.isFrontOverGround():
+        elif not self.isFrontOverGround() and not self.isFullyRetractedFront():
             self.setSpeeds(0, self.frontHold)
             print('holding front')
-        elif not self.isBackOverGround():
+        elif not self.isBackOverGround() and not self.isFullyRetractedBack():
             self.setSpeeds(self.backHold, 0)
             print('holding back')
         else:
@@ -242,6 +258,7 @@ class Climber():
 
     def startClimbAuto(self):
         self.state = 1
+        self.wheelsStart = wpilib.Timer.getFPGATimestamp()
 
     def stopClimbAuto(self):
         self.state = -1
@@ -299,6 +316,7 @@ class Climber():
         if self.state==2 and self.isFullyRetractedFront():
             print("Transition to State 3")
             self.state = 3
+            self.wheelsStart2 = wpilib.Timer.getFPGATimestamp()
 
         if self.state==3 and self.isBackOverGround():
             print("Transition to State 4")
@@ -373,3 +391,6 @@ class Climber():
         self.frontHold = SmartDashboard.getNumber("FrontHold", self.frontHold)
         SmartDashboard.putNumber("Lean", self.getLean())
         SmartDashboard.putNumber("FloorSensor", self.backUp())
+        SmartDashboard.putBoolean("Auto Climb Indicator" , self.autoClimbIndicator)
+        SmartDashboard.putNumber("Retract Start", self.frontRetractStart)
+        SmartDashboard.putNumber("Wheels Start", self.wheelsStart2)

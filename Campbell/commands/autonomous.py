@@ -59,8 +59,7 @@ class CenterCargo(CommandGroup):
         DriveStraightCombined = driveStraightCombined.DriveStraightCombined
         EjectHatch = HatchMech.EjectHatch
 
-        self.addSequential(DriveStraightCombined(distance=50, angle=0, timeout=3.5, p=0.06, i=0, d=.336))
-        self.addSequential(DriveStraightCombined(distance=88.25, angle=0, timeout=.75))
+        self.addSequential(DriveStraightCombined(distance=138.25, angle=0, timeout=5))
         #self.addSequential(EjectHatch())
 
 class CenterCargoPart2(CommandGroup):
