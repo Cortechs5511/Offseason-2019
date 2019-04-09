@@ -167,7 +167,15 @@ class Drive(Subsystem):
 
     def __setDistance__(self,output): self.distPID = output
 
-    def __getAngle__(self): return self.getAngle()
+    def __getAngle__(self):
+        angle = self.getAngle()
+        if self.robot.teleop:
+            if angle < 0:
+                angle = angle + 180
+            else:
+                angle = angle -180
+        return angle
+
     def __setAngle__(self,output): self.anglePID = output
 
     def setMode(self, mode, name=None, distance=0, angle=0):

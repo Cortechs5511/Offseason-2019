@@ -55,7 +55,7 @@ class MyRobot(CommandBasedRobot):
         self.lastAuto = False
         self.lastAlign = False
         self.lastStraightAlign = False
-
+        self.teleop = False
         Command.getRobot = lambda x=0: self
 
         # Load system preferences prior to constructing
@@ -156,6 +156,7 @@ class MyRobot(CommandBasedRobot):
     def teleopInit(self):
         super().teleopInit()
         self.disabledInit()
+        self.teleop = True
 
     def teleopPeriodic(self):
         self.climber.periodic()
