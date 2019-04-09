@@ -122,15 +122,13 @@ class MyRobot(CommandBasedRobot):
             AutoAlign(self.limelight.getPath()[0],self.limelight.getPath()[1],self.limelight.getPath()[2]).cancel()
             self.SetSpeedDT.start()
 
-
         currStraightAlign = self.joystick0.getRawButton(map.straightAlign)
         if currStraightAlign and currStraightAlign != self.lastStraightAlign:
-            StraightAlign(self.limelight.getPath()[0]).start()
+            StraightAlign(self.limelight.getTx()).start()
         self.lastStraightAlign = currAlign
         if not currStraightAlign and currStraightAlign != self.lastStraightAlign:
-            StraightAlign(self.limelight.getPath()[0]).cancel()
+            StraightAlign(self.limelight.getTx()).cancel()
             self.SetSpeedDT.start()
-
 
     def autonomousInit(self):
         super().autonomousInit()

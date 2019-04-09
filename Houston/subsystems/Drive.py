@@ -193,7 +193,11 @@ class Drive(Subsystem):
     def setDirect(self): self.setMode("Direct")
     def getAngleAutoAlign(self):
         '''need to add conversion'''
-        return self.yaw
+        if self.yaw < 0:
+            angle =  self.yaw + 180
+        else:
+            angle = self.yaw - 180
+        return angle
 
     def angleAutoAlignToDT(self, DT_Angle):
         '''need to add conversion

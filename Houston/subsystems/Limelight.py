@@ -75,8 +75,7 @@ class Limelight():
         angle = self.robot.drive.getAngleAutoAlign()
         dist1 = x/math.cos(math.radians(angle))
         dist2 = y - (dist1 * math.sin(math.radians(angle)))
-        angle1 = self.robot.drive.angleAutoAlignToDT(angle)
-        return [angle1, dist1, dist2]
+        return [angle, dist1, dist2]
 
     def getPathXY(self):
         if wpilib.RobotBase.isSimulation(): return [-10, -5]

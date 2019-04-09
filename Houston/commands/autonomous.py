@@ -85,8 +85,8 @@ class AutoAlign(CommandGroup):
         DriveStraightCombined = driveStraightCombined.DriveStraightCombined
         TurnAngle = turnAngle.TurnAngle
         self.addSequential(DriveStraightCombined(distance=dist1, angle=angle, timeout=5))
-        self.addSequential(TurnAngle(angle=180, timeout=2.5))
-        self.addSequential(DriveStraightCombined(distance=dist2, angle=180, timeout=5))
+        self.addSequential(TurnAngle(angle=0, timeout=2.5))
+        self.addSequential(DriveStraightCombined(distance=dist2, angle=0, timeout=5))
 
 class StraightAlign(CommandGroup):
     def __init__(self,angle):
