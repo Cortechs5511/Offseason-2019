@@ -156,6 +156,7 @@ class Drive(Subsystem):
         self.angleController.setPID(p,i,d,f)
 
     def subsystemInit(self):
+        self.zeroNavx()
         driveStraightButton : wpilib.buttons.JoystickButton = r.driverLeftButton(1)
         driveStraightButton.whileHeld(DriveStraightTime(0.5))
 
@@ -257,7 +258,7 @@ class Drive(Subsystem):
             self.pitch = 0
             self.roll = 0
         else:
-            self.yaw = -1 * self.navx.getYaw()
+            self.yaw = self.navx.getYaw()
             self.pitch = self.navx.getPitch()
             self.roll = self.navx.getRoll()
 
@@ -265,10 +266,15 @@ class Drive(Subsystem):
         self.rightVal = self.rightEncoder.get()
 
     def getAngle(self):
-        if RobotBase.isSimulation(): return self.yaw
+        if RobotBase.isSimulation(): angle = - self.yaw
         else:
-            if map.robotId == map.astroV1: return self.yaw
-            else: return (-1 * self.yaw)
+            if self.yaw < 0:
+                angle = self.yaw + 180
+            elif self.yaw == 0:
+                angle = 0
+            else:
+                angle = self.yaw -180
+        return angle
 
     def getRoll(self): return self.roll
     def getPitch(self): return self.pitch
