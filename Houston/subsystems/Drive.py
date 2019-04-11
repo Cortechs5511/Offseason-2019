@@ -156,6 +156,7 @@ class Drive(Subsystem):
         self.angleController.setPID(p,i,d,f)
 
     def subsystemInit(self):
+        self.zeroNavx()
         driveStraightButton : wpilib.buttons.JoystickButton = r.driverLeftButton(1)
         driveStraightButton.whileHeld(DriveStraightTime(0.5))
         self.zeroNavx()
