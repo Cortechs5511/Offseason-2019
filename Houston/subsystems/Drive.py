@@ -158,6 +158,7 @@ class Drive(Subsystem):
     def subsystemInit(self):
         driveStraightButton : wpilib.buttons.JoystickButton = r.driverLeftButton(1)
         driveStraightButton.whileHeld(DriveStraightTime(0.5))
+        self.zeroNavx()
 
     def periodic(self):
         self.updateSensors()
@@ -169,11 +170,6 @@ class Drive(Subsystem):
 
     def __getAngle__(self):
         angle = self.getAngle()
-        if self.robot.teleop:
-            if angle < 0:
-                angle = angle + 180
-            else:
-                angle = angle -180
         return angle
 
     def __setAngle__(self,output): self.anglePID = output
@@ -199,18 +195,6 @@ class Drive(Subsystem):
     def setAngle(self, angle): self.setMode("Angle",angle=angle)
     def setCombined(self, distance, angle): self.setMode("Combined",distance=distance,angle=angle)
     def setDirect(self): self.setMode("Direct")
-    def getAngleAutoAlign(self):
-        '''need to add conversion'''
-        if self.yaw < 0:
-            angle =  self.yaw + 180
-        else:
-            angle = self.yaw - 180
-        return angle
-
-    def angleAutoAlignToDT(self, DT_Angle):
-        '''need to add conversion
-        will convert target angle for PID'''
-        return self.yaw
 
     def sign(self,num):
         if(num>0): return 1
@@ -257,7 +241,7 @@ class Drive(Subsystem):
             self.pitch = 0
             self.roll = 0
         else:
-            self.yaw = -1 * self.navx.getYaw()
+            self.yaw = self.navx.getYaw()
             self.pitch = self.navx.getPitch()
             self.roll = self.navx.getRoll()
 
@@ -265,10 +249,16 @@ class Drive(Subsystem):
         self.rightVal = self.rightEncoder.get()
 
     def getAngle(self):
-        if RobotBase.isSimulation(): return self.yaw
-        else:
-            if map.robotId == map.astroV1: return self.yaw
-            else: return (-1 * self.yaw)
+        angle = self.yaw
+        if RobotBase.isSimulation(): return -angle
+        if self.robot.teleop:
+            if angle == 0:
+                angle = 0
+            elif angle < 0:
+                angle = angle + 180
+            else:
+                angle = angle - 180
+        return angle
 
     def getRoll(self): return self.roll
     def getPitch(self): return self.pitch

@@ -108,18 +108,20 @@ class MyRobot(CommandBasedRobot):
         self.autonChooser.addOption("Drive Straight Side", "DriveStraightSide")
 
         SmartDashboard.putData("Auto mode", self.autonChooser)
+        self.drive.zeroNavx()
 
     def robotPeriodic(self):
         self.limelight.readLimelightData()
+        SmartDashboard.putBoolean("teleop",self.teleop)
 
         if(self.dashboard): self.updateDashboardPeriodic()
 
         currAlign = self.joystick0.getRawButton(map.autoAlign)
         if currAlign and currAlign != self.lastAlign:
-            AutoAlign(self.limelight.getPath()[0],self.limelight.getPath()[1],self.limelight.getPath()[2]).start()
+            AutoAlign(self.limelight.getPath()[0],self.limelight.getPath()[1],self.limelight.getPath()[2],self.limelight.getPath()[3]).start()
         self.lastAlign = currAlign
         if not currAlign and currAlign != self.lastAlign:
-            AutoAlign(self.limelight.getPath()[0],self.limelight.getPath()[1],self.limelight.getPath()[2]).cancel()
+            AutoAlign(self.limelight.getPath()[0],self.limelight.getPath()[1],self.limelight.getPath()[2],self.limelight.getPath()[3]).cancel()
             self.SetSpeedDT.start()
 
         currStraightAlign = self.joystick0.getRawButton(map.straightAlign)

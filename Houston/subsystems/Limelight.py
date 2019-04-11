@@ -11,13 +11,15 @@ class Limelight():
     def __init__(self, Robot):
         self.robot = Robot
         self.table = NetworkTables.getTable("limelight")
-        self.table.putNumber('ledMode',1)
+        self.table.putNumber('ledMode', 0)
         self.tv = 0
         self.tx = 0
         self.ty = 0
         self.ta = 0
         self.ts = 0
         self.tl = 0
+        self.camtran = [0,0,0,0,0,0]
+
     def readLimelightData(self):
         self.tv = self.table.getNumber('tv',1000)
         self.tx = self.table.getNumber('tx',1000)
@@ -29,7 +31,8 @@ class Limelight():
         self.tvert = self.table.getNumber('tvert',1000)
         self.tlong = self.table.getNumber('tlong',1000)
         self.tshort = self.table.getNumber('tshort',1000)
-        #self.camTran = self.table.getNumberArray('camtran',None)
+        self.camtran = self.table.getNumberArray('camtran', [1000,1000,1000,1000,1000,1000])
+
 
     def get(self):
         return [self.tv, self.tx, self.ty, self.ta]
@@ -51,7 +54,8 @@ class Limelight():
     def getDistance(self):
         """returns distance in inches from limelight to target"""
         taBox = (self.thor * self.tvert)/(720*960) #box area as percentage of whole
-        if(taBox==None or taBox<=0): return -1
+        if (taBox==None or taBox<=0):
+            return -1
         const = 4 * math.tan(0.471)*math.tan(0.3576)
         return math.sqrt((self.abox)/(const*taBox))
 
@@ -60,10 +64,19 @@ class Limelight():
         return self.robot.drive.getAngle() - self.getTx()
 
     def getXError(self):
-        return self.robot.limelight.getDistance() * math.sin(math.radians(self.getAngle2()))
+        tx = self.getTx()
+        #return self.robot.limelight.getDistance() * math.sin(math.radians(self.getAngle2()))
+        angle = self.robot.drive.getAngle()
+        angle = abs(angle)
+        a = tx + 90 - angle
+        return (self.getZ()) / (math.tan(math.radians(a)))
 
     def getYError(self):
-        return self.robot.limelight.getDistance() * math.cos(math.radians(self.getAngle2()))
+        #return self.robot.limelight.getDistance() * math.cos(math.radians(self.getAngle2()))
+        return self.getZ()
+
+    def getZ(self):
+        return self.camtran[2]
 
     def getPath(self):
         '''returns - amount to drive forward on same angle
@@ -72,14 +85,22 @@ class Limelight():
         '''
         x = self.getXError()
         y = self.getYError()
-        angle = self.robot.drive.getAngleAutoAlign()
+        angle0 = 1000
+        #x = self.getX3D()
+        #y = self.getY3D()
+        angle = self.robot.drive.getAngle()
         dist1 = x/math.cos(math.radians(angle))
         dist2 = y - (dist1 * math.sin(math.radians(angle)))
-        return [angle, dist1, dist2]
+        if dist2 < 10:
+            angle0 = math.atan(x/(y-10))
+            dist2 = 10
+            dist1 = (y - 10)/ math.cos(math.radians(angle0))
+        return [angle, dist1, dist2, angle0]
 
     def getPathXY(self):
         if wpilib.RobotBase.isSimulation(): return [-10, -5]
         return [-self.getYError()/12, self.getXError()/12]
+        #return [-self.getY3D()/12, self.getX3D()/12]
 
     def dashboardInit(self):
         pass
@@ -87,6 +108,7 @@ class Limelight():
     def dashboardPeriodic(self):
         SmartDashboard.putNumber("xError", self.getXError())
         SmartDashboard.putNumber("yError", self.getYError())
+        SmartDashboard.putNumber('Camtran', self.camtran[2])
         SmartDashboard.putNumber("Distance",self.getDistance())
         SmartDashboard.putNumber("thor", self.thor)
         SmartDashboard.putNumber("Angle1", self.tx)

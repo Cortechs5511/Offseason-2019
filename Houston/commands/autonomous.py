@@ -80,13 +80,19 @@ class CenterCargoPart2(CommandGroup):
         self.addSequential(DriveStraightCombined(distance=-10, angle=0, timeout=.75))'''
 
 class AutoAlign(CommandGroup):
-    def __init__(self,angle,dist1,dist2):
+    def __init__(self,angle,dist1,dist2,angle0):
         super().__init__('autoAlign')
         DriveStraightCombined = driveStraightCombined.DriveStraightCombined
         TurnAngle = turnAngle.TurnAngle
-        self.addSequential(DriveStraightCombined(distance=dist1, angle=angle, timeout=5))
-        self.addSequential(TurnAngle(angle=0, timeout=2.5))
-        self.addSequential(DriveStraightCombined(distance=dist2, angle=0, timeout=5))
+        if angle0 != 1000:
+            self.addSequential(TurnAngle(angle=angle0, timeout=2.5))
+            self.addSequential(DriveStraightCombined(distance=dist1, angle=angle0, timeout=5))
+            self.addSequential(TurnAngle(angle=0, timeout=2.5))
+            self.addSequential(DriveStraightCombined(distance=dist2, angle=0, timeout=5))
+        else:
+            self.addSequential(DriveStraightCombined(distance=dist1, angle=angle, timeout=5))
+            self.addSequential(TurnAngle(angle=0, timeout=2.5))
+            self.addSequential(DriveStraightCombined(distance=dist2, angle=0, timeout=5))
 
 class StraightAlign(CommandGroup):
     def __init__(self,angle):
