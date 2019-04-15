@@ -103,7 +103,7 @@ class MyRobot(CommandBasedRobot):
         # Set up auton chooser
         self.autonChooser = SendableChooser()
         self.autonChooser.setDefaultOption("Drive Straight", "DriveStraight")
-        self.autonChooser.addOption("Test LimeLight", "TestLimeLight")
+        #self.autonChooser.addOption("Test LimeLight", "TestLimeLight")
         self.autonChooser.addOption("Left Cargo", "LeftCargo")
         self.autonChooser.addOption("Right Cargo", "RightCargo")
         self.autonChooser.addOption("Do Nothing", "DoNothing")

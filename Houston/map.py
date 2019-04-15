@@ -164,4 +164,5 @@ halfSpeed = 1
 flip = 4
 shimmy = 15
 autoAlign = 5
+testStraight = 11
 straightAlign = 6

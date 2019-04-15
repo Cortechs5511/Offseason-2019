@@ -8,6 +8,8 @@ class Limelight():
 
     abox = 92.25 #area of box around targets
     tolAngle = 2
+    align = False
+    aligned = False
 
     def __init__(self, Robot):
         self.robot = Robot
@@ -93,7 +95,7 @@ class Limelight():
         '''
         x = self.getXError()
         y = self.getYError()
-        angle0 = 1000
+        '''angle0 = 1000
         #x = self.getX3D()
         #y = self.getY3D()
         angle = self.robot.drive.getAngle()
@@ -101,16 +103,21 @@ class Limelight():
         self.dist1 = x/math.cos(math.radians(angle))
         dist2 = y - (dist1 * abs(math.sin(math.radians(angle))))
         self.dist2 = y - (dist1 * math.sin(math.radians(angle)))
-        '''if angle is too low it doesnt have time to cover x error'''
+        #if angle is too low it doesnt have time to cover x error
         if dist2 < 10:
             angle0 = math.atan(x/(y-10))
             dist2 = 10
-            dist1 = (y - 10)/ math.cos(math.radians(angle0))
+            dist1 = (y - 10)/ math.cos(math.radians(angle0))'''
 
+        tx = self.getTx()
         dist2 = 1000
         angle0 = 1000
         dist1 = y
-
+        angle = self.robot.drive.getAngle() + tx
+        if dist1 > 1:
+            self.align = True
+        if abs(tx) < 2:
+            self.aligned = True
         return [angle, dist1 * 2, dist2, angle0]
 
     def getPathXY(self):
@@ -122,14 +129,16 @@ class Limelight():
         pass
 
     def dashboardPeriodic(self):
-        SmartDashboard.putNumber("xError", self.getXError())
-        SmartDashboard.putNumber("yError", self.getYError())
-        SmartDashboard.putNumber('Camtran', self.camtran[2])
-        SmartDashboard.putNumber("Distance",self.getDistance())
-        SmartDashboard.putNumber("thor", self.thor)
-        SmartDashboard.putNumber("Angle1", self.tx)
-        SmartDashboard.putNumber("Angle2", self.getAngle2())
-        SmartDashboard.putNumber("NavXAngle", self.robot.drive.getAngle())
+        #SmartDashboard.putNumber("xError", self.getXError())
+        #SmartDashboard.putNumber("yError", self.getYError())
+        #SmartDashboard.putNumber('Camtran', self.camtran[2])
+        #SmartDashboard.putNumber("Distance",self.getDistance())
+        #SmartDashboard.putNumber("thor", self.thor)
+        #SmartDashboard.putNumber("Angle1", self.tx)
+        #SmartDashboard.putNumber("Angle2", self.getAngle2())
+        #SmartDashboard.putNumber("NavXAngle", self.robot.drive.getAngle())
         SmartDashboard.putNumberArray("Path", self.getPath())
-        SmartDashboard.putNumber("dist1", self.dist1)
-        SmartDashboard.putNumber("dist2", self.dist2)
+        #SmartDashboard.putNumber("dist1", self.dist1)
+        #SmartDashboard.putNumber("dist2", self.dist2)
+        SmartDashboard.putNumber("aligned", self.aligned)
+        SmartDashboard.putNumber("align", self.align)

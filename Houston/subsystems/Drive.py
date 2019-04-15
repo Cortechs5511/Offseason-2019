@@ -161,8 +161,8 @@ class Drive(Subsystem):
         autoAlignButton.whenPressed(LimeLightAutoAlign(self.robot))
         autoAlignButton.whenReleased(SetSpeedDT())
 
-        autoAlignTuningButton : wpilib.buttons.JoystickButton = robot.driverLeftButton(6)
-        autoAlignTuningButton.whileHeld(AutoAlign(self.lime.getPath()[0],self.lime.getPath()[1],self.lime.getPath()[2],self.lime.getPath()[3]))
+        #autoAlignTuningButton : wpilib.buttons.JoystickButton = robot.driverLeftButton(6)
+        #autoAlignTuningButton.whileHeld(AutoAlign(self.lime.getPath()[0],self.lime.getPath()[1],self.lime.getPath()[2],self.lime.getPath()[3]))
 
     def setGains(self, p, i, d, f):
         self.distController.setPID(p,i,d,f)

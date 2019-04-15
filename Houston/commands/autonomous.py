@@ -93,6 +93,7 @@ class AutoAlign(CommandGroup):
             self.addSequential(TurnAngle(angle=0, timeout=2.5))
             self.addSequential(DriveStraightCombined(distance=dist2, angle=0, timeout=5))
         elif dist2 == 1000:
+            self.addSequential(TurnAngle(angle=angle, timeout=2.5))
             self.addSequential(DriveStraightCombined(distance=dist1, angle=angle, timeout=5))
         else:
             self.addSequential(DriveStraightCombined(distance=dist1, angle=angle, timeout=5))
