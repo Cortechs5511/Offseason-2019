@@ -21,6 +21,11 @@ from commands.drive.setFixedDT import SetFixedDT
 from commands.drive.setSpeedDT import SetSpeedDT
 from commands.drive.turnAngle import TurnAngle
 
+from commands.autonomous import AutoAlign as AutoAlign
+from commands.autonomous import AutoAlignTuning as AutoAlignTuning
+from commands.autonomous import LimeLightAutoAlign as LimeLightAutoAlign
+from commands.autonomous import TurnAngle as TurnAngle
+from commands.autonomous import DriveStraight as DriveStraight
 from sim import simComms
 import map
 
@@ -45,6 +50,7 @@ class Drive(Subsystem):
 
     def __init__(self, robot):
         super().__init__('Drive')
+
         SmartDashboard.putNumber("DriveStraight_P", 0.075)
         SmartDashboard.putNumber("DriveStraight_I", 0.0)
         SmartDashboard.putNumber("DriveStraight_D", 0.42)
@@ -59,8 +65,9 @@ class Drive(Subsystem):
         SmartDashboard.putNumber("DriveStraightAngle_D", 0.01)
 
         self.robot = robot
+        self.lime = self.robot.limelight
         self.nominalPID = 0.15
-        self.nominalPIDAngle = 0.11
+        self.nominalPIDAngle = 0.22 # 0.11 - v2
 
         self.preferences = Preferences.getInstance()
         timeout = 0
@@ -143,11 +150,19 @@ class Drive(Subsystem):
         if RobotBase.isSimulation(): [kP,kI,kD,kF] = [0.005, 0.0, 0.01, 0.00]
         angleController = PIDController(kP, kI, kD, kF, source=self.__getAngle__, output=self.__setAngle__)
         angleController.setInputRange(-180,  180) #degrees
-        angleController.setOutputRange(-0.9, 0.9)
+        angleController.setOutputRange(-0.5, 0.5)
         angleController.setAbsoluteTolerance(self.TolAngle)
         angleController.setContinuous(True)
         self.angleController = angleController
         self.angleController.disable()
+
+    def initializeCommands(self,robot):
+        autoAlignButton : wpilib.buttons.JoystickButton = robot.driverLeftButton(map.autoAlign)
+        autoAlignButton.whenPressed(LimeLightAutoAlign(self.robot))
+        autoAlignButton.whenReleased(SetSpeedDT())
+
+        autoAlignTuningButton : wpilib.buttons.JoystickButton = robot.driverLeftButton(6)
+        autoAlignTuningButton.whileHeld(AutoAlign(self.lime.getPath()[0],self.lime.getPath()[1],self.lime.getPath()[2],self.lime.getPath()[3]))
 
     def setGains(self, p, i, d, f):
         self.distController.setPID(p,i,d,f)
@@ -156,9 +171,6 @@ class Drive(Subsystem):
         self.angleController.setPID(p,i,d,f)
 
     def subsystemInit(self):
-        self.zeroNavx()
-        driveStraightButton : wpilib.buttons.JoystickButton = r.driverLeftButton(1)
-        driveStraightButton.whileHeld(DriveStraightTime(0.5))
         self.zeroNavx()
 
     def periodic(self):
@@ -213,8 +225,10 @@ class Drive(Subsystem):
             nom = self.nominalPID
             if self.distPID < 0:
                 nom = -nom
+
             left= self.getMaximum(self.distPID+self.anglePID,nom)
             right = self.getMaximum(self.distPID-self.anglePID,nom)
+
             #left= self.getMaximum(self.distPID,nom)
             #right = self.getMaximum(self.distPID,nom)
         elif(self.mode=="Direct"): [left, right] = [left, right]
@@ -296,7 +310,10 @@ class Drive(Subsystem):
     def initDefaultCommand(self):
         self.setDefaultCommand(SetSpeedDT(timeout = 300))
 
-    def dashboardInit(self): pass
+    def dashboardInit(self):
+        SmartDashboard.putData("test command", LimeLightAutoAlign(self.robot))
+        SmartDashboard.putData("Turn Angle", TurnAngle())
+        SmartDashboard.putData("Drive Combined" , DriveStraight())
 
     def getMaximum(self, number, comparison):
         if math.fabs(number) > math.fabs(comparison):
@@ -325,5 +342,5 @@ class Drive(Subsystem):
         SmartDashboard.putNumber("DT_VelocityRight", self.getVelocity()[1])
         SmartDashboard.putNumber("DT_CounLeft", self.getRaw()[0])
         SmartDashboard.putNumber("DT_CountRight", self.getRaw()[1])
-
+        SmartDashboard.putNumber("angle correction", self.anglePID)
         SmartDashboard.putNumber("DriveAmps",self.getOutputCurrent())

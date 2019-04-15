@@ -7,6 +7,7 @@ from networktables import NetworkTables
 class Limelight():
 
     abox = 92.25 #area of box around targets
+    tolAngle = 2
 
     def __init__(self, Robot):
         self.robot = Robot
@@ -69,14 +70,21 @@ class Limelight():
         angle = self.robot.drive.getAngle()
         angle = abs(angle)
         a = tx + 90 - angle
-        return (self.getZ()) / (math.tan(math.radians(a)))
+        de = math.tan(math.radians(a))
+        if de == 0:
+            return 1000
+        else:
+            return ((self.getZ()) / (math.tan(math.radians(a)))) + (7.5 * abs(math.sin(math.radians(a))))
 
     def getYError(self):
         #return self.robot.limelight.getDistance() * math.cos(math.radians(self.getAngle2()))
-        return self.getZ()
+        tx = self.getTx()
+        angle = abs(self.robot.drive.getAngle())
+        a = tx + 90 - angle
+        return self.getZ() +  (7.5 - 15.2)* abs(math.cos(math.radians(a)))
 
     def getZ(self):
-        return self.camtran[2]
+        return self.camtran[2] * -1
 
     def getPath(self):
         '''returns - amount to drive forward on same angle
@@ -89,13 +97,21 @@ class Limelight():
         #x = self.getX3D()
         #y = self.getY3D()
         angle = self.robot.drive.getAngle()
-        dist1 = x/math.cos(math.radians(angle))
-        dist2 = y - (dist1 * math.sin(math.radians(angle)))
+        dist1 = x/abs(math.cos(math.radians(angle)))
+        self.dist1 = x/math.cos(math.radians(angle))
+        dist2 = y - (dist1 * abs(math.sin(math.radians(angle))))
+        self.dist2 = y - (dist1 * math.sin(math.radians(angle)))
+        '''if angle is too low it doesnt have time to cover x error'''
         if dist2 < 10:
             angle0 = math.atan(x/(y-10))
             dist2 = 10
             dist1 = (y - 10)/ math.cos(math.radians(angle0))
-        return [angle, dist1, dist2, angle0]
+
+        dist2 = 1000
+        angle0 = 1000
+        dist1 = y
+
+        return [angle, dist1 * 2, dist2, angle0]
 
     def getPathXY(self):
         if wpilib.RobotBase.isSimulation(): return [-10, -5]
@@ -114,3 +130,6 @@ class Limelight():
         SmartDashboard.putNumber("Angle1", self.tx)
         SmartDashboard.putNumber("Angle2", self.getAngle2())
         SmartDashboard.putNumber("NavXAngle", self.robot.drive.getAngle())
+        SmartDashboard.putNumberArray("Path", self.getPath())
+        SmartDashboard.putNumber("dist1", self.dist1)
+        SmartDashboard.putNumber("dist2", self.dist2)

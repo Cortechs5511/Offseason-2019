@@ -12,14 +12,14 @@ class DriveStraightCombined(TimedCommand):
         self.requires(self.getRobot().drive)
         self.DT = self.getRobot().drive
 
-        self.distance = distance/12
+        self.distanceRelative = distance/12
         self.angle = angle
         self.pCheck = p
         self.iCheck = i
         self.dCheck = d
 
     def initialize(self):
-        self.DT.zeroEncoders()
+        #self.DT.zeroEncoders()
         # GETTING VALUE FROM DASHBOARD IF P,I,D ARGUMENTS ARE NOT GIVEN WHEN COMMAND IS CALLED
         if self.pCheck == 1000:
             p = SmartDashboard.getNumber("DriveStraight_P", 0.1)
@@ -41,18 +41,19 @@ class DriveStraightCombined(TimedCommand):
         angleD = SmartDashboard.getNumber('DriveStraightAngle_D', 0.01)
         self.DT.setGains(p, i, d, 0)
         self.DT.setGainsAngle(angleP, angleI, angleD, 0)
-        self.distance = self.distance + self.DT.getAvgDistance()
+        self.distance = self.distanceRelative + self.DT.getAvgDistance()
         self.DT.setCombined(distance=self.distance, angle=self.angle)
 
     def execute(self):
         self.DT.tankDrive()
 
     def isFinished(self):
-        return (abs(self.distance-self.DT.getAvgDistance())<0.1 and self.DT.getAvgAbsVelocity()<0.2) or self.isTimedOut()
+        return (abs(self.distance-self.DT.getAvgDistance())<0.1 and self.DT.getAvgAbsVelocity()<0.5) or self.isTimedOut()
 
     def interrupted(self):
         self.end()
 
     def end(self):
         self.DT.setMode("Direct")
+        SmartDashboard.putNumber("Distance Driven", self.DT.getAvgDistance() - self.distance)
         self.DT.tankDrive(0,0)

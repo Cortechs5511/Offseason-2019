@@ -29,6 +29,7 @@ from commands.autonomous import DriveStraightSide as DriveStraightSide
 from commands.autonomous import CenterCargoPart2 as CenterCargoPart2
 from commands.autonomous import AutoAlign as AutoAlign
 from commands.autonomous import StraightAlign as StraightAlign
+from commands.autonomous import LimeLightAutoAlign
 
 from commands.drive.driveStraightDistance import DriveStraightDistance
 from commands.drive.driveStraightCombined import DriveStraightCombined
@@ -82,6 +83,7 @@ class MyRobot(CommandBasedRobot):
 
         self.watch = wpilib.Watchdog(150, None)
 
+        self.drive.zeroNavx()
         '''
         Since OI instantiates commands and commands need access to subsystems,
         OI must be initialized after subsystems.
@@ -101,6 +103,7 @@ class MyRobot(CommandBasedRobot):
         # Set up auton chooser
         self.autonChooser = SendableChooser()
         self.autonChooser.setDefaultOption("Drive Straight", "DriveStraight")
+        self.autonChooser.addOption("Test LimeLight", "TestLimeLight")
         self.autonChooser.addOption("Left Cargo", "LeftCargo")
         self.autonChooser.addOption("Right Cargo", "RightCargo")
         self.autonChooser.addOption("Do Nothing", "DoNothing")
@@ -108,7 +111,7 @@ class MyRobot(CommandBasedRobot):
         self.autonChooser.addOption("Drive Straight Side", "DriveStraightSide")
 
         SmartDashboard.putData("Auto mode", self.autonChooser)
-        self.drive.zeroNavx()
+        self.drive.initializeCommands(self)
 
     def robotPeriodic(self):
         self.limelight.readLimelightData()
@@ -116,21 +119,23 @@ class MyRobot(CommandBasedRobot):
 
         if(self.dashboard): self.updateDashboardPeriodic()
 
-        currAlign = self.joystick0.getRawButton(map.autoAlign)
+        '''currAlign = self.joystick0.getRawButton(map.autoAlign)
         if currAlign and currAlign != self.lastAlign:
             AutoAlign(self.limelight.getPath()[0],self.limelight.getPath()[1],self.limelight.getPath()[2],self.limelight.getPath()[3]).start()
-        self.lastAlign = currAlign
+
         if not currAlign and currAlign != self.lastAlign:
             AutoAlign(self.limelight.getPath()[0],self.limelight.getPath()[1],self.limelight.getPath()[2],self.limelight.getPath()[3]).cancel()
             self.SetSpeedDT.start()
 
-        currStraightAlign = self.joystick0.getRawButton(map.straightAlign)
+        self.lastAlign = currAlign'''
+
+        '''currStraightAlign = self.joystick0.getRawButton(map.straightAlign)
         if currStraightAlign and currStraightAlign != self.lastStraightAlign:
             StraightAlign(self.limelight.getTx()).start()
         self.lastStraightAlign = currAlign
         if not currStraightAlign and currStraightAlign != self.lastStraightAlign:
             StraightAlign(self.limelight.getTx()).cancel()
-            self.SetSpeedDT.start()
+            self.SetSpeedDT.start()'''
 
     def autonomousInit(self):
         super().autonomousInit()
@@ -244,6 +249,8 @@ class MyRobot(CommandBasedRobot):
             self.RightCargo.start()
         elif a== "LeftCargo":
             self.LeftCargo.start()
+        elif a == "TestLimeLight":
+            LimeLightAutoAlign(self).start()
         else:
             self.disabledInit()
 
