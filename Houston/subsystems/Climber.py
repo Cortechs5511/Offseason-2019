@@ -20,7 +20,7 @@ class Climber():
         self.usingNeo = True
 
         self.frontRetractStart = 0
-        self.wheelsStart = 0 
+        self.wheelsStart = 0
         self.wheelsStart2 = 0
 
         if self.usingNeo:
@@ -158,7 +158,7 @@ class Climber():
             state = self.getState()
 
         #if state == 0: self.extend("both")
-        if state == 1: 
+        if state == 1:
             now = wpilib.Timer.getFPGATimestamp()
             if (now - self.wheelsStart) >= 2:
                     self.autoClimbIndicator = True
@@ -192,7 +192,6 @@ class Climber():
             self.retract("back")
             self.stopDrive()
         elif state == -1:
-            #self.disable()
             pass
 
     def frontUp(self):
@@ -200,7 +199,6 @@ class Climber():
 
     def backUp(self):
         return not self.backSwitch.get()
-        #return False
 
     def getLean(self):
         if map.robotId == map.astroV1: return self.robot.drive.getRoll()
@@ -241,7 +239,7 @@ class Climber():
         else:
             self.setSpeeds(0, 0)
             print('holding none')
-        
+
 
     def wheel(self, direction, speed=0):
         if(speed==0): speed = self.wheelSpeed
@@ -252,9 +250,6 @@ class Climber():
         elif direction == "backward":
             self.wheelLeft.set(-1 * speed)
             self.wheelRight.set(-1 * speed)
-
-        #correction = self.getCorrection()
-        #self.setSpeeds(self.backHold+correction, 0)
 
     def startClimbAuto(self):
         self.state = 1
@@ -276,27 +271,22 @@ class Climber():
 
         '''checking any illogical scenarios, if they occur end autoclimb'''
 
-        #if self.state==1 and (not self.isFullyExtendedBoth() or self.isBackOverGround()):
         if self.state ==1 and (not self.isFullyExtendedBoth()):
             print("STATE 1 Error")
             self.state = -1
 
-        #if self.state==2 and (not self.isFullyExtendedBack() or self.isBackOverGround() or not self.isFrontOverGround()):
         if self.state ==2 and (not self.isFullyExtendedBack()):
             print("STATE 2 Error")
             self.state = -1
 
-        #if self.state==3 and (not self.isFrontOverGround() or not self.isFullyExtendedBack() or not self.isFullyRetractedFront()):
         if self.state == 3 and (not self.isFullyExtendedBack() or not self.isFullyRetractedFront()):
             print("STATE 3 Error")
             self.state = -1
 
-        #if self.state==4 and (not self.isFrontOverGround() or not self.isBackOverGround() or not self.isFullyRetractedFront()):
         if self.state == 4 and (not self.isFullyRetractedFront()):
             print("STATE 4 Error")
             self.state = -1
 
-        #if self.state==5 and (not self.isFrontOverGround() or not self.isBackOverGround() or not self.isFullyRetractedBoth()):
         if self.state == 5 and (not self.isFullyRetractedBack()):
             print("STATE 5 Error")
             self.state=-1
@@ -367,7 +357,7 @@ class Climber():
 
     def isFullyExtendedBoth(self):
         return (self.isFullyExtendedBack() and self.isFullyExtendedFront())
-    
+
     def isFullyRetractedBoth(self):
         return (self.isFullyRetractedBack() and self.isFullyRetractedFront())
 

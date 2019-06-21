@@ -27,12 +27,6 @@ class HatchMech(Subsystem):
 
     def periodic(self):
 
-        #if self.xbox.getRawButton(map.kickHatch) == True: self.kick("out")
-        #elif self.xbox.getRawButton(map.toggleHatch) == True: self.kick("in")
-
-        #if self.xbox.getRawButton(map.extendHatch) == True: self.slide("out")
-        #elif self.xbox.getRawButton(map.retractHatch) == True: self.slide("in")
-
         currKick = self.xbox.getRawButton(map.kickHatch)
         currSlide = self.xbox.getRawButton(map.toggleHatch)
 
@@ -42,12 +36,16 @@ class HatchMech(Subsystem):
         self.lastKick = currKick
         self.lastSlide = currSlide
 
-        if self.joystick0.getRawButton(map.drivehatch) or self.joystick1.getRawButton(map.drivehatch): self.kick("out")
+        if self.joystick0.getRawButton(map.drivehatch) or self.joystick1.getRawButton(map.drivehatch):
+            self.kick("out")
 
     def kick(self, mode):
-        if mode == "out": self.kicker.set(True)
-        elif mode == "in": self.kicker.set(False)
-        else: self.kicker.set(not self.kicker.get())
+        if mode == "out":
+            self.kicker.set(True)
+        elif mode == "in":
+            self.kicker.set(False)
+        else:
+            self.kicker.set(not self.kicker.get())
 
     def slide(self, mode):
         if mode == "out": self.slider.set(True)
