@@ -41,7 +41,7 @@ class CargoMech():
         self.motor.configPeakCurrentDuration(100,timeout) #Peak Current for max 100 ms
         self.motor.enableCurrentLimit(True)
 
-
+        #Talon motor object created
         self.wrist = Talon(map.wrist)
         if not wpilib.RobotBase.isSimulation():
             self.wrist.configFactoryDefault()
@@ -49,7 +49,6 @@ class CargoMech():
         self.wrist.setNeutralMode(2)
         self.motor.setNeutralMode(2)
         self.motor.configVoltageCompSaturation(self.maxVolts)
-        self.intakeSpeed = 0.9
 
         self.wrist.configClearPositionOnLimitF(True)
 
@@ -66,13 +65,13 @@ class CargoMech():
         self.cargoController.disable()
 
     def intake(self, mode):
-        ''' Intake/Outtake/Stop Intake the cargo (turn wheels inward)'''
-        if mode == "intake": self.motor.set(self.intakeSpeed)
-        elif mode == "outtake": self.motor.set(-1 * self.intakeSpeed)
+        #Intake/Outtake/Stop, based on the mode it changes the speed of the motor
+        if mode == "intake": self.motor.set(0.9)
+        elif mode == "outtake": self.motor.set(-0.9)
         elif mode == "stop": self.motor.set(0)
 
     def moveWrist(self,mode):
-        '''move wrist in and out of robot'''
+        #move wrist in and out of robot
         if mode == "up": self.wrist.set(self.getPowerSimple("up"))
         elif mode == "down": self.wrist.set(-1 * self.getPowerSimple("down"))
         elif mode == "upVolts": self.wrist.set(self.wristUpVolts/self.maxVolts)
@@ -85,23 +84,20 @@ class CargoMech():
             self.wrist.set(self.gPower)
 
     def periodic(self):
-        deadband = 0.4
-
-        if self.xbox.getRawAxis(map.intakeCargo)>deadband: self.intake("intake")
-        elif self.xbox.getRawAxis(map.outtakeCargo)>deadband: self.intake("outtake")
-        else:
-            self.intake("stop")
+        #0.4 as a deadband
+        if self.xbox.getRawAxis(map.intakeCargo)>0.4: self.intake("intake")
+        elif self.xbox.getRawAxis(map.outtakeCargo)>0.4: self.intake("outtake")
+        else: self.intake("stop")
 
         if self.xbox.getRawButton(map.wristUp): self.moveWrist("up")
         elif self.xbox.getRawButton(map.wristDown): self.moveWrist("down")
         elif self.joystick0.getRawButton(map.wristUpVolts): self.moveWrist("upVolts")
         elif self.joystick0.getRawButton(map.wristDownVolts): self.moveWrist("downVolts")
-        else:
-            self.moveWrist("gravity")
-
+        else: self.moveWrist("gravity")
+    #disables intake
     def disable(self): self.intake("stop")
 
-
+    #gets the angle, used in other support functions
     def getAngle(self):
         pos = self.getPosition()
         angle = abs(pos * 115/self.targetPosDown)
@@ -136,8 +132,7 @@ class CargoMech():
             SmartDashboard.putNumber(key, val)
         return val
 
-    def dashboardInit(self):
-        pass
+    def dashboardInit(self): pass
 
     def dashboardPeriodic(self):
         #self.wristUp = self.getNumber("WristUpSpeed" , 0.5)
