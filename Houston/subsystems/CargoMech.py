@@ -1,6 +1,8 @@
 from wpilib import SmartDashboard
 from ctre import WPI_TalonSRX as Talon
 from wpilib import SmartDashboard
+from wpilib import PIDController
+from wpilib import RobotBase
 import wpilib
 import map
 import oi
@@ -27,6 +29,12 @@ class CargoMech():
         self.joystick0 = oi.getJoystick(0)
         self.motor = Talon(map.intake)
 
+        self.gPower = 0
+
+        self.angleArr = [0, 0, 0, 0]
+        #measure these ^
+        self.gravityArr = [0, 0, 0, 0]
+        #tune these ^
 
         self.motor.configContinuousCurrentLimit(20,timeout) #15 Amps per motor
         self.motor.configPeakCurrentLimit(30,timeout) #20 Amps during Peak Duration
@@ -48,9 +56,14 @@ class CargoMech():
         #MOTION MAGIC CONFIG
         self.loops = 0
         self.timesInMotionMagic = 0
-      
 
-        self.wrist.setSelectedSensorPosition(0, self.kPIDLoopIdx, self.kTimeoutMs)
+
+        #self.wrist.setSelectedSensorPosition(0, self.kPIDLoopIdx, self.kTimeoutMs)
+
+        [self.kP, self.kI, self.kD] = [0, 0, 0]
+        cargoController = PIDController(self.kP, self.kI, self.kD, source = self.getAngle, output = self.__setGravity__)
+        self.cargoController = cargoController
+        self.cargoController.disable()
 
     def intake(self, mode):
         ''' Intake/Outtake/Stop Intake the cargo (turn wheels inward)'''
@@ -67,7 +80,9 @@ class CargoMech():
         elif mode == "stop":
             self.wrist.set(0)
         else:
-            self.wrist.set(self.getGravitySimple())
+            self.cargoController.setSetpoint(self.getAngle())
+            self.cargoController.enable()
+            self.wrist.set(self.gPower)
 
     def periodic(self):
         deadband = 0.4
@@ -90,7 +105,7 @@ class CargoMech():
     def getAngle(self):
         pos = self.getPosition()
         angle = abs(pos * 115/self.targetPosDown)
-        return angle - 25
+        return (angle - 25)
 
     def getPosition(self):
         return self.wrist.getQuadraturePosition()
@@ -99,22 +114,19 @@ class CargoMech():
         angle = self.getAngle()
         return angle*gain
 
+    def __setGravity__(self, output): self.gPower = output
+
     def getPowerSimple(self, direction):
         '''true direction is up into robot
         false direction is down out of robot'''
         angle = self.getAngle()
-        power = abs(self.simpleGainGravity * math.sin(math.radians(angle)) + self.simpleGain)
+        power = abs(self.simpleGain)
         if angle > 80:
             if direction == "down":
                 power = 0
         if angle < -20:
             if direction == "up":
                 power = 0
-        return power
-
-    def getGravitySimple(self):
-        angle = self.getAngle()
-        power =  self.simpleGainGravity * math.sin(math.radians(angle))
         return power
 
     def getNumber(self, key, defVal):
@@ -128,12 +140,19 @@ class CargoMech():
         pass
 
     def dashboardPeriodic(self):
-        self.wristUp = self.getNumber("WristUpSpeed" , 0.5)
-        self.wristDown = self.getNumber("WristDownSpeed" , 0.2)
-        self.wristUpVolts = self.getNumber("WristUpVoltage" , 5)
-        self.wristDownVolts = self.getNumber("WristDownVoltage" , 2)
-        self.simpleGain = self.getNumber("Wrist Simple Gain", self.simpleGain)
-        self.simpleGainGravity = self.getNumber("Wrist Simple Gain Gravity", self.simpleGainGravity)
+        #self.wristUp = self.getNumber("WristUpSpeed" , 0.5)
+        #self.wristDown = self.getNumber("WristDownSpeed" , 0.2)
+        #self.wristUpVolts = self.getNumber("WristUpVoltage" , 5)
+        #self.wristDownVolts = self.getNumber("WristDownVoltage" , 2)
+        #self.simpleGain = self.getNumber("Wrist Simple Gain", self.simpleGain)
+        #self.simpleGainGravity = self.getNumber("Wrist Simple Gain Gravity", self.simpleGainGravity)
+        self.kP = self.getNumber("Wrist kP", 0)
+        self.kI = self.getNumber("Wrist kI", 0)
+        self.kD = self.getNumber("Wrist kD", 0)]
+        self.gravityArr[0] = self.getNumber("Gravity Bottom", 0)
+        self.gravityArr[1] = self.getNumber("Gravity Cargoship", 0)
+        self.gravityArr[2] = self.getNumber("Gravity Rocket", 0)
+        self.gravityArr[3] = self.getNumber("Gravity Up", 0)
         SmartDashboard.putNumber("Wrist Position", self.wrist.getQuadraturePosition())
         SmartDashboard.putNumber("Wrist Angle" , self.getAngle())
         SmartDashboard.putNumber("Wrist Power Up" , self.getPowerSimple("up"))
