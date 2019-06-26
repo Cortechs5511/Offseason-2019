@@ -37,6 +37,7 @@ class CargoMech():
 
         self.gPower = 0
         self.input = 0
+        self.lastCargoCommand = "resting"
 
         self.motor.configContinuousCurrentLimit(20,timeout) #15 Amps per motor
         self.motor.configPeakCurrentLimit(30,timeout) #20 Amps during Peak Duration
@@ -59,7 +60,6 @@ class CargoMech():
         self.loops = 0
         self.timesInMotionMagic = 0
 
-
         #self.wrist.setSelectedSensorPosition(0, self.kPIDLoopIdx, self.kTimeoutMs)
 
         [self.kP, self.kI, self.kD] = [0, 0, 0]
@@ -73,33 +73,36 @@ class CargoMech():
         elif mode == "outtake": self.motor.set(-0.9)
         elif mode == "stop": self.motor.set(0)
 
-    def moveWrist(self,mode):
+    def moveWrist(self, mode):
         #move wrist in and out of robot
-        '''replace modes up and down with pid and set angles'''
-        if mode == "up":
-            self.input = (self.getPowerSimple("up")) + self.getGravity()
-            self.wrist.set(self.getPowerSimple("up") + self.getGravity())
-        elif mode == "down":
-            self.input = (-1 * self.getPowerSimple("down")) + self.getGravity()
-            self.wrist.set((-1 * self.getPowerSimple("down")) + self.getGravity())
-        elif mode == "upVolts":
-            self.input = (self.wristUpVolts/self.maxVolts) + self.getGravity()
-            self.wrist.set((self.wristUpVolts/self.maxVolts) + self.getGravity())
-        elif mode == "downVolts":
-            self.input = (-1 * self.wristDownVolts / self.maxVolts) + self.getGravity()
-            self.wrist.set((-1 * self.wristDownVolts/ self.maxVolts) + self.getGravity())
-        elif mode == "stop":
-            self.input = 0
-            self.wrist.set(0)
+        if mode == "resting":
+            self.cargoController.setSetpoint(-50)
+            self.cargoController.enable()
+            if self.getAngle() <= -50:
+                self.cargoController.disable()
+                self.wrist.set(0.15)
+        elif mode == "cargoship":
+            self.cargoController.setSetpoint(-28)
+            self.cargoController.enable()
+            if self.getAngle() <= -25 and self.getAngle() >= -30:
+                self.cargoController.disable()
+                self.wrist.set(-0.1)
+        elif mode == "intake":
+            self.cargoController.setSetpoint(50)
+            self.cargoController.enable()
+            if self.getAngle() >= 45:
+                self.cargoController.disable()
+                self.wrist.set(0.15)
+        elif mode == "rocket":
+            #self.wrist.set(-0.3)
+            self.cargoController.setSetpoint(5)
+            self.cargoController.enable()
+            if self.getAngle() <= 10 and self.getAngle() >= 0:
+                self.cargoController.disable()
+                self.wrist.set(0.15)
         else:
-            #self.input = self.getGravity#()
-            #self.input = self.getNumber("#Wrist Power Set", 0)
-            self.input = 0
-            self.wrist.set(self.input)
-            #self.cargoController.setSetpoint(self.getAngle())
-            #self.cargoController.enable()
-            #self.wrist.set(self.gPower)
-            '''replace pid here with kF'''
+            pass
+        '''replace modes up and down with pid and set angles'''
 
     def periodic(self):
         #0.4 as a deadband
@@ -107,11 +110,22 @@ class CargoMech():
         elif self.xbox.getRawAxis(map.outtakeCargo)>0.4: self.intake("outtake")
         else: self.intake("stop")
 
-        if self.xbox.getRawButton(map.wristUp): self.moveWrist("up")
-        elif self.xbox.getRawButton(map.wristDown): self.moveWrist("down")
-        elif self.joystick0.getRawButton(map.wristUpVolts): self.moveWrist("upVolts")
-        elif self.joystick0.getRawButton(map.wristDownVolts): self.moveWrist("downVolts")
-        else: self.moveWrist("gravity")
+        if self.xbox.getPOV() == 0:
+            self.moveWrist("resting")
+            self.lastCargoCommand = "resting"
+        elif self.xbox.getPOV() == 90:
+            self.moveWrist("cargoship")
+            self.lastCargoCommand = "cargoship"
+        elif self.xbox.getPOV() == 180:
+            self.moveWrist("intake")
+            self.lastCargoCommand = "intake"
+        elif self.xbox.getPOV() == 270:
+            self.moveWrist("rocket")
+            self.lastCargoCommand = "rocket"
+        else:
+            self.moveWrist(self.lastCargoCommand)
+        '''replace with callling movewrist based on buttons'''
+
     #disables intake
     def disable(self): self.intake("stop")
 
@@ -121,21 +135,6 @@ class CargoMech():
         angle = abs(pos * 115/self.targetPosDown)
         angle -= 25
         return (angle - 25)
-        '''cargo mech vertical is 0 degrees'''
-        '''cargo mech down completely is 90 degrees'''
-        '''cargo mech has range of -25 to 85 degrees'''
-
-    def getGravity(self):
-        '''angle = self.getAngle()
-        power = 0
-        if angle < -20:
-            power = 0
-        elif angle > 80:
-            power = 0
-        else:
-            power = math.sin(math.radians(angle)) / 2
-        return power'''
-        return 0
 
     def getPosition(self):
         return self.wrist.getQuadraturePosition()
@@ -159,9 +158,6 @@ class CargoMech():
                 power = 0
         return power
 
-    def setWristPower(self, power):
-        self.wrist.set(power)
-
     def getNumber(self, key, defVal):
         val = SmartDashboard.getNumber(key, None)
         if val == None:
@@ -183,6 +179,6 @@ class CargoMech():
         self.kD = self.getNumber("Wrist kD", 0)
         SmartDashboard.putNumber("Wrist Position", self.wrist.getQuadraturePosition())
         SmartDashboard.putNumber("Wrist Angle" , self.getAngle())
-        #SmartDashboard.putNumber("Wrist Power", self.input)
+        SmartDashboard.putNumber("Wrist Power", self.input)
         SmartDashboard.putNumber("Wrist Power Up" , self.getPowerSimple("up"))
         SmartDashboard.putNumber("Wrist Power Down" , self.getPowerSimple("down"))
