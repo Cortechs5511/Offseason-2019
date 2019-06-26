@@ -9,6 +9,10 @@ import oi
 from sim import simComms
 import math
 
+#gravity for cargo ship is -.1, angle is -28
+#gravity for rocket is .15, angle is 5
+#gravity for resting position was .15 , angle is -50
+#gravity for intake is .15, angle is 50
 class CargoMech():
     kSlotIdx = 0
     kPIDLoopIdx = 0
@@ -16,6 +20,7 @@ class CargoMech():
 
     def initialize(self):
         timeout = 15
+        SmartDashboard.putNumber("Wrist Power Set", 0)
         self.lastMode = "unknown"
         self.sb = []
         self.targetPosUp = -300 #!!!!!
@@ -27,6 +32,7 @@ class CargoMech():
         self.simpleGainGravity = 0.07
         self.xbox = oi.getJoystick(2)
         self.joystick0 = oi.getJoystick(0)
+        #below is the talon on the intake
         self.motor = Talon(map.intake)
 
         self.gPower = 0
@@ -41,6 +47,7 @@ class CargoMech():
         self.wrist = Talon(map.wrist)
         if not wpilib.RobotBase.isSimulation():
             self.wrist.configFactoryDefault()
+        self.wrist.configVoltageCompSaturation(self.maxVolts)
         self.wrist.setInverted(True)
         self.wrist.setNeutralMode(2)
         self.motor.setNeutralMode(2)
@@ -86,7 +93,8 @@ class CargoMech():
             self.wrist.set(0)
         else:
             self.input = self.getGravity()
-            self.wrist.set(self.getGravity())
+            self.input = self.getNumber("Wrist Power Set", 0)
+            self.wrist.set(self.input)
             #self.cargoController.setSetpoint(self.getAngle())
             #self.cargoController.enable()
             #self.wrist.set(self.gPower)
@@ -148,6 +156,9 @@ class CargoMech():
             if direction == "up":
                 power = 0
         return power
+
+    def setWristPower(self, power):
+        self.wrist.set(power)
 
     def getNumber(self, key, defVal):
         val = SmartDashboard.getNumber(key, None)
