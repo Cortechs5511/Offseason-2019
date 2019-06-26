@@ -92,8 +92,9 @@ class CargoMech():
             self.input = 0
             self.wrist.set(0)
         else:
-            self.input = self.getGravity()
-            self.input = self.getNumber("Wrist Power Set", 0)
+            #self.input = self.getGravity#()
+            #self.input = self.getNumber("#Wrist Power Set", 0)
+            self.input = 0
             self.wrist.set(self.input)
             #self.cargoController.setSetpoint(self.getAngle())
             #self.cargoController.enable()
@@ -125,7 +126,7 @@ class CargoMech():
         '''cargo mech has range of -25 to 85 degrees'''
 
     def getGravity(self):
-        angle = self.getAngle()
+        '''angle = self.getAngle()
         power = 0
         if angle < -20:
             power = 0
@@ -133,7 +134,8 @@ class CargoMech():
             power = 0
         else:
             power = math.sin(math.radians(angle)) / 2
-        return power
+        return power'''
+        return 0
 
     def getPosition(self):
         return self.wrist.getQuadraturePosition()
@@ -181,6 +183,6 @@ class CargoMech():
         self.kD = self.getNumber("Wrist kD", 0)
         SmartDashboard.putNumber("Wrist Position", self.wrist.getQuadraturePosition())
         SmartDashboard.putNumber("Wrist Angle" , self.getAngle())
-        SmartDashboard.putNumber("Wrist Power", self.input)
+        #SmartDashboard.putNumber("Wrist Power", self.input)
         SmartDashboard.putNumber("Wrist Power Up" , self.getPowerSimple("up"))
         SmartDashboard.putNumber("Wrist Power Down" , self.getPowerSimple("down"))
