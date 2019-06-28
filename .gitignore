@@ -10,3 +10,4 @@ Testing/NeoTest/.deploy_cfg
 Testing/CargoArmTest/.deploy_cfg
 Testing/LegTest/.deploy_cfg
 Testing/LegTest/tests/pyfrc_test.py
+Testing/PerformanceTest/Python/tests/pyfrc_test.py
