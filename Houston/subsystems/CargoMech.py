@@ -21,7 +21,7 @@ class CargoMech():
     def initialize(self):
         timeout = 15
         SmartDashboard.putNumber("Wrist Power Set", 0)
-        self.lastMode = "unknown"
+        SmartDashboard.putNumber("Gravity Power", 0)
         self.sb = []
         self.targetPosUp = -300 #!!!!!
         self.targetPosDown = -1500 #!!!!!
@@ -35,9 +35,9 @@ class CargoMech():
         #below is the talon on the intake
         self.motor = Talon(map.intake)
 
-        self.gPower = 0
         self.input = 0
-        self.lastCargoCommand = "resting"
+        self.lastCargoCommand = "unknown"
+        self.gPower = 0
 
         self.motor.configContinuousCurrentLimit(20,timeout) #15 Amps per motor
         self.motor.configPeakCurrentLimit(30,timeout) #20 Amps during Peak Duration
@@ -62,10 +62,17 @@ class CargoMech():
 
         #self.wrist.setSelectedSensorPosition(0, self.kPIDLoopIdx, self.kTimeoutMs)
 
-        [self.kP, self.kI, self.kD] = [0, 0, 0]
-        cargoController = PIDController(self.kP, self.kI, self.kD, source = self.getAngle, output = self.__setGravity__)
+        [self.kP, self.kI, self.kD, self.kF] = [0, 0, 0, 0]
+        cargoController = PIDController(self.kP, self.kI, self.kD, self.kF, self, self)
         self.cargoController = cargoController
         self.cargoController.disable()
+
+        self.pidValuesForMode = {
+            "resting": [-50, self.kP, self.kI, self.kD, -0.15 / -50],
+            "cargoship": [-28, self.kP, self.kI, self.kD, 0.1/28],
+            "intake": [50, self.kP, self.kI, self.kD, 0.15/50],
+            "rocket": [5, self.kP, self.kI, self.kD, 0.15/5],
+        }
 
     def intake(self, mode):
         #Intake/Outtake/Stop, based on the mode it changes the speed of the motor
@@ -73,36 +80,37 @@ class CargoMech():
         elif mode == "outtake": self.motor.set(-0.9)
         elif mode == "stop": self.motor.set(0)
 
+    def pidWrite(self, output):
+        if output < -0.15:
+            output = -0.15
+        elif output > 0.2:
+            output = 0.2
+        self.wrist.set(output)
+        self.input = output
+
+    def pidGet(self):
+        return self.getAngle()
+
+    def setPIDSourceType(self):
+        pass
+
+    def getPIDSourceType(self):
+        return 0
+
     def moveWrist(self, mode):
-        #move wrist in and out of robot
-        if mode == "resting":
-            self.cargoController.setSetpoint(-50)
-            self.cargoController.enable()
-            if self.getAngle() <= -50:
+        if mode != self.lastCargoCommand:
+            self.lastCargoCommand = mode
+            if mode in self.pidValuesForMode:
+                array = self.pidValuesForMode[mode]
+                self.cargoController.setP(array[1])
+                self.cargoController.setI(array[2])
+                self.cargoController.setD(array[3])
+                self.cargoController.setF(array[4])
+                self.cargoController.setSetpoint(array[0])
+                self.cargoController.enable()
+            else:
+                self.wrist.set(0)
                 self.cargoController.disable()
-                self.wrist.set(0.15)
-        elif mode == "cargoship":
-            self.cargoController.setSetpoint(-28)
-            self.cargoController.enable()
-            if self.getAngle() <= -25 and self.getAngle() >= -30:
-                self.cargoController.disable()
-                self.wrist.set(-0.1)
-        elif mode == "intake":
-            self.cargoController.setSetpoint(50)
-            self.cargoController.enable()
-            if self.getAngle() >= 45:
-                self.cargoController.disable()
-                self.wrist.set(0.15)
-        elif mode == "rocket":
-            #self.wrist.set(-0.3)
-            self.cargoController.setSetpoint(5)
-            self.cargoController.enable()
-            if self.getAngle() <= 10 and self.getAngle() >= 0:
-                self.cargoController.disable()
-                self.wrist.set(0.15)
-        else:
-            pass
-        '''replace modes up and down with pid and set angles'''
 
     def periodic(self):
         #0.4 as a deadband
@@ -123,11 +131,13 @@ class CargoMech():
             self.moveWrist("rocket")
             self.lastCargoCommand = "rocket"
         else:
+            #self.moveWrist(self.lastCargoCommand)
             self.moveWrist(self.lastCargoCommand)
-        '''replace with callling movewrist based on buttons'''
+            self.wrist.set(self.gPower)
 
     #disables intake
-    def disable(self): self.intake("stop")
+    def disable(self):
+        self.intake("stop")
 
     #gets the angle, used in other support functions
     def getAngle(self):
@@ -138,25 +148,6 @@ class CargoMech():
 
     def getPosition(self):
         return self.wrist.getQuadraturePosition()
-
-    def getFeedForward(self, gain):
-        angle = self.getAngle()
-        return angle*gain
-
-    def __setGravity__(self, output): self.gPower = output
-
-    def getPowerSimple(self, direction):
-        '''true direction is up into robot
-        false direction is down out of robot'''
-        angle = self.getAngle()
-        power = abs(self.simpleGain)
-        if angle > 80:
-            if direction == "down":
-                power = 0
-        if angle < -20:
-            if direction == "up":
-                power = 0
-        return power
 
     def getNumber(self, key, defVal):
         val = SmartDashboard.getNumber(key, None)
@@ -174,11 +165,9 @@ class CargoMech():
         #self.wristDownVolts = self.getNumber("WristDownVoltage" , 2)
         #self.simpleGain = self.getNumber("Wrist Simple Gain", self.simpleGain)
         #self.simpleGainGravity = self.getNumber("Wrist Simple Gain Gravity", self.simpleGainGravity)
-        self.kP = self.getNumber("Wrist kP", 0)
-        self.kI = self.getNumber("Wrist kI", 0)
-        self.kD = self.getNumber("Wrist kD", 0)
         SmartDashboard.putNumber("Wrist Position", self.wrist.getQuadraturePosition())
+        SmartDashboard.putData("PID Controller", self.cargoController)
         SmartDashboard.putNumber("Wrist Angle" , self.getAngle())
         SmartDashboard.putNumber("Wrist Power", self.input)
-        SmartDashboard.putNumber("Wrist Power Up" , self.getPowerSimple("up"))
-        SmartDashboard.putNumber("Wrist Power Down" , self.getPowerSimple("down"))
+        self.gPower = SmartDashboard.getNumber("Gravity Power", 0)
+        SmartDashboard.putString("Last Cargo Command", self.lastCargoCommand)
