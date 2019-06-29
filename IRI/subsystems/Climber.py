@@ -229,16 +229,16 @@ class Climber():
         elif mode=="both": self.setSpeeds(-1 + correction, -1)
         elif not self.isBackOverGround() and not self.isFrontOverGround() and not self.isFullyRetractedFront() and not self.isFullyRetractedBack():
             self.setSpeeds(self.backHold, self.frontHold)
-            print('holding both')
+            #print('holding both')
         elif not self.isFrontOverGround() and not self.isFullyRetractedFront():
             self.setSpeeds(0, self.frontHold)
-            print('holding front')
+            #print('holding front')
         elif not self.isBackOverGround() and not self.isFullyRetractedBack():
             self.setSpeeds(self.backHold, 0)
-            print('holding back')
+            #print('holding back')
         else:
             self.setSpeeds(0, 0)
-            print('holding none')
+            #print('holding none')
 
 
     def wheel(self, direction, speed=0):
