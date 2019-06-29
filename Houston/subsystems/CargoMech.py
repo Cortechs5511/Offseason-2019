@@ -119,7 +119,6 @@ class CargoMech():
     def getAngle(self):
         pos = self.getPosition()
         angle = abs(pos * 115/self.targetPosDown)
-        angle -= 25
         return (angle - 25)
         '''cargo mech vertical is 0 degrees'''
         '''cargo mech down completely is 90 degrees'''
