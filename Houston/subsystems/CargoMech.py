@@ -153,9 +153,9 @@ class CargoMech():
         if angle > 80:
             if direction == "down":
                 power = 0
-        if angle < -20:
-            if direction == "up":
-                power = 0
+        #if angle < -20:
+        #    if direction == "up":
+        #        power = 0
         return power
 
     def setWristPower(self, power):
