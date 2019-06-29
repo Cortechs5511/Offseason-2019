@@ -1,4 +1,5 @@
-import wpilib
+#delete as soon as tested
+'''import wpilib
 from wpilib.command import Command
 import subsystems
 from subsystems import CargoMech, Climber, Drive, HatchMech, Limelight
@@ -30,3 +31,4 @@ class DisableAll(Command):
 
     def isFinished(self):
         return True
+'''

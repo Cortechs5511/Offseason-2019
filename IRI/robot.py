@@ -172,10 +172,10 @@ class MyRobot(CommandBasedRobot):
         super().teleopPeriodic()
 
     def updateDashboardInit(self):
-        self.drive.dashboardInit()
+        #self.drive.dashboardInit()
         #self.hatch.dashboardInit()
-        #self.cargo.dashboardInit()
-        self.climber.dashboardInit()
+        self.cargo.dashboardInit()
+        #self.climber.dashboardInit()
         #self.limelight.dashboardInit()
         #sequences.dashboardInit()
         #autonomous.dashboardInit()
@@ -183,11 +183,11 @@ class MyRobot(CommandBasedRobot):
     def updateDashboardPeriodic(self):
         #SmartDashboard.putNumber("Timer", self.timer.get())
         SmartDashboard.putNumber("PressureSwitch", self.compressor.getPressureSwitchValue())
-        self.drive.dashboardPeriodic()
+        #self.drive.dashboardPeriodic()
         #self.hatch.dashboardPeriodic()
-        #self.cargo.dashboardPeriodic()
-        self.climber.dashboardPeriodic()
-        self.limelight.dashboardPeriodic()
+        self.cargo.dashboardPeriodic()
+        #self.climber.dashboardPeriodic()
+        #self.limelight.dashboardPeriodic()
 
         #sequences.dashboardPeriodic()
         #autonomous.dashboardPeriodic()
