@@ -29,10 +29,10 @@ class HatchMech(Subsystem):
         self.lastKick = False
         self.lastSlide = False
         #boolean object for current kick and current slide
-        self.currKick = self.xbox.getRawButton(map.kickHatch)
-        self.currSlide = self.xbox.getRawButton(map.toggleHatch)
 
     def periodic(self):
+        self.currKick = self.xbox.getRawButton(map.kickHatch)
+        self.currSlide = self.xbox.getRawButton(map.toggleHatch)
         #if the variable is true and it does not equal the lastkick/slide boolean, sets it to the opposite of what it currently is
         if self.currKick and (self.currKick != self.lastKick): self.kick("toggle")
         if self.currSlide and (self.currSlide != self.lastSlide): self.slide("toggle")

@@ -36,8 +36,8 @@ class CargoMech():
         self.motor = Talon(map.intake)
 
         self.input = 0
+        self.input2 = 0
         self.lastCargoCommand = "unknown"
-        self.gPower = 0
 
         self.motor.configContinuousCurrentLimit(20,timeout) #15 Amps per motor
         self.motor.configPeakCurrentLimit(30,timeout) #20 Amps during Peak Duration
@@ -62,16 +62,20 @@ class CargoMech():
 
         #self.wrist.setSelectedSensorPosition(0, self.kPIDLoopIdx, self.kTimeoutMs)
 
+        self.F = 0
+        #should be 0.4
+        SmartDashboard.putNumber("F Gain", self.F)
+
         [self.kP, self.kI, self.kD, self.kF] = [0, 0, 0, 0]
         cargoController = PIDController(self.kP, self.kI, self.kD, self.kF, self, self)
         self.cargoController = cargoController
         self.cargoController.disable()
 
         self.pidValuesForMode = {
-            "resting": [-50, self.kP, self.kI, self.kD, -0.15 / -50],
-            "cargoship": [-28, self.kP, self.kI, self.kD, 0.1/28],
-            "intake": [50, self.kP, self.kI, self.kD, 0.15/50],
-            "rocket": [5, self.kP, self.kI, self.kD, 0.15/5],
+            "resting": [-50, self.kP, self.kI, self.kD, 0.15 / -50],
+            "cargoship": [-28, self.kP, self.kI, self.kD, 0.0],
+            "intake": [50, self.kP, self.kI, self.kD, 0.0],
+            "rocket": [5, self.kP, self.kI, self.kD, 0.19/5],
         }
 
     def intake(self, mode):
@@ -81,10 +85,11 @@ class CargoMech():
         elif mode == "stop": self.motor.set(0)
 
     def pidWrite(self, output):
-        if output < -0.15:
-            output = -0.15
-        elif output > 0.2:
-            output = 0.2
+        maxPower = 0.3
+        if output < -maxPower:
+            output = -maxPower
+        elif output > maxPower:
+            output = maxPower
         self.wrist.set(output)
         self.input = output
 
@@ -105,12 +110,15 @@ class CargoMech():
                 self.cargoController.setP(array[1])
                 self.cargoController.setI(array[2])
                 self.cargoController.setD(array[3])
-                self.cargoController.setF(array[4])
+                self.cargoController.setF(math.sin(self.getAngle()/180*math.pi)*self.F)
                 self.cargoController.setSetpoint(array[0])
                 self.cargoController.enable()
             else:
-                self.wrist.set(0)
                 self.cargoController.disable()
+        elif(mode not in self.pidValuesForMode):
+            self.wrist.set(math.sin(self.getAngle()/180*math.pi)*self.F)
+            self.input2 = math.sin(self.getAngle()/180*math.pi)*self.F
+
 
     def periodic(self):
         #0.4 as a deadband
@@ -131,9 +139,7 @@ class CargoMech():
             self.moveWrist("rocket")
             self.lastCargoCommand = "rocket"
         else:
-            #self.moveWrist(self.lastCargoCommand)
             self.moveWrist(self.lastCargoCommand)
-            self.wrist.set(self.gPower)
 
     #disables intake
     def disable(self):
@@ -143,8 +149,7 @@ class CargoMech():
     def getAngle(self):
         pos = self.getPosition()
         angle = abs(pos * 115/self.targetPosDown)
-        angle -= 25
-        return (angle - 25)
+        return (angle-20)
 
     def getPosition(self):
         return self.wrist.getQuadraturePosition()
@@ -169,5 +174,6 @@ class CargoMech():
         SmartDashboard.putData("PID Controller", self.cargoController)
         SmartDashboard.putNumber("Wrist Angle" , self.getAngle())
         SmartDashboard.putNumber("Wrist Power", self.input)
-        self.gPower = SmartDashboard.getNumber("Gravity Power", 0)
+        SmartDashboard.putNumber("Wrist Power2", self.input2)
         SmartDashboard.putString("Last Cargo Command", self.lastCargoCommand)
+        self.F = SmartDashboard.getNumber("F Gain", 0)
