@@ -4,6 +4,7 @@ from ctre import WPI_TalonSRX as Talon
 from ctre import WPI_VictorSPX as Victor
 
 import navx
+import oi
 
 import wpilib
 
@@ -68,6 +69,8 @@ class Drive(Subsystem):
         self.lime = self.robot.limelight
         self.nominalPID = 0.15
         self.nominalPIDAngle = 0.22 # 0.11 - v2
+
+        self.switch = False
 
         self.preferences = Preferences.getInstance()
         timeout = 0
@@ -175,6 +178,10 @@ class Drive(Subsystem):
 
     def periodic(self):
         self.updateSensors()
+        if oi.getJoystick(0).getRawButton(1):
+            self.switch = True
+        else:
+            self.switch = False
 
     def __getDistance__(self):
         return self.getAvgDistance()
@@ -236,7 +243,10 @@ class Drive(Subsystem):
 
         left = min(abs(left),self.maxSpeed)*self.sign(left)
         right = min(abs(right),self.maxSpeed)*self.sign(right)
-        self.__tankDrive__(left,right)
+        if self.switch:
+            self.__tankDrive__(-left, -right)
+        else:
+            self.__tankDrive__(left, right)
 
     def __tankDrive__(self,left,right):
         deadband = 0.1
