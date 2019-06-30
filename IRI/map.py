@@ -19,9 +19,10 @@ driveRight1 = 20
 driveRight2 = 21
 driveRight3 = 22
 
-
 intake = 30
 wrist = 31
+
+hatchWheels = 32
 
 frontLift = 40
 backLift = 41

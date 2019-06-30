@@ -4,6 +4,9 @@ from wpilib import Solenoid
 from wpilib.command.subsystem import Subsystem
 from wpilib.command import Command
 
+from ctre import WPI_TalonSRX as Talon
+from ctre import WPI_VictorSPX as Victor
+
 import map
 import oi
 
@@ -19,38 +22,60 @@ class HatchMech(Subsystem):
         self.xbox = oi.getJoystick(2)
         self.joystick0 = oi.getJoystick(0)
         self.joystick1 = oi.getJoystick(1)
+
         #makes solenoid objects to be used in kick and slide functions
         self.kicker = Solenoid(map.hatchKick)
         self.slider = Solenoid(map.hatchSlide)
+
+        self.maxVolts = 10
+        timeout = 0
+
+        self.wheels = Talon(map.hatchWheels)
+        self.wheels.setNeutralMode(2)
+        self.wheels.configVoltageCompSaturation(self.maxVolts)
+
+        self.wheels.configContinuousCurrentLimit(20,timeout) #20 Amps per motor
+        self.wheels.configPeakCurrentLimit(30,timeout) #30 Amps during Peak Duration
+        self.wheels.configPeakCurrentDuration(100,timeout) #Peak Current for max 100 ms
+        self.wheels.enableCurrentLimit(True)
+
+        self.powerIn = 0.5
+        self.powerOut = -0.5
+
         #sets kicker and slide solenoids to in
         self.kick("in")
         self.slide("in")
+
         #starts lastkick/slide booleans
         self.lastKick = False
         self.lastSlide = False
-        #boolean object for current kick and current slide
+
+        self.hasHatch = False
 
     def periodic(self):
+        self.updateHatch()
+
         self.currKick = self.xbox.getRawButton(map.kickHatch)
         self.currSlide = self.xbox.getRawButton(map.toggleHatch)
+
         #if the variable is true and it does not equal the lastkick/slide boolean, sets it to the opposite of what it currently is
         if self.currKick and (self.currKick != self.lastKick): self.kick("toggle")
         if self.currSlide and (self.currSlide != self.lastSlide): self.slide("toggle")
+
         #after the if statement, sets the lastkick/slide to the currkick/slide
         self.lastKick = self.currKick
         self.lastSlide = self.currSlide
-        #if either button is pressed set the kicker solenoid to true
-        if self.joystick0.getRawButton(map.drivehatch) or self.joystick1.getRawButton(map.drivehatch):
-            self.kick("out")
+
+        self.setWheels()
 
     # kick function to activate kicker solenoid
     def kick(self, mode):
         #out mode sets kicker solenoid to true
-        if mode == "out": self.kicker.set(True)
+        if mode == "out": self.setKick(True)
         #in mode sets kicker solenoid to false
-        elif mode == "in": self.kicker.set(False)
+        elif mode == "in": self.setKick(False)
         #if neither of them, makes the kicker solenoid to the opposite of what it is
-        else: self.kicker.set(not self.kicker.get())
+        else: self.setKick(not self.kicker.get())
 
     # slide function to activate slide solenoid
     def slide(self, mode):
@@ -61,22 +86,28 @@ class HatchMech(Subsystem):
         #if neither of them, makes the slider solenoid to the opposite of what it is
         else: self.slider.set(not self.slider.get())
 
-    #function to check if kicker solenoid is out, gets the boolean state of kicker
-    def isEjectorOut(self): return self.kicker.get()
+    def setKick(self, state):
+        self.kicker.set(state)
+        if state and self.slider.get() and self.hasHatch: self.hasHatch = False
 
-    #function which reads kicker solenoid to return either out/in
-    def toggle(self):
-        #if kicker is true, run kick function to 'out'
-        if self.kicker.get(): self.kick("out")
-        #otherwise, run kcik function 'in'
-        else: self.kick("in")
+    def setWheels(self):
+        if self.kicker.get() and self.slider.get() and self.hasHatch: self.wheels.set(self.powerOut)
+        elif not self.kicker.get() and self.slider.get() and not self.hasHatch: self.wheels.set(self.powerIn)
+        else: self.wheels.set(0)
+
+    def updateHatch(self):
+        #only checks current to possibly set false to true for hasHatch
+        threshold = 10 #10 amp current separates freely spinning and stalled
+        if self.slider.get() and self.wheels.getOutputCurrent()>threshold:
+            self.hasHatch = True
 
     #disable function runs kick function on in
     def disable(self): self.kick("in")
 
     def dashboardInit(self): pass
 
-    def dashboardPeriodic(self): pass
+    def dashboardPeriodic(self):
+        SmartDashboard.putNumber("Hatch Current", self.wheels.getOutputCurrent())
 
 #class ommand to eject hatch
 class EjectHatch(Command):
