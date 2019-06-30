@@ -132,6 +132,8 @@ class Drive(Subsystem):
         self.rightEncoder.setDistancePerPulse(self.rightConv)
         self.rightEncoder.setSamplesToAverage(10)
 
+        self.zero()
+
         #PID for Drive
         self.TolDist = 0.1 #feet
         [kP,kI,kD,kF] = [0.027, 0.00, 0.20, 0.00]
@@ -170,9 +172,6 @@ class Drive(Subsystem):
     def setGainsAngle(self, p, i, d, f):
         self.angleController.setPID(p,i,d,f)
 
-    def subsystemInit(self):
-        self.zeroNavx()
-
     def periodic(self):
         self.updateSensors()
 
@@ -182,8 +181,7 @@ class Drive(Subsystem):
     def __setDistance__(self,output): self.distPID = output
 
     def __getAngle__(self):
-        angle = self.getAngle()
-        return angle
+        return self.getAngle()
 
     def __setAngle__(self,output): self.anglePID = output
 
@@ -229,8 +227,6 @@ class Drive(Subsystem):
             left= self.getMaximum(self.distPID+self.anglePID,nom)
             right = self.getMaximum(self.distPID-self.anglePID,nom)
 
-            #left= self.getMaximum(self.distPID,nom)
-            #right = self.getMaximum(self.distPID,nom)
         elif(self.mode=="Direct"): [left, right] = [left, right]
         else: [left, right] = [0,0]
 

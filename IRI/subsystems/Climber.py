@@ -102,11 +102,8 @@ class Climber():
         POSITIVE POWER TO WHEELS MOVES ROBOT FORWARD
         '''
 
-        self.started = False
-
     def periodic(self):
         state = -1
-        if self.xbox.getRawButton(map.liftClimber): self.started = True
 
         deadband = 0.50
         frontAxis = self.xbox.getRawAxis(map.liftFrontClimber)

@@ -83,7 +83,6 @@ class MyRobot(CommandBasedRobot):
 
         self.watch = wpilib.Watchdog(150, None)
 
-        self.drive.zeroNavx()
         '''
         Since OI instantiates commands and commands need access to subsystems,
         OI must be initialized after subsystems.
