@@ -11,6 +11,7 @@ from wpilib import CameraServer
 
 from subsystems import HatchMech
 from subsystems import CargoMech
+#from subsystems import CargoMech0
 from subsystems import Climber
 from subsystems import Drive
 from subsystems import Limelight
@@ -69,6 +70,7 @@ class MyRobot(CommandBasedRobot):
         self.hatch = HatchMech.HatchMech(self)
         self.hatch.initialize()
 
+        #self.cargo = CargoMech0.CargoMech()
         self.cargo = CargoMech.CargoMech() #not a subsystem
         self.cargo.initialize()
 
@@ -172,8 +174,8 @@ class MyRobot(CommandBasedRobot):
 
     def updateDashboardInit(self):
         #self.drive.dashboardInit()
-        #self.hatch.dashboardInit()
-        self.cargo.dashboardInit()
+        self.hatch.dashboardInit()
+        #self.cargo.dashboardInit()
         #self.climber.dashboardInit()
         #self.limelight.dashboardInit()
         #sequences.dashboardInit()
@@ -183,8 +185,8 @@ class MyRobot(CommandBasedRobot):
         #SmartDashboard.putNumber("Timer", self.timer.get())
         SmartDashboard.putNumber("PressureSwitch", self.compressor.getPressureSwitchValue())
         #self.drive.dashboardPeriodic()
-        #self.hatch.dashboardPeriodic()
-        self.cargo.dashboardPeriodic()
+        self.hatch.dashboardPeriodic()
+        #self.cargo.dashboardPeriodic()
         #self.climber.dashboardPeriodic()
         #self.limelight.dashboardPeriodic()
 

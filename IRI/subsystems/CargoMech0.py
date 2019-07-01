@@ -176,4 +176,6 @@ class CargoMech():
         SmartDashboard.putNumber("Wrist Power", self.input)
         SmartDashboard.putNumber("Wrist Power2", self.input2)
         SmartDashboard.putString("Last Cargo Command", self.lastCargoCommand)
+        SmartDashboard.putBoolean("Wrist PinState Quad A", self.wrist.getPinStateQuadA())
+        SmartDashboard.putBoolean("Wrist PinState Quad B", self.wrist.getPinStateQuadB())
         self.F = SmartDashboard.getNumber("F Gain", 0)

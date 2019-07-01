@@ -19,17 +19,21 @@ class CargoMech():
         SmartDashboard.putNumber("Wrist Power Set", 0)
         SmartDashboard.putNumber("Gravity Power", 0)
 
-        self.F = 0.4
+        self.F = 0.25
         SmartDashboard.putNumber("F Gain", self.F)
 
         #self.angle = 0
         #SmartDashboard.putNumber("angle", self.angle)
 
-        self.range = 1200
+        self.range = -1200
+
+        self.povPressed = False
 
         self.maxVolts = 10
-        self.wristUpVolts = 2
+        self.wristUpVolts = 4
         self.wristDownVolts = -4
+        SmartDashboard.putNumber("Wrist Up Volts", self.wristUpVolts)
+        SmartDashboard.putNumber("Wrist Down Volts", self.wristDownVolts)
 
         self.xbox = oi.getJoystick(2)
         self.joystick0 = oi.getJoystick(0)
@@ -69,7 +73,7 @@ class CargoMech():
         else: self.intake.set(0)
 
     def setWrist(self, mode):
-        [setpoint, error] = [50, 5]
+        [setpoint, error] = [10, 5]
         mult = abs(self.getAngle()-50)/100 + 0.5 #increase constant if the arm is not moving enough close to the setpoint
         if mode == "rocket" and self.getAngle() < setpoint-error: self.moveWrist(self.wristDownVolts/ self.maxVolts*mult, mode)
         elif mode == "rocket" and self.getAngle() > setpoint+error: self.moveWrist(self.wristUpVolts/self.maxVolts*mult, mode)
@@ -86,13 +90,20 @@ class CargoMech():
         angle = self.getAngle()
         if angle > 80 and (mode == "down" or mode == "gravity"): power = 0
         elif angle < -20 and (mode == "up" or mode == "gravity"): power = 0
+        elif angle < 10 and mode == "gravity":
+            power = self.F #if operator lets go of buttons while at top, arm goes back to upper limit sqitch
         return power
 
     def getGravity(self):
         return math.sin(math.radians(self.getAngle()))*self.F
 
     def getAngle(self):
-        pos = self.getPosition()
+        pos = 0
+        if self.wrist.isRevLimitSwitchClosed():
+            pos = self.range
+            self.wrist.setQuadraturePosition(pos)
+        else:
+            pos = self.getPosition()
         angle = abs(pos * 115/self.range)
         return (angle-25)
 
@@ -109,7 +120,10 @@ class CargoMech():
         elif self.xbox.getRawAxis(map.outtakeCargo)>0.4: self.setIntake("outtake")
         else: self.setIntake("stop")
 
-        if self.xbox.getPOV() > 0: self.setWrist("rocket")
+        if self.xbox.getPOV() > 0 and self.povPressed: self.povPressed = False
+        if self.xbox.getPOV() > 0 and not self.povPressed: self.povPressed = True
+
+        if self.povPressed: self.setWrist("rocket")
         elif self.xbox.getRawButton(map.wristUp): self.setWrist("up")
         elif self.xbox.getRawButton(map.wristDown): self.setWrist("down")
         else: self.setWrist("gravity")
@@ -132,7 +146,12 @@ class CargoMech():
         SmartDashboard.putNumber("Wrist Position", self.wrist.getQuadraturePosition())
         SmartDashboard.putNumber("Wrist Angle" , self.getAngle())
         SmartDashboard.putNumber("Output", self.out)
-
         self.F = SmartDashboard.getNumber("F Gain", 0)
+        self.wristUpVolts = SmartDashboard.getNumber("Wrist Up Volts", 0)
+        self.wristDownVolts = SmartDashboard.getNumber("Wrist Down Volts", 0)
+        #SmartDashboard.putBoolean("Limit Switch", self.wrist.isFwdLimitSwitchClosed())
+        #SmartDashboard.putBoolean("Limit Switch Reverse", self.wrist.isRevLimitSwitchClosed())
+        #SmartDashboard.putBoolean("Wrist PinState Quad A", self.wrist.getPinStateQuadA())
+        #SmartDashboard.putBoolean("Wrist PinState Quad B", self.wrist.getPinStateQuadB())
 
         #self.angle = SmartDashboard.getNumber("angle", 0)

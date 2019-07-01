@@ -38,9 +38,10 @@ class HatchMech(Subsystem):
         self.wheels.configPeakCurrentLimit(30,timeout) #30 Amps during Peak Duration
         self.wheels.configPeakCurrentDuration(100,timeout) #Peak Current for max 100 ms
         self.wheels.enableCurrentLimit(True)
+        self.wheels.setInverted(True)
 
-        self.powerIn = 0.5
-        self.powerOut = -0.5
+        self.powerIn = 0.9
+        self.powerOut = -0.9
 
         #sets kicker and slide solenoids to in
         self.kick("in")
@@ -51,6 +52,8 @@ class HatchMech(Subsystem):
         self.lastSlide = False
 
         self.hasHatch = False
+
+        self.outPower = 0
 
     def periodic(self):
         self.updateHatch()
@@ -91,13 +94,19 @@ class HatchMech(Subsystem):
         if state and self.slider.get() and self.hasHatch: self.hasHatch = False
 
     def setWheels(self):
-        if self.kicker.get() and self.slider.get() and self.hasHatch: self.wheels.set(self.powerOut)
-        elif not self.kicker.get() and self.slider.get() and not self.hasHatch: self.wheels.set(self.powerIn)
-        else: self.wheels.set(0)
+        if self.kicker.get() and self.slider.get() and self.hasHatch:
+            self.wheels.set(self.powerOut)
+            self.outPower = self.powerOut
+        elif not self.kicker.get() and self.slider.get() and not self.hasHatch:
+            self.wheels.set(self.powerIn)
+            self.outPower = self.powerIn
+        else:
+            self.wheels.set(0)
+            self.outPower = 0
 
     def updateHatch(self):
         #only checks current to possibly set false to true for hasHatch
-        threshold = 10 #10 amp current separates freely spinning and stalled
+        threshold = 25 #10 amp current separates freely spinning and stalled
         if self.slider.get() and self.wheels.getOutputCurrent()>threshold:
             self.hasHatch = True
 
@@ -108,6 +117,7 @@ class HatchMech(Subsystem):
 
     def dashboardPeriodic(self):
         SmartDashboard.putNumber("Hatch Current", self.wheels.getOutputCurrent())
+        SmartDashboard.putNumber("Power", self.outPower)
 
 #class ommand to eject hatch
 class EjectHatch(Command):
