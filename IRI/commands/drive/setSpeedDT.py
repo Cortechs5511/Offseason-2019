@@ -18,6 +18,9 @@ class SetSpeedDT(TimedCommand):
         self.Joystick0 = self.robot.joystick0 #this is pretty messed up lol
         self.Joystick1 = self.robot.joystick1
 
+        self.robot.button = False
+        self.flip = False
+
     def initialize(self):
         self.DT.setDirect()
 
@@ -26,10 +29,14 @@ class SetSpeedDT(TimedCommand):
         right = -self.Joystick1.getY()
 
         if self.robot.readDriverRightButton(map.halfSpeed) or self.robot.readDriverLeftButton(map.halfSpeed):
-            [left, right] = [left*.75, right*.75]
+            [left, right] = [left*.5, right*.5]
 
-        if self.robot.readDriverRightButton(map.flip) or self.robot.readDriverLeftButton(map.flip):
-            [left, right] = [-right, -left]
+
+        button = self.robot.readDriverLeftButton(map.flip) or self.robot.readDriverRightButton(map.flip)
+        if button==True and self.robot.button==False: self.flip = not self.flip
+        self.robot.button = button
+
+        if self.flip: [left, right] = [-right, -left]
 
         if self.robot.readDriverRightButton(map.testStraight):
             [left, right] = [left,left]

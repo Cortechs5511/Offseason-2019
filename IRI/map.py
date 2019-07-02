@@ -162,8 +162,8 @@ wristDownMagic = 16
 
 #buttons
 halfSpeed = 1
-flip = 4
+flip = 2
 shimmy = 15
 autoAlign = 5
-testStraight = 11
+testStraight = 4
 straightAlign = 6
