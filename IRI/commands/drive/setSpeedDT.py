@@ -38,9 +38,6 @@ class SetSpeedDT(TimedCommand):
 
         if self.flip: [left, right] = [-right, -left]
 
-        if self.robot.readDriverRightButton(map.testStraight):
-            [left, right] = [left,left]
-
         self.DT.tankDrive((left * 0.85), (right * 0.85))
 
     def isFinished(self):

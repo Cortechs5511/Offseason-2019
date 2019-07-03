@@ -106,8 +106,11 @@ class HatchMech(Subsystem):
 
     def updateHatch(self):
         #only checks current to possibly set false to true for hasHatch
-        threshold = 25 #10 amp current separates freely spinning and stalled
+        threshold = 10 #10 amp current separates freely spinning and stalled
         if self.slider.get() and self.wheels.getOutputCurrent()>threshold:
+            self.hasHatch = True
+
+        if self.joystick0.getRawButton(3) or self.joystick0.getRawButton(4) or self.joystick1.getRawButton(3) or self.joystick1.getRawButton(4):
             self.hasHatch = True
 
     #disable function runs kick function on in
