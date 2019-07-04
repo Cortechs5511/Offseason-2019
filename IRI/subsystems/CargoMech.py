@@ -120,8 +120,8 @@ class CargoMech():
         elif self.xbox.getRawAxis(map.outtakeCargo)>0.4: self.setIntake("outtake")
         else: self.setIntake("stop")
 
-        if self.xbox.getPOV() > 0 and self.povPressed: self.povPressed = False
-        if self.xbox.getPOV() > 0 and not self.povPressed: self.povPressed = True
+        if self.xbox.getPOV() >= 0 and self.povPressed: self.povPressed = False
+        elif self.xbox.getPOV() >= 0 and not self.povPressed: self.povPressed = True
 
         if self.povPressed: self.setWrist("rocket")
         elif self.xbox.getRawButton(map.wristUp): self.setWrist("up")
@@ -143,15 +143,14 @@ class CargoMech():
     def dashboardInit(self): pass
 
     def dashboardPeriodic(self):
-        SmartDashboard.putNumber("Wrist Position", self.wrist.getQuadraturePosition())
+        #commented out some values. DON'T DELETE THESE VALUES
+        #SmartDashboard.putNumber("Wrist Position", self.wrist.getQuadraturePosition())
         SmartDashboard.putNumber("Wrist Angle" , self.getAngle())
-        SmartDashboard.putNumber("Output", self.out)
-        self.F = SmartDashboard.getNumber("F Gain", 0)
-        self.wristUpVolts = SmartDashboard.getNumber("Wrist Up Volts", 0)
-        self.wristDownVolts = SmartDashboard.getNumber("Wrist Down Volts", 0)
-        #SmartDashboard.putBoolean("Limit Switch", self.wrist.isFwdLimitSwitchClosed())
-        #SmartDashboard.putBoolean("Limit Switch Reverse", self.wrist.isRevLimitSwitchClosed())
+        #SmartDashboard.putNumber("Output", self.out)
+        #self.F = SmartDashboard.getNumber("F Gain", 0)
+        #self.wristUpVolts = SmartDashboard.getNumber("Wrist Up Volts", 0)
+        #self.wristDownVolts = SmartDashboard.getNumber("Wrist Down Volts", 0)
+        SmartDashboard.putBoolean("Limit Switch", self.wrist.isFwdLimitSwitchClosed())
+        SmartDashboard.putBoolean("Limit Switch Reverse", self.wrist.isRevLimitSwitchClosed())
         #SmartDashboard.putBoolean("Wrist PinState Quad A", self.wrist.getPinStateQuadA())
         #SmartDashboard.putBoolean("Wrist PinState Quad B", self.wrist.getPinStateQuadB())
-
-        #self.angle = SmartDashboard.getNumber("angle", 0)

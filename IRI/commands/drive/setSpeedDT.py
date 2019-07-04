@@ -25,20 +25,44 @@ class SetSpeedDT(TimedCommand):
         self.DT.setDirect()
 
     def execute(self):
-        left = -self.Joystick0.getY() #also messed up :\
-        right = -self.Joystick1.getY()
+        if self.DT.mentorGame:
+            power = -self.Joystick0.getY()
+            turn = self.Joystick1.getX()
+            turn = turn * abs(turn)
+            if power > 0:
+                if turn > 0:
+                    [left, right] = [max(power, turn), power-turn]
+                else:
+                    [left, right] = [power+turn, max(power, -turn)]
+            else:
+                if turn < 0:
+                    [left, right] = [-max(-power, -turn), power-turn]
+                else:
+                    [left, right] = [power+turn, -max(-power, turn)]
+            if self.robot.readDriverRightButton(map.halfSpeed) or self.robot.readDriverLeftButton(map.halfSpeed):
+                [left, right] = [left * .5, right * .5]
+            button = self.robot.readDriverLeftButton(map.flip) or self.robot.readDriverRightButton(map.flip)
+            if button and not self.robot.button:
+                self.flip = not self.flip
+            self.robot.button = button
+            if self.flip:
+                [left, right] = [-right, -left]
+            self.DT.tankDrive((left*.85), (right*.85))
 
-        if self.robot.readDriverRightButton(map.halfSpeed) or self.robot.readDriverLeftButton(map.halfSpeed):
-            [left, right] = [left*.5, right*.5]
+        else:
+            left = -self.Joystick0.getY() #also messed up :\
+            right = -self.Joystick1.getY()
 
+            if self.robot.readDriverRightButton(map.halfSpeed) or self.robot.readDriverLeftButton(map.halfSpeed):
+                [left, right] = [left*.5, right*.5]
 
-        button = self.robot.readDriverLeftButton(map.flip) or self.robot.readDriverRightButton(map.flip)
-        if button==True and self.robot.button==False: self.flip = not self.flip
-        self.robot.button = button
+            button = self.robot.readDriverLeftButton(map.flip) or self.robot.readDriverRightButton(map.flip)
+            if button==True and self.robot.button==False: self.flip = not self.flip
+            self.robot.button = button
 
-        if self.flip: [left, right] = [-right, -left]
+            if self.flip: [left, right] = [-right, -left]
 
-        self.DT.tankDrive((left * 0.85), (right * 0.85))
+            self.DT.tankDrive((left * 0.85), (right * 0.85))
 
     def isFinished(self):
         return False

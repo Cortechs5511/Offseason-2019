@@ -63,6 +63,8 @@ class Drive(Subsystem):
         SmartDashboard.putNumber("DriveStraightAngle_P", 0.025)
         SmartDashboard.putNumber("DriveStraightAngle_I", 0.0)
         SmartDashboard.putNumber("DriveStraightAngle_D", 0.01)
+        self.mentorGame = False
+        SmartDashboard.putBoolean("Mentor Mode", self.mentorGame)
 
         self.robot = robot
         self.lime = self.robot.limelight
@@ -324,19 +326,21 @@ class Drive(Subsystem):
             return False
 
     def dashboardPeriodic(self):
-        SmartDashboard.putNumber("Left Counts", self.leftEncoder.get())
-        SmartDashboard.putNumber("Left Distance", self.leftEncoder.getDistance())
-        SmartDashboard.putNumber("Right Counts", self.rightEncoder.get())
-        SmartDashboard.putNumber("Right Distance", self.rightEncoder.getDistance())
-        SmartDashboard.putNumber("DT_DistanceAvg", self.getAvgDistance())
-        SmartDashboard.putNumber("DT_DistanceLeft", self.getDistance()[0])
-        SmartDashboard.putNumber("DT_DistanceRight", self.getDistance()[1])
-        SmartDashboard.putNumber("DT_Angle", self.getAngle())
-        SmartDashboard.putNumber("DT_PowerLeft", self.left.get())
-        SmartDashboard.putNumber("DT_PowerRight", self.right.get())
-        SmartDashboard.putNumber("DT_VelocityLeft", self.getVelocity()[0])
-        SmartDashboard.putNumber("DT_VelocityRight", self.getVelocity()[1])
-        SmartDashboard.putNumber("DT_CounLeft", self.getRaw()[0])
-        SmartDashboard.putNumber("DT_CountRight", self.getRaw()[1])
-        SmartDashboard.putNumber("angle correction", self.anglePID)
-        SmartDashboard.putNumber("DriveAmps",self.getOutputCurrent())
+        #commented out some values. DON'T DELETE THESE VALUES
+        #SmartDashboard.putNumber("Left Counts", self.leftEncoder.get())
+        #SmartDashboard.putNumber("Left Distance", self.leftEncoder.getDistance())
+        #SmartDashboard.putNumber("Right Counts", self.rightEncoder.get())
+        #SmartDashboard.putNumber("Right Distance", self.rightEncoder.getDistance())
+        #SmartDashboard.putNumber("DT_DistanceAvg", self.getAvgDistance())
+        #SmartDashboard.putNumber("DT_DistanceLeft", self.getDistance()[0])
+        #SmartDashboard.putNumber("DT_DistanceRight", self.getDistance()[1])
+        #SmartDashboard.putNumber("DT_Angle", self.getAngle())
+        #SmartDashboard.putNumber("DT_PowerLeft", self.left.get())
+        #SmartDashboard.putNumber("DT_PowerRight", self.right.get())
+        #SmartDashboard.putNumber("DT_VelocityLeft", self.getVelocity()[0])
+        #SmartDashboard.putNumber("DT_VelocityRight", self.getVelocity()[1])
+        #SmartDashboard.putNumber("DT_CounLeft", self.getRaw()[0])
+        #SmartDashboard.putNumber("DT_CountRight", self.getRaw()[1])
+        #SmartDashboard.putNumber("angle correction", self.anglePID)
+        #SmartDashboard.putNumber("DriveAmps",self.getOutputCurrent())
+        self.mentorGame = SmartDashboard.getBoolean("Mentor Mode", False)

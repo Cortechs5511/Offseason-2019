@@ -119,8 +119,12 @@ class HatchMech(Subsystem):
     def dashboardInit(self): pass
 
     def dashboardPeriodic(self):
-        SmartDashboard.putNumber("Hatch Current", self.wheels.getOutputCurrent())
-        SmartDashboard.putNumber("Power", self.outPower)
+        #commented out some values. DON'T DELETE THESE VALUES
+        #SmartDashboard.putNumber("Hatch Current", self.wheels.getOutputCurrent())
+        #SmartDashboard.putNumber("Power", self.outPower)
+        SmartDashboard.putBoolean("Has Hatch", self.hasHatch)
+        SmartDashboard.putBoolean("Slider Out", self.slider.get())
+        SmartDashboard.putBoolean("Kicker Out", self.kicker.get())
 
 #class ommand to eject hatch
 class EjectHatch(Command):
