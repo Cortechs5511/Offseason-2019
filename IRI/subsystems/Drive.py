@@ -63,8 +63,9 @@ class Drive(Subsystem):
         SmartDashboard.putNumber("DriveStraightAngle_P", 0.025)
         SmartDashboard.putNumber("DriveStraightAngle_I", 0.0)
         SmartDashboard.putNumber("DriveStraightAngle_D", 0.01)
-        self.mentorGame = False
-        SmartDashboard.putBoolean("Mentor Mode", self.mentorGame)
+
+        self.driveStyle = "Curvature"
+        #SmartDashboard.putData("Mode", self.mode)
 
         self.robot = robot
         self.lime = self.robot.limelight
@@ -314,16 +315,12 @@ class Drive(Subsystem):
         SmartDashboard.putData("Drive Combined" , DriveStraight())
 
     def getMaximum(self, number, comparison):
-        if math.fabs(number) > math.fabs(comparison):
-            return number
-        else:
-            return comparison
+        if math.fabs(number) > math.fabs(comparison): return number
+        else: return comparison
 
     def isCargoPassed(self):
-        if self.getAvgDistance() > 16.1:
-            return True
-        else:
-            return False
+        if self.getAvgDistance() > 16.1: return True
+        else: return False
 
     def dashboardPeriodic(self):
         #commented out some values. DON'T DELETE THESE VALUES
@@ -343,4 +340,6 @@ class Drive(Subsystem):
         #SmartDashboard.putNumber("DT_CountRight", self.getRaw()[1])
         #SmartDashboard.putNumber("angle correction", self.anglePID)
         #SmartDashboard.putNumber("DriveAmps",self.getOutputCurrent())
-        self.mentorGame = SmartDashboard.getBoolean("Mentor Mode", False)
+
+        #self.mode = SmartDashboard.getData("Mode", "Tank")
+        pass
