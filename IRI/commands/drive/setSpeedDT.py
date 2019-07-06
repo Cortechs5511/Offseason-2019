@@ -21,11 +21,11 @@ class SetSpeedDT(TimedCommand):
         self.robot.button = False
         self.flip = False
 
-        self.k = 1
+        self.k = self.DT.k
 
         self.alpha = 0.1 #for quickturn
         self.quickStopAccum = 0
-        self.sensitivity = 1
+        self.sensitivity = self.DT.sensitivity
 
     def initialize(self):
         self.DT.setDirect()
