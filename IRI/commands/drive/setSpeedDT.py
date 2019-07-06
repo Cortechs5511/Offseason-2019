@@ -21,11 +21,11 @@ class SetSpeedDT(TimedCommand):
         self.robot.button = False
         self.flip = False
 
-        self.k = 1
+        self.k = 0.5
 
         self.alpha = 0.1 #for quickturn
         self.quickStopAccum = 0
-        self.sensitivity = 1
+        self.sensitivity = 2
 
     def initialize(self):
         self.DT.setDirect()
@@ -102,6 +102,11 @@ class SetSpeedDT(TimedCommand):
         else: #self.DT.driveStyle=="Tank"
             left = -input1
             right = -input3
+
+            if self.robot.readDriverRightButton(map.halfSpeed) or self.robot.readDriverLeftButton(map.halfSpeed):
+                temp = (left+right)/2
+                left = temp
+                right = temp
 
 
         if self.robot.readDriverLeftButton(map.halfSpeed):

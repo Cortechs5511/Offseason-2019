@@ -64,7 +64,7 @@ class Drive(Subsystem):
         SmartDashboard.putNumber("DriveStraightAngle_I", 0.0)
         SmartDashboard.putNumber("DriveStraightAngle_D", 0.01)
 
-        self.driveStyle = "Curvature"
+        self.driveStyle = "Tank"
         #SmartDashboard.putData("Mode", self.mode)
 
         self.robot = robot
