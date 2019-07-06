@@ -1,179 +1,29 @@
-#tankdrive is broken because it is based on having a complete drivers station, not just a  controller
-
-#imports important packages for running
 import wpilib
 import wpilib.drive
-from wpilib import SmartDashboard as sd
 import ctre
-from robotpy_ext.misc.looptimer import LoopTimer
 
-#class of robot
 class MyRobot(wpilib.TimedRobot):
-#initialization
+
     def robotInit(self):
-        self.loop_timer = LoopTimer(self.logger)
+        self.left1 = ctre.WPI_VictorSPX(11)
+        self.left2 = ctre.WPI_VictorSPX(12)
+        self.leftMain = ctre.WPI_TalonSRX(10)
+        self.right1 = ctre.WPI_VictorSPX(21)
+        self.right2 = ctre.WPI_VictorSPX(22)
+        self.rightMain = ctre.WPI_TalonSRX(20)
+        self.left1.follow(self.leftMain)
+        self.left2.follow(self.leftMain)
+        self.right1.follow(self.rightMain)
+        self.right2.follow(self.rightMain)
+        self.drive = wpilib.drive.DifferentialDrive(self.leftMain, self.rightMain)
+        self.stick = wpilib.Joystick(0)
+        self.stick2 = wpilib.Joystick(1)
+        self.timer = wpilib.Timer()
+        self.leftMain.setNeutralMode(2)
+        self.rightMain.setNeutralMode(2)
 
-        #Intake motors
-        self.Intake1: wpilib.VictorSP = wpilib.VictorSP(0) # ctre.WPI_TalonSRX(50)
-        self.Intake2: wpilib.VictorSP = wpilib.VictorSP(1) # ctre.WPI_TalonSRX(51)
-        # When TalonSRX/VictorSPX CAN used
-        # self.Intake1.setNeutralMode(2)
-        # self.Intake1.setInverted(True)
-        # self.Intake2.setNeutralMode(2)
-        # self.Intake2.setInverted(True)
-        # self.Intake1.follow(self.Intake2)
-
-        #lift motors
-        self.Lift1 = ctre.WPI_TalonSRX(30)
-        self.Lift1.setNeutralMode(2)
-        self.Lift2 = ctre.WPI_TalonSRX(31)
-        self.Lift2.setNeutralMode(2)
-        self.Lift1.follow(self.Lift2)
-
-        #leftdrive motors
-        self.LeftDrive1 = ctre.WPI_TalonSRX(10)
-        self.LeftDrive1.setInverted(True)
-        self.LeftDrive1.setNeutralMode(2)
-        self.LeftDrive2 = ctre.WPI_VictorSPX(11)
-        self.LeftDrive2.setInverted(True)
-        self.LeftDrive2.setNeutralMode(2)
-        self.LeftDrive3 = ctre.WPI_VictorSPX(12)
-        self.LeftDrive3.setInverted(True)
-        self.LeftDrive3.setNeutralMode(2)
-    #sets motors to follow each other
-        self.LeftDrive3.follow(self.LeftDrive1)
-        self.LeftDrive2.follow(self.LeftDrive1)
-    #rightdrive motors
-        self.RightDrive1 = ctre.WPI_TalonSRX(20)
-        self.RightDrive1.setInverted(False)
-        self.RightDrive1.setNeutralMode(2)
-        self.RightDrive2 = ctre.WPI_VictorSPX(21)
-        self.RightDrive2.setInverted(False)
-        self.RightDrive2.setNeutralMode(2)
-        self.RightDrive3 = ctre.WPI_VictorSPX(22)
-        self.RightDrive3.setInverted(False)
-        self.RightDrive3.setNeutralMode(2)
-    #sets motors to follow each other
-        self.RightDrive3.follow(self.RightDrive1)
-        self.RightDrive2.follow(self.RightDrive1)
-    #sets up a controller
-        self.controller = wpilib.Joystick(0)
-    #sets up encoders
-        self.left_encoder = wpilib.Encoder(0,1)
-        self.right_encoder = wpilib.Encoder(2,3)
-    #switch between modes
-        self.tankMode = False
-        #self.modeButton = self.right_joystick.
-
-    def teleopInit(self):
-        self.count = 0
-
-    def autonomousInit(self):
-    #creates a time to run
-        self.count = 0
-        self.autonTimer = wpilib.Timer()
-        self.autonTimer.start()
-    
     def teleopPeriodic(self):
-        self.loop_timer.measure()
-    #teleoporated period; man control
-        self.count += 1
-    #puts the count variable on the SmartDashboard
-        sd.putNumber("count", self.count)
-        self.ticks = self.getDistance()
-        sd.putNumber("ticks",self.ticks)
-    #limit breakers which set speeds based on axis units
-        self.left = -(self.controller.getRawAxis(1))
-        self.right = -(self.controller.getRawAxis(5))
-        sd.putNumber("Left power", self.left)
-        sd.putNumber("Right power",self.right)
-        self.rotation = (self.controller.getRawAxis(4))
-        self.intakeButton = self.controller.getRawAxis(2)
-        self.outtakeButton = self.controller.getRawAxis(3)
-        self.liftButtonUp = (self.controller.getRawButton(4))
-        self.liftButtonDown = (self.controller.getRawButton(1))
-        #arcade tank toggle
-        if self.tankMode == True:
-            self.tankDrive(self.left, self.right)
-        else:
-            self.arcadeDrive(self.left,self.rotation)
-        '''#lift
-        self.lift(liftButtonUp,liftButtonDown)
-        '''
-        self.intake(self.intakeButton > 0.5,self.outtakeButton > 0.5)
-        self.lift(self.liftButtonUp,self.liftButtonDown)
+        self.drive.tankDrive(self.stick.getY(), self.stick2.getY())
 
-#support functions
-    #gets distance for ticks and converts
-    def getDistance(self):
-        left_ticks = (self.left_encoder.getDistance())/255
-        right_ticks = (self.right_encoder.getDistance())/-127
-        ticks = (left_ticks +right_ticks)/2
-        distance = ticks * 4 *3.14
-        return distance
-#action functions
-    def forward(self,maxSpeed,maxPoint):
-        #constant for a linear decline
-        constant = (maxSpeed/maxPoint)
-        #variable for remaining distance
-        remaining_distance = maxPoint - self.getDistance()
-        #once this distance travelled is larger than the maxPoint, we know we've reached our goal, stopping it
-        if self.getDistance() <= maxPoint:
-            self.tankDrive(remaining_distance*constant+0.25,remaining_distance*constant+0.25)
-        else:
-            self.tankDrive(0,0)
-    def intake(self,intakeIn,out):
-        power = 0.0
-        if intakeIn and not out:
-            power = 0.5
-        elif out and not intakeIn:
-            power = -0.5
-        self.Intake1.set(-power)
-        self.Intake2.set(power)
-    def lift(self,up,down):
-        if up and not down:
-            self.Lift2.set(-0.5)
-        if down and not up:
-            self.Lift2.set(0.5)
-        if down and up:
-            self.Lift2.set(0)
-        if (not down) and (not up):
-            self.Lift2.set(0)
-    #tank drive
-    def tankDrive(self, left, right):
-        #breakers
-        if abs(left) < 0.1:
-            left = 0
-        if abs(right) < 0.1:
-            right = 0
-        left = left *0.9
-        right = right *0.9
-        #sets powers
-        self.LeftDrive1.set(left)
-        self.RightDrive1.set(right)
-
-    def arcadeDrive(self, movement, rotation):
-        #breakers
-        if abs(rotation) < 0.1:
-            left = movement
-            right = movement
-        else:
-            right = -rotation
-            left = rotation
-            if abs(movement) < 0.1:
-                pass
-            else:
-                right = right * movement
-                left = left * movement
-        self.LeftDrive1.set(left)
-        self.RightDrive1.set(right)
-    
-    def disabledPeriodic(self):
-        # a disabled period will reset the wrist and intake
-        self.tankDrive(0,0)
-        self.intake(0,0)
-        #no lift disable: YET :
-
-#run code
-if __name__ == '__main__':
+if __name__ == "__main__":
     wpilib.run(MyRobot)

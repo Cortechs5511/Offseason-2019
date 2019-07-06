@@ -161,6 +161,12 @@ class Drive(Subsystem):
         self.angleController = angleController
         self.angleController.disable()
 
+        self.k = 1
+        self.sensitivity = 1
+
+        SmartDashboard.putNumber("K Value", self.k)
+        SmartDashboard.putNumber("sensitivity", self.sensitivity)
+
     def initializeCommands(self,robot):
         autoAlignButton : wpilib.buttons.JoystickButton = robot.driverLeftButton(map.autoAlign)
         autoAlignButton.whenPressed(LimeLightAutoAlign(self.robot))
@@ -342,4 +348,5 @@ class Drive(Subsystem):
         #SmartDashboard.putNumber("DriveAmps",self.getOutputCurrent())
 
         #self.mode = SmartDashboard.getData("Mode", "Tank")
-        pass
+        self.k = SmartDashboard.getNumber("K Value", 1)
+        self.sensitivity = SmartDashboard.getNumber("sensitivity", 1)
