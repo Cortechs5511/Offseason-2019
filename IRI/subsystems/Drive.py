@@ -65,6 +65,7 @@ class Drive(Subsystem):
         SmartDashboard.putNumber("DriveStraightAngle_D", 0.01)
 
         self.driveStyle = "Tank"
+        SmartDashboard.putString("DriveStyle", self.driveStyle)
         #SmartDashboard.putData("Mode", self.mode)
 
         self.robot = robot
@@ -350,3 +351,4 @@ class Drive(Subsystem):
         #self.mode = SmartDashboard.getData("Mode", "Tank")
         self.k = SmartDashboard.getNumber("K Value", 1)
         self.sensitivity = SmartDashboard.getNumber("sensitivity", 1)
+        self.driveStyle = SmartDashboard.getString("DriveStyle", "Tank")
