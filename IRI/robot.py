@@ -99,13 +99,13 @@ class MyRobot(CommandBasedRobot):
 
         # Set up auton chooser
         self.autonChooser = SendableChooser()
-        self.autonChooser.setDefaultOption("Drive Straight", "DriveStraight")
+        #self.autonChooser.setDefaultOption("Drive Straight", "DriveStraight")
+        self.autonChooser.setDefaultOption("Level 1 Center", "Level1Center")
         self.autonChooser.addOption("Left Cargo", "LeftCargo")
         self.autonChooser.addOption("Right Cargo", "RightCargo")
         self.autonChooser.addOption("Do Nothing", "DoNothing")
         self.autonChooser.addOption("Level 1 Center","Level1Center")
         self.autonChooser.addOption("Drive Straight Side", "DriveStraightSide")
-        #self.autonChooser.addOption("DriveStraight", "DriveStraight")
 
         SmartDashboard.putData("Auto mode", self.autonChooser)
 
@@ -145,25 +145,25 @@ class MyRobot(CommandBasedRobot):
         super().teleopPeriodic()
 
     def updateDashboardInit(self):
-        #self.drive.dashboardInit()
+        self.drive.dashboardInit()
         #self.hatch.dashboardInit()
         #self.cargo.dashboardInit()
         #self.climber.dashboardInit()
         #self.limelight.dashboardInit()
         #sequences.dashboardInit()
         #autonomous.dashboardInit()
-        pass
+        #pass
 
     def updateDashboardPeriodic(self):
         #SmartDashboard.putNumber("Timer", self.timer.get())
-        #self.drive.dashboardPeriodic()
+        self.drive.dashboardPeriodic()
         #self.hatch.dashboardPeriodic()
         #self.cargo.dashboardPeriodic()
         #self.climber.dashboardPeriodic()
         #self.limelight.dashboardPeriodic()
         #sequences.dashboardPeriodic()
         #autonomous.dashboardPeriodic()
-        pass
+        #pass
 
     def disabledInit(self):
         self.scheduler.removeAll()

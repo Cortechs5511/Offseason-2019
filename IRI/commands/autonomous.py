@@ -17,7 +17,7 @@ class DriveStraight(CommandGroup):
         super().__init__('DriveStraight')
         DriveStraightCombined = driveStraightCombined.DriveStraightCombined
         DriveStraightDistance = driveStraightDistance.DriveStraightDistance
-        self.addSequential(DriveStraightCombined(distance=30, timeout=100)) #just off hab platformclass LeftCargo(CommandGroup):
+        self.addSequential(DriveStraightCombined(distance=55, timeout=100)) #just off hab platformclass LeftCargo(CommandGroup):
 
 class LeftCargo(CommandGroup):
     def __init__(self):
@@ -32,7 +32,7 @@ class LeftCargo(CommandGroup):
         self.addSequential(DriveStraightCombined(distance=144.5, angle=0, timeout=5))
         self.addSequential(TurnAngle(angle=90, timeout=2.5))
         self.addSequential(SetFixedDT(0.3,0.3, timeout=3))
-        self.addSequential(EjectHatch())
+        #self.addSequential(EjectHatch())
         '''self.addSequential(SetFixedDT(-0.3,-0.3, timeout=1))
         self.addSequential(TurnAngle(angle=0, timeout=2.5))
         self.addSequential(SetFixedDT(-0.3,-0.3, timeout=3))'''
@@ -53,11 +53,12 @@ class RightCargo(CommandGroup):
         EjectHatch = HatchMech.EjectHatch
         SetFixedDT = setFixedDT.SetFixedDT
 
-        self.addSequential(DriveStraightCombined(distance=50, angle=0, timeout=3.5, p=0.06, i=0, d=.336))
+        #self.addSequential(DriveStraightCombined(distance=50, angle=0, timeout=3.5, p=0.06, i=0, d=.336))
+        self.addSequential(DriveStraightCombined(distance=50, angle=0, timeout=3.5))
         self.addSequential(DriveStraightCombined(distance=144.5, angle=0, timeout=5))
         self.addSequential(TurnAngle(angle=-90, timeout=2.5))
         self.addSequential(SetFixedDT(0.3,0.3, timeout=3))
-        self.addSequential(EjectHatch())
+        #self.addSequential(EjectHatch())
 
 class CenterCargo(CommandGroup):
     def __init__(self):

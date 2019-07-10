@@ -22,7 +22,7 @@ class DriveStraightCombined(TimedCommand):
         #self.DT.zeroEncoders()
         # GETTING VALUE FROM DASHBOARD IF P,I,D ARGUMENTS ARE NOT GIVEN WHEN COMMAND IS CALLED
         if self.pCheck == 1000:
-            p=0.15
+            p=0.1
             #p = SmartDashboard.getNumber("DriveStraight_P", 0.1)
         else:
             p = self.pCheck
@@ -34,14 +34,18 @@ class DriveStraightCombined(TimedCommand):
             i = self.iCheck
 
         if self.dCheck == 1000:
-            d=0.4
+            d=0.5
             #d = SmartDashboard.getNumber("DriveStraight_D", 0.4)
         else:
             d = self.dCheck
 
-        angleP = SmartDashboard.getNumber('DriveStraightAngle_P', 0.025)
-        angleI = SmartDashboard.getNumber('DriveStraightAngle_I', 0.0)
-        angleD = SmartDashboard.getNumber('DriveStraightAngle_D', 0.01)
+        angleP = 0.025
+        angleI = 0
+        angleD = 0.01
+
+        #angleP = SmartDashboard.getNumber('DriveStraightAngle_P', 0.025)
+        #angleI = SmartDashboard.getNumber('DriveStraightAngle_I', 0.0)
+        #angleD = SmartDashboard.getNumber('DriveStraightAngle_D', 0.01)
         self.DT.setGains(p, i, d, 0)
         self.DT.setGainsAngle(angleP, angleI, angleD, 0)
         self.distance = self.distanceRelative + self.DT.getAvgDistance()

@@ -215,7 +215,7 @@ class Climber():
     def retract(self, mode):
         correction = self.getCorrection()
         if mode=="front": self.setSpeeds(self.backHold, 1)
-        elif mode=="back": self.setSpeeds(0.7, 0)
+        elif mode=="back": self.setSpeeds(1, 0)
         elif mode=="both": self.setSpeeds(1 + correction, 1)
         else: self.setSpeeds(0, 0)
 

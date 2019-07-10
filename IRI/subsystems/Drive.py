@@ -164,6 +164,9 @@ class Drive(Subsystem):
         SmartDashboard.putNumber("K Value", self.k)
         SmartDashboard.putNumber("sensitivity", self.sensitivity)
 
+        self.prevLeft = 0
+        self.prevRight = 0
+
     def setGains(self, p, i, d, f):
         self.distController.setPID(p,i,d,f)
 
@@ -196,6 +199,8 @@ class Drive(Subsystem):
             self.angleController.setSetpoint(angle)
             self.distController.enable()
             self.angleController.enable()
+            self.prevLeft = 0
+            self.prevRight = 0
         elif(mode=="Direct"):
             self.distController.disable()
             self.angleController.disable()
@@ -222,9 +227,14 @@ class Drive(Subsystem):
             if self.distPID < 0:
                 nom = -nom
 
-            print(self.distPID)
             left= self.getMaximum(self.distPID+self.anglePID,nom)
             right = self.getMaximum(self.distPID-self.anglePID,nom)
+
+            left = self.getMinimum3(left, 0.30, self.prevLeft + 0.01)
+            right = self.getMinimum3(right, 0.30, self.prevRight + 0.01)
+
+            self.prevLeft = left
+            self.prevRight = right
 
         elif(self.mode=="Direct"): [left, right] = [left, right]
         else: [left, right] = [0,0]
@@ -313,20 +323,27 @@ class Drive(Subsystem):
         if math.fabs(number) > math.fabs(comparison): return number
         else: return comparison
 
+    def getMinimum3(self, val1, val2, val3):
+        return self.getMinimum(self.getMinimum(val1, val2), val3)
+
+    def getMinimum(self, number, comparison):
+        if math.fabs(number) < math.fabs(comparison): return number
+        else: return comparison
+
     def isCargoPassed(self):
         if self.getAvgDistance() > 16.1: return True
         else: return False
 
     def dashboardPeriodic(self):
         #commented out some values. DON'T DELETE THESE VALUES
-        #SmartDashboard.putNumber("Left Counts", self.leftEncoder.get())
-        #SmartDashboard.putNumber("Left Distance", self.leftEncoder.getDistance())
-        #SmartDashboard.putNumber("Right Counts", self.rightEncoder.get())
+        SmartDashboard.putNumber("Left Counts", self.leftEncoder.get())
+        SmartDashboard.putNumber("Left Distance", self.leftEncoder.getDistance())
+        SmartDashboard.putNumber("Right Counts", self.rightEncoder.get())
         #SmartDashboard.putNumber("Right Distance", self.rightEncoder.getDistance())
-        #SmartDashboard.putNumber("DT_DistanceAvg", self.getAvgDistance())
-        #SmartDashboard.putNumber("DT_DistanceLeft", self.getDistance()[0])
-        #SmartDashboard.putNumber("DT_DistanceRight", self.getDistance()[1])
-        #SmartDashboard.putNumber("DT_Angle", self.getAngle())
+        SmartDashboard.putNumber("DT_DistanceAvg", self.getAvgDistance())
+        SmartDashboard.putNumber("DT_DistanceLeft", self.getDistance()[0])
+        SmartDashboard.putNumber("DT_DistanceRight", self.getDistance()[1])
+        SmartDashboard.putNumber("DT_Angle", self.getAngle())
         #SmartDashboard.putNumber("DT_PowerLeft", self.left.get())
         #SmartDashboard.putNumber("DT_PowerRight", self.right.get())
         #SmartDashboard.putNumber("DT_VelocityLeft", self.getVelocity()[0])
