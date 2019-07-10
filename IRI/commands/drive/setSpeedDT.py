@@ -50,7 +50,7 @@ class SetSpeedDT(TimedCommand):
         if self.DT.driveStyle=="Arcade":
             power = -input1
             turn = input2
-
+            if abs(turn) < 0.1: turn = 0.05 * self.sign(turn)
             if power > 0:
                 if turn > 0:
                     [left, right] = [max(power, turn), power-turn]

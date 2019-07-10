@@ -83,15 +83,15 @@ class Climber():
         self.switchBottomBack = DigitalInput(map.backBottomSensor)
         self.switchBottomFront = DigitalInput(map.frontBottomSensor)
 
-        self.MAX_ANGLE = 2 #degrees
-        self.TARGET_ANGLE = -1 #degrees
-        self.climbSpeed = 0.9
-        self.wheelSpeed = 0.9
+        self.TARGET_ANGLE = 6 #degrees
+        self.climbSpeedFront = 0.9
+        self.climbSpeedBack = 0.85
+        self.wheelSpeed = 0.6
 
         self.backHold = -0.10 #holds back stationary if extended ADJUST**
         self.frontHold = -0.10 #holds front stationary if extended
 
-        self.kP = 0.35 #proportional gain for angle to power
+        self.kP = 0.15 #proportional gain for angle to power
         self.autoClimbIndicator = False
 
         '''
@@ -202,15 +202,15 @@ class Climber():
         else: return self.robot.drive.getPitch()
 
     def getCorrection(self):
-        return (self.kP * -self.getLean())
+        return (self.kP * -(self.getLean()-self.TARGET_ANGLE))
 
     def setSpeeds(self, back, front):
         if self.usingNeo:
-            self.backLift.set(back * self.climbSpeed)
-            self.frontLift.set(front * self.climbSpeed)
+            self.backLift.set(back * self.climbSpeedBack)
+            self.frontLift.set(front * self.climbSpeedFront)
         else:
-            self.backLift.set(back * self.climbSpeed)
-            self.frontLift.set(front * self.climbSpeed)
+            self.backLift.set(back * self.climbSpeedBack)
+            self.frontLift.set(front * self.climbSpeedFront)
 
     def retract(self, mode):
         correction = self.getCorrection()
@@ -360,7 +360,8 @@ class Climber():
 
     def dashboardInit(self):
         SmartDashboard.putNumber("Climber kP", self.kP)
-        SmartDashboard.putNumber("ClimbSpeed", self.climbSpeed)
+        SmartDashboard.putNumber("ClimbSpeedFront", self.climbSpeedFront)
+        SmartDashboard.putNumber("ClimbSpeedBack", self.climbSpeedBack)
         SmartDashboard.putNumber("BackHold", self.backHold)
         SmartDashboard.putNumber("FrontHold", self.frontHold)
 
@@ -372,7 +373,8 @@ class Climber():
         SmartDashboard.putBoolean("Front Over Ground", self.isFrontOverGround())
         SmartDashboard.putBoolean("Back Over Ground", self.isBackOverGround())
         SmartDashboard.putNumber("self.state", self.state)
-        self.climbSpeed = SmartDashboard.getNumber("ClimbSpeed", self.climbSpeed)
+        self.climbSpeedFront = SmartDashboard.getNumber("ClimbSpeedFront", self.climbSpeedFront)
+        self.climbSpeedBack = SmartDashboard.getNumber("ClimbSpeedBack", self.climbSpeedBack)
         self.kP = SmartDashboard.getNumber("Climber kP", self.kP)
         self.backHold = SmartDashboard.getNumber("BackHold", self.backHold)
         self.frontHold = SmartDashboard.getNumber("FrontHold", self.frontHold)
