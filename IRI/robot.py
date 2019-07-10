@@ -49,6 +49,7 @@ class MyRobot(CommandBasedRobot):
         This is a good place to set up your subsystems and anything else that
         you will need to access later.
         '''
+
         wpilib.CameraServer.launch()
         self.lastAuto = False
         self.lastAlign = False
@@ -107,7 +108,7 @@ class MyRobot(CommandBasedRobot):
         #self.autonChooser.addOption("DriveStraight", "DriveStraight")
 
         SmartDashboard.putData("Auto mode", self.autonChooser)
-        
+
     def robotPeriodic(self):
         self.limelight.readLimelightData()
         SmartDashboard.putBoolean("teleop",self.teleop)
@@ -144,24 +145,25 @@ class MyRobot(CommandBasedRobot):
         super().teleopPeriodic()
 
     def updateDashboardInit(self):
-        self.drive.dashboardInit()
+        #self.drive.dashboardInit()
         #self.hatch.dashboardInit()
         #self.cargo.dashboardInit()
-        self.climber.dashboardInit()
+        #self.climber.dashboardInit()
         #self.limelight.dashboardInit()
         #sequences.dashboardInit()
         #autonomous.dashboardInit()
+        pass
 
     def updateDashboardPeriodic(self):
         #SmartDashboard.putNumber("Timer", self.timer.get())
-        self.drive.dashboardPeriodic()
+        #self.drive.dashboardPeriodic()
         #self.hatch.dashboardPeriodic()
         #self.cargo.dashboardPeriodic()
-        self.climber.dashboardPeriodic()
+        #self.climber.dashboardPeriodic()
         #self.limelight.dashboardPeriodic()
-
         #sequences.dashboardPeriodic()
         #autonomous.dashboardPeriodic()
+        pass
 
     def disabledInit(self):
         self.scheduler.removeAll()
@@ -204,28 +206,25 @@ class MyRobot(CommandBasedRobot):
         return self.joystick0.getRawButton(id)
 
     def autoSelector(self, auto):
-        a = auto
-
-        if a == "DriveStraight":
+        if auto == "DriveStraight":
             self.DriveStraight.start()
-        elif a == "DoNothing":
+        elif auto == "DoNothing":
             self.disabledInit()
-        elif a == "Level1Center":
+        elif auto == "Level1Center":
             self.CenterCargo.start()
-        elif a == "DriverControl":
+        elif auto == "DriverControl":
             self.driverControl()
-        elif a == "DriveStraightSide":
+        elif auto == "DriveStraightSide":
             self.DriveStraightSide.start()
-        elif a== "RightCargo":
+        elif auto == "RightCargo":
             self.RightCargo.start()
-        elif a== "LeftCargo":
+        elif auto == "LeftCargo":
             self.LeftCargo.start()
         else:
             self.disabledInit()
 
     def driverControl(self):
         self.SetSpeedDT.start()
-
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)

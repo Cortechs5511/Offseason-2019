@@ -83,15 +83,15 @@ class Climber():
         self.switchBottomBack = DigitalInput(map.backBottomSensor)
         self.switchBottomFront = DigitalInput(map.frontBottomSensor)
 
-        self.TARGET_ANGLE = 6 #degrees
+        self.TARGET_ANGLE = 0 #degrees
         self.climbSpeedFront = 0.9
-        self.climbSpeedBack = 0.85
+        self.climbSpeedBack = 0.9
         self.wheelSpeed = 0.6
 
         self.backHold = -0.10 #holds back stationary if extended ADJUST**
         self.frontHold = -0.10 #holds front stationary if extended
 
-        self.kP = 0.15 #proportional gain for angle to power
+        self.kP = 0.25 #proportional gain for angle to power
         self.autoClimbIndicator = False
 
         '''
