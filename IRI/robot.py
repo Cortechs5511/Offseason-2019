@@ -27,10 +27,6 @@ from commands.autonomous import RightCargo as RightCargo
 from commands.autonomous import CenterCargo as CenterCargo
 from commands.autonomous import DriveStraight as DriveStraight
 from commands.autonomous import DriveStraightSide as DriveStraightSide
-from commands.autonomous import CenterCargoPart2 as CenterCargoPart2
-from commands.autonomous import AutoAlign as AutoAlign
-from commands.autonomous import StraightAlign as StraightAlign
-from commands.autonomous import LimeLightAutoAlign
 
 from commands.drive.driveStraightDistance import DriveStraightDistance
 from commands.drive.driveStraightCombined import DriveStraightCombined
@@ -99,44 +95,24 @@ class MyRobot(CommandBasedRobot):
         self.RightCargo = RightCargo()
         self.CenterCargo = CenterCargo()
         self.SetSpeedDT = SetSpeedDT()
-        self.CenterCargoPart2 = CenterCargoPart2()
 
         # Set up auton chooser
         self.autonChooser = SendableChooser()
         self.autonChooser.setDefaultOption("Drive Straight", "DriveStraight")
-        #self.autonChooser.addOption("Test LimeLight", "TestLimeLight")
         self.autonChooser.addOption("Left Cargo", "LeftCargo")
         self.autonChooser.addOption("Right Cargo", "RightCargo")
         self.autonChooser.addOption("Do Nothing", "DoNothing")
         self.autonChooser.addOption("Level 1 Center","Level1Center")
         self.autonChooser.addOption("Drive Straight Side", "DriveStraightSide")
+        #self.autonChooser.addOption("DriveStraight", "DriveStraight")
 
         SmartDashboard.putData("Auto mode", self.autonChooser)
-        self.drive.initializeCommands(self)
-
+        
     def robotPeriodic(self):
         self.limelight.readLimelightData()
         SmartDashboard.putBoolean("teleop",self.teleop)
 
         if(self.dashboard): self.updateDashboardPeriodic()
-
-        '''currAlign = self.joystick0.getRawButton(map.autoAlign)
-        if currAlign and currAlign != self.lastAlign:
-            AutoAlign(self.limelight.getPath()[0],self.limelight.getPath()[1],self.limelight.getPath()[2],self.limelight.getPath()[3]).start()
-
-        if not currAlign and currAlign != self.lastAlign:
-            AutoAlign(self.limelight.getPath()[0],self.limelight.getPath()[1],self.limelight.getPath()[2],self.limelight.getPath()[3]).cancel()
-            self.SetSpeedDT.start()
-
-        self.lastAlign = currAlign'''
-
-        '''currStraightAlign = self.joystick0.getRawButton(map.straightAlign)
-        if currStraightAlign and currStraightAlign != self.lastStraightAlign:
-            StraightAlign(self.limelight.getTx()).start()
-        self.lastStraightAlign = currAlign
-        if not currStraightAlign and currStraightAlign != self.lastStraightAlign:
-            StraightAlign(self.limelight.getTx()).cancel()
-            self.SetSpeedDT.start()'''
 
     def autonomousInit(self):
         super().autonomousInit()
@@ -148,11 +124,6 @@ class MyRobot(CommandBasedRobot):
 
     def autonomousPeriodic(self):
         super().autonomousPeriodic()
-
-        #starts second part of auto for center if button is pressed
-        currAuto = self.xbox.getRawButton(map.autoStart)
-        if currAuto and currAuto != self.lastAuto: self.CenterCargoPart2.start()
-        self.lastAuto = currAuto
 
         #driver takes control of drivetrain
         deadband = 0.1
@@ -249,8 +220,6 @@ class MyRobot(CommandBasedRobot):
             self.RightCargo.start()
         elif a== "LeftCargo":
             self.LeftCargo.start()
-        elif a == "TestLimeLight":
-            LimeLightAutoAlign(self).start()
         else:
             self.disabledInit()
 

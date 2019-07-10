@@ -29,7 +29,7 @@ class PhysicsEngine(object):
 
         self.controller.add_device_gyro_channel('navxmxp_spi_4_angle')
 
-        self.deadZone=0.20
+        self.deadZone=0.10
 
     def update_sim(self, hal_data, now, timeDiff):
         left = hal_data['CAN'][10]['value']

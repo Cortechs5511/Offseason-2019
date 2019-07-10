@@ -22,17 +22,20 @@ class DriveStraightCombined(TimedCommand):
         #self.DT.zeroEncoders()
         # GETTING VALUE FROM DASHBOARD IF P,I,D ARGUMENTS ARE NOT GIVEN WHEN COMMAND IS CALLED
         if self.pCheck == 1000:
-            p = SmartDashboard.getNumber("DriveStraight_P", 0.1)
+            p=0.15
+            #p = SmartDashboard.getNumber("DriveStraight_P", 0.1)
         else:
             p = self.pCheck
 
         if self.iCheck == 1000:
-            i = SmartDashboard.getNumber("DriveStraight_I", 0)
+            i=0
+            #i = SmartDashboard.getNumber("DriveStraight_I", 0)
         else:
             i = self.iCheck
 
         if self.dCheck == 1000:
-            d = SmartDashboard.getNumber("DriveStraight_D", 0.4)
+            d=0.4
+            #d = SmartDashboard.getNumber("DriveStraight_D", 0.4)
         else:
             d = self.dCheck
 
@@ -55,5 +58,6 @@ class DriveStraightCombined(TimedCommand):
 
     def end(self):
         self.DT.setMode("Direct")
+        print(self.DT.getAvgDistance()-self.distance)
         SmartDashboard.putNumber("Distance Driven", self.DT.getAvgDistance() - self.distance)
         self.DT.tankDrive(0,0)
