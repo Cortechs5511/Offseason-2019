@@ -77,8 +77,8 @@ class Climber():
         self.backSwitch = DigitalInput(map.backFloor)
         self.frontSwitch = DigitalInput(map.frontFloor)
 
-        self.switchTopBack = DigitalInput(map.backTopSensor)
-        self.switchTopFront = DigitalInput(map.frontTopSensor)
+        #self.switchTopBack = DigitalInput(map.backTopSensor)
+        #self.switchTopFront = DigitalInput(map.frontTopSensor)
 
         self.switchBottomBack = DigitalInput(map.backBottomSensor)
         self.switchBottomFront = DigitalInput(map.frontBottomSensor)

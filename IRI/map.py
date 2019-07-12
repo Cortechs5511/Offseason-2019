@@ -49,9 +49,11 @@ backFloor = 4
 frontFloor = 5
 
 frontBottomSensor = 6
-frontTopSensor = 7
+topSwitch = 7
+#frontTopSensor = 7
 backBottomSensor = 8
-backTopSensor = 9
+bottomSwitch = 9
+#backTopSensor = 9
 
 #sets the system preferences
 
