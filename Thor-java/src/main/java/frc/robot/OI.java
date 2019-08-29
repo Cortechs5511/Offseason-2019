@@ -7,11 +7,79 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /**
  * This class is the glue that binds the controls on the physical operator
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
+
+  private XboxController operator;
+  private Joystick driverLeft;
+  private Joystick driverRight;
+
+  /**
+   * Constructor creates controllers used by driver and operator.
+   */
+  OI() {
+    driverLeft = new Joystick(0);
+    driverRight = new Joystick(1);
+    operator = new XboxController(2);
+  }
+
+  /**
+   * Helper method that gets or sets number from SmartDashboard.
+   * 
+   * <p>
+   * NOTE: If the value is not present on the dashboard, it will be added to the
+   * dashboard using the default value applied.
+   * </p>
+   * 
+   * @param key    The unique string associated with the number (label on
+   *               SmartDashboard).
+   * @param defVal The default value to used if number is not available.
+   * @return Value from dashboard or default value if value not yet on dashboard.
+   */
+  public static double getSetNumber(String key, double defVal) {
+    double val = defVal;
+    if (SmartDashboard.containsKey(key)) {
+      val = SmartDashboard.getNumber(key, val);
+    } else {
+      SmartDashboard.putNumber(key, val);
+    }
+    return val;
+  }
+
+  /**
+   * Get access to the gamepad used by the operator.
+   * 
+   * @return Reference to controller.
+   */
+  public XboxController getOperatorGamepad() {
+    return operator;
+  }
+
+  /**
+   * Get access to the left joystick used by the driver to control the robot.
+   * 
+   * @return Reference to controller.
+   */
+  public Joystick getDriverLeft() {
+    return driverRight;
+  }
+
+  /**
+   * Get access to the right joystick used by the driver to control the robot.
+   * 
+   * @return Reference to controller.
+   */
+  public Joystick getDriverRight() {
+    return driverLeft;
+  }
+
   //// CREATING BUTTONS
   // One type of button is a joystick button which is any button on a
   //// joystick.

@@ -122,7 +122,6 @@ public class RobotMap {
   }
 
   public static void loadPreferences() {
-    Preferences config = Preferences.getInstance();
     robotId = getConfigInt("RobotId", astroV2);
     System.out.println("map.py robotId " + robotId);
     if (robotId == astroV1) {
