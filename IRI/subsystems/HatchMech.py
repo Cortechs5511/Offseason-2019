@@ -22,7 +22,7 @@ class HatchMech(Subsystem):
         self.xbox = oi.getJoystick(2)
         self.joystick0 = oi.getJoystick(0)
         self.joystick1 = oi.getJoystick(1)
-
+    
         #makes solenoid objects to be used in kick and slide functions
         self.kicker = Solenoid(map.hatchKick)
         self.slider = Solenoid(map.hatchSlide)
@@ -97,7 +97,10 @@ class HatchMech(Subsystem):
         if self.kicker.get() and self.slider.get() and self.hasHatch:
             self.wheels.set(self.powerOut)
             self.outPower = self.powerOut
-        elif not self.kicker.get() and self.slider.get() and not self.hasHatch:
+        elif not self.kicker.get() and self.slider.get() and self.hasHatch:
+            self.wheels.set(self.powerIn)
+            self.outPower = self.powerIn
+        elif self.joystick1.getRawButton(1):
             self.wheels.set(self.powerIn)
             self.outPower = self.powerIn
         else:
