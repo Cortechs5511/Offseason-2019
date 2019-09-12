@@ -1,7 +1,7 @@
 import wpilib
 import ctre
 
-class MyRobot(wpilib.TimedRobot):
+class MyRobot(CommandBasedRobot):
 
     def robotInit(self):
         self.moveLeft1 = ctre.WPI_VictorSPX(3)
@@ -10,7 +10,8 @@ class MyRobot(wpilib.TimedRobot):
         self.moveRight2 = ctre.WPI_VictorSPX(0)
         self.joystick1 = wpilib.Joystick(1)
         self.joystick2 = wpilib.Joystick(2)
-        
+
+
     def teleopPeriodic(self):
         if self.joystick1.getY() >= .2:
             self.moveLeft1.set(0.3)
