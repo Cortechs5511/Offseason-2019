@@ -103,13 +103,13 @@ class SetSpeedDT(TimedCommand):
             left = -input1
             right = -input3
 
-            if self.robot.readDriverRightButton(map.halfSpeed) or self.robot.readDriverLeftButton(map.halfSpeed):
-                temp = (left+right)/2
-                left = temp
-                right = temp
+            #if self.robot.readDriverRightButton(map.halfSpeed) or self.robot.readDriverLeftButton(map.halfSpeed):
+            #    temp = (left+right)/2
+            #    left = temp
+            #    right = temp
 
 
-        if self.robot.readDriverLeftButton(map.halfSpeed):
+        if self.robot.readDriverLeftButton(map.halfSpeed) or self.robot.readDriverRightButton(map.halfSpeed):
             [left, right] = [left * .5, right * .5]
 
         button = self.robot.readDriverLeftButton(map.flip) or self.robot.readDriverRightButton(map.flip)
