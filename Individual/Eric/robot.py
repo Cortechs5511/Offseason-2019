@@ -1,4 +1,6 @@
 import wpilib
+import wpilib.drive
+
 
 class MyRobot(wpilib.TimedRobot):
 
@@ -8,10 +10,9 @@ class MyRobot(wpilib.TimedRobot):
         pass
 
     def teleopPeriodic(self):
-        #measure joystick values
-        #refine data
-        #set motor values
-        pass
+        """This function is called periodically during operator control."""
+        self.drive.tankDrive(self.leftStick.getY(), self.rightStick.getY()) # I think this is how tank driving works, y-axis control on both joysticks
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     wpilib.run(MyRobot)
