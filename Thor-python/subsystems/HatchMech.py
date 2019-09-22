@@ -97,7 +97,10 @@ class HatchMech(Subsystem):
         if self.kicker.get() and self.slider.get() and self.hasHatch:
             self.wheels.set(self.powerOut)
             self.outPower = self.powerOut
-        elif not self.kicker.get() and self.slider.get() and not self.hasHatch:
+        #elif not self.kicker.get() and self.slider.get() and not self.hasHatch:
+        #    self.wheels.set(self.powerIn)
+        #    self.outPower = self.powerIn
+        elif self.robot.readDriverLeftButton(map.halfSpeed):
             self.wheels.set(self.powerIn)
             self.outPower = self.powerIn
         else:
