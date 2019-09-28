@@ -4,12 +4,13 @@ import ctre
 
 class MyRobot(wpilib.TimedRobot):
     def robotInit(self):
-        self.frontLeft = ctre.WPI_TalonSRX(0)
-        self.rearLeft = ctre.WPI_TalonSRX(1)
+        self.frontLeft = wpilib.Talon(0)
+        self.rearLeft = wpilib.Talon(1)
+        #self.left = self.frontLeft
         self.left = wpilib.SpeedControllerGroup(self.frontLeft, self.rearLeft)
 
-        self.frontRight = ctre.WPI_TalonSRX(2)
-        self.rearRight = ctre.WPI_TalonSRX(3)
+        self.frontRight = wpilib.Talon(2)
+        self.rearRight = wpilib.Talon(3)
         self.right = wpilib.SpeedControllerGroup(self.frontRight, self.rearRight)
 
         #self.drive = wpilib.TankDrive(self.left, self.right)
@@ -37,7 +38,7 @@ class MyRobot(wpilib.TimedRobot):
         leftInput = float(self.leftStick.getY()) * 0.9
         rightInput = float(self.rightStick.getY()) * 0.9
         if abs(leftInput) >= 0.05:
-            self.left.set(leftInput)
+            self.left.set(-leftInput)
         else:
             self.left.set(0)
         if abs(rightInput) >= 0.05:
