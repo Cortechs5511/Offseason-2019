@@ -1,3 +1,4 @@
+# not a command based robot
 import wpilib
 import wpilib.drive
 import ctre
@@ -6,7 +7,6 @@ class MyRobot(wpilib.TimedRobot):
     def robotInit(self):
         self.frontLeft = wpilib.Talon(0)
         self.rearLeft = wpilib.Talon(1)
-        #self.left = self.frontLeft
         self.left = wpilib.SpeedControllerGroup(self.frontLeft, self.rearLeft)
 
         self.frontRight = wpilib.Talon(2)
@@ -22,12 +22,20 @@ class MyRobot(wpilib.TimedRobot):
         self.timer.reset()
         self.timer.start()
 
+    def teleopInit(self):
+        self.timer.reset()
+        self.timer.start()
+
     def autonomousPeriodic(self):
-        if self.timer.get() >= 6:
+        if self.timer.get() <= 0.1:
             self.left.set(0)
             self.right.set(0)
             pass
-        if self.timer.get() <= 0.45:
+        elif self.timer.get() >= 6:
+            self.left.set(0)
+            self.right.set(0)
+            pass
+        elif self.timer.get() <= 0.45:
             self.left.set(0.85)
             self.right.set(0.85)
         else:
@@ -48,6 +56,3 @@ class MyRobot(wpilib.TimedRobot):
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)
-
-# encoders maybe?
-# physics file needs fixing
