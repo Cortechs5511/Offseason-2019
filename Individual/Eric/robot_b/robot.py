@@ -14,7 +14,6 @@ class myRobot(CommandBasedRobot):
         self.leftStick = oi.getLeftStick()
         self.rightStick = oi.getRightStick()
         
-
     def autonomousInit(self):
         self.autonomousProgram = Autonomous()
 

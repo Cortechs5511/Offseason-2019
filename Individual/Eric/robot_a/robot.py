@@ -1,7 +1,6 @@
 # not a command based robot
 import wpilib
 import wpilib.drive
-import ctre
 
 class MyRobot(wpilib.TimedRobot):
     def robotInit(self):
