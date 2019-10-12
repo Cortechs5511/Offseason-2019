@@ -6,19 +6,29 @@ from wpilib.command import Command
 
 
 class Drive(Subsystem):
+
     def __init__(self):
         super().__init__("Drive")
-        Command.pageDrive = lambda x=0: self # I cannot believe that adding this made the whole thing work. Wow. That is pretty cool. Now onto finding a more efficient way of doing this.
-        self.frontLeft = wpilib.Talon(0)
-        self.rearLeft = wpilib.Talon(1)
-        self.left = wpilib.SpeedControllerGroup(self.frontLeft, self.rearLeft)
-        self.frontRight = wpilib.Talon(2)
-        self.rearRight = wpilib.Talon(3)
+        Command.pageDrive = lambda x=0: self
+        self.frontRight = wpilib.Talon(0)
+        self.rearRight = wpilib.Talon(1)
+        self.frontRight.setInverted(True)
+        self.rearRight.setInverted(True)
         self.right = wpilib.SpeedControllerGroup(self.frontRight, self.rearRight)
+        self.frontLeft = wpilib.Talon(2)
+        self.rearLeft = wpilib.Talon(3)
+        self.left = wpilib.SpeedControllerGroup(self.frontLeft, self.rearLeft)
+        self.rightEncoder = wpilib.Encoder(0, 1) # these serve no purpose as of right now
+        self.leftEncoder = wpilib.Encoder(2, 3) # must figure out lambda thing first
 
     def setSpeed(self, leftSpeed, rightSpeed):
         self.left.set(leftSpeed)
         self.right.set(rightSpeed)
+
+    def getEncoders(self):
+        right = self.rightEncoder.getDistance()
+        left = self.leftEncoder.getDistance()
+        return right, left
 
     def initDefaultCommand(self):
         self.setDefaultCommand(joystickDrive())

@@ -11,11 +11,12 @@ class myRobot(CommandBasedRobot):
     def robotInit(self):
         Command.getRobot = lambda x=0: self
         self.drivetrain = Drive.Drive()
-        self.leftStick = oi.getLeftStick()
-        self.rightStick = oi.getRightStick()
-        
+        myRobot.leftStick = oi.getLeftStick()
+        myRobot.rightStick = oi.getRightStick()
+        self.Autonomous = Autonomous()
+
     def autonomousInit(self):
-        self.autonomousProgram = Autonomous()
+        self.Autonomous.start()
 
 if __name__ == "__main__":
     wpilib.run(myRobot)

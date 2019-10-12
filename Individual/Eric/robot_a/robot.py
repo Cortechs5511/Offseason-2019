@@ -1,12 +1,7 @@
-# not a command based robot
+# timed robot
 import wpilib
-import wpilib.drive
-
 class MyRobot(wpilib.TimedRobot):
     def robotInit(self):
-        self.frontLeft = wpilib.Talon(2)
-        self.rearLeft = wpilib.Talon(3)
-        self.left = wpilib.SpeedControllerGroup(self.frontLeft, self.rearLeft)
 
         self.frontRight = wpilib.Talon(0)
         self.rearRight = wpilib.Talon(1)
@@ -14,7 +9,10 @@ class MyRobot(wpilib.TimedRobot):
         self.rearRight.setInverted(True)
         self.right = wpilib.SpeedControllerGroup(self.frontRight, self.rearRight)
 
-        #self.drive = wpilib.TankDrive(self.left, self.right)
+        self.frontLeft = wpilib.Talon(2)
+        self.rearLeft = wpilib.Talon(3)
+        self.left = wpilib.SpeedControllerGroup(self.frontLeft, self.rearLeft)
+
         self.leftStick = wpilib.Joystick(0)
         self.rightStick = wpilib.Joystick(1)
         self.timer = wpilib.Timer()
@@ -23,31 +21,26 @@ class MyRobot(wpilib.TimedRobot):
         self.timer.reset()
         self.timer.start()
 
-    def teleopInit(self):
-        self.timer.reset()
-        self.timer.start()
-
     def autonomousPeriodic(self):
-        if self.timer.get() <= 0.1:
+        time = float(self.timer.get())
+        if time <= 0.1:
             self.left.set(0)
             self.right.set(0)
             pass
-        elif self.timer.get() >= 6:
+        elif time >= 6:
             self.left.set(0)
             self.right.set(0)
             pass
-        elif self.timer.get() <= 0.45:
-            self.left.set(0.85)
-            self.right.set(0.85)
+        elif time <= 1:
+            self.left.set((0.8)/(1+7*2**-(time*8)))
+            self.right.set((0.8)/(1+7*2**-(time*8)))
         else:
-            self.left.set(1 / (float(2.54 * self.timer.get() ** 0.9999))) #This is a placeholder until I can figure out something better
-            self.right.set(1 / (float(2.54 * self.timer.get() ** 0.9999)))
+            self.left.set((2)/(1+1.5**(time))) #This is a placeholder until I can figure out something better
+            self.right.set((2)/(1+1.5**(time)))
 
     def teleopPeriodic(self):
         leftInput = float(self.leftStick.getY()) * 0.9
         rightInput = float(self.rightStick.getY()) * 0.9
-        #self.left.set(leftInput)
-        #self.right.set(rightInput)
         if abs(leftInput) >= 0.05:
             self.left.set(leftInput)
         else:

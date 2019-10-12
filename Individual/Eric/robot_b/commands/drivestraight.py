@@ -1,16 +1,15 @@
 from wpilib.command import TimedCommand
 from subsystems import Drive
 
-class SetSpeed(TimedCommand):
+class DriveStraight(TimedCommand):
 
     def __init__(self, power, timeout):
         super().__init__("Set Speed %d" % power, timeout)
-
         self.power = power
         self.requires(self.getRobot().drivetrain)
 
     def initialize(self):
-        Drive.Drive.setSpeed(self.pageDrive(), power, power)
+        Drive.Drive.setSpeed(self.pageDrive(), self.power, self.power)
 
     def end(self):
-        self.getRobot().motor.setSpeed(0)
+        Drive.Drive.setSpeed(self.pageDrive(), 0, 0)
