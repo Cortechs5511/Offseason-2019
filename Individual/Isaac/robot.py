@@ -3,6 +3,7 @@ import wpilib
 class MyRobot(wpilib.TimedRobot):
 
 	def robotInit(self):
+		'''Isaac is a good programmer'''
 		pass
 
 	def teleopPeriodic(self):
