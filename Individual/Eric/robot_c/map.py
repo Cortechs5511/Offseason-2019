@@ -4,4 +4,5 @@ rearLeft = 1
 frontRight = 2
 rearRight = 3
 
-halfSpeed = 1
+halfSpeed = [0, 1]
+flipButton = [1, 1]

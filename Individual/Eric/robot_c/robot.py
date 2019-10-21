@@ -2,7 +2,6 @@
 import wpilib
 from wpilib.command import Command
 from commandbased import CommandBasedRobot
-import oi
 from subsystems import Drive
 from commands.autonomous import Autonomous
 
@@ -10,9 +9,7 @@ class myRobot(CommandBasedRobot):
 
     def robotInit(self):
         Command.getRobot = lambda x=0: self
-        myRobot.drivetrain = Drive.Drive()
-        myRobot.leftStick = oi.getLeftStick()
-        myRobot.rightStick = oi.getRightStick()
+        self.drivetrain = Drive.Drive()
         self.Autonomous = Autonomous()
 
     def autonomousInit(self):

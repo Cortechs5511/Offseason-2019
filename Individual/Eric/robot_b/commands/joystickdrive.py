@@ -13,11 +13,11 @@ class joystickDrive(Command):
         leftInput = self.getRobot().leftStick.getY()
         rightInput = self.getRobot().rightStick.getY()
         if abs(leftInput) >= 0.05:
-            leftOutput = float(leftInput) * 0.9
+            leftOutput = float(leftInput)
         else:
             leftOutput = 0
         if abs(rightInput) >= 0.05:
-            rightOutput = float(rightInput) * 0.9
+            rightOutput = float(rightInput)
         else:
             rightOutput = 0
         Drive.Drive.setSpeed(self.pageDrive(), leftOutput, rightOutput)

@@ -22,8 +22,8 @@ class Drive(Subsystem):
         self.leftEncoder = wpilib.Encoder(2, 3) # must figure out lambda thing first
 
     def setSpeed(self, leftSpeed, rightSpeed):
-        self.left.set(leftSpeed)
-        self.right.set(rightSpeed)
+        self.left.set(leftSpeed * 0.9)
+        self.right.set(rightSpeed * 0.9)
 
     def getEncoders(self):
         right = self.rightEncoder.getDistance()

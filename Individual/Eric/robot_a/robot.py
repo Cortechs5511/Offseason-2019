@@ -1,8 +1,9 @@
 # timed robot
 import wpilib
+import math
+
 class MyRobot(wpilib.TimedRobot):
     def robotInit(self):
-
         self.frontRight = wpilib.Talon(0)
         self.rearRight = wpilib.Talon(1)
         self.frontRight.setInverted(True)
@@ -17,11 +18,21 @@ class MyRobot(wpilib.TimedRobot):
         self.rightStick = wpilib.Joystick(1)
         self.timer = wpilib.Timer()
 
+        self.leftEncoder = wpilib.Encoder(0, 1)
+        self.leftEncoder.setDistancePerPulse(1/2 * math.pi / 256)
+        self.leftEncoder.setSamplesToAverage(10)
+
+        self.rightEncoder = wpilib.Encoder(2, 3)
+        self.rightEncoder.setDistancePerPulse(-1/2 * math.pi / 256)
+        self.rightEncoder.setSamplesToAverage(10)
+
     def autonomousInit(self):
         self.timer.reset()
         self.timer.start()
 
     def autonomousPeriodic(self):
+        self.leftEncoder.getDistance()
+        self.rightEncoder.getDistance()
         time = float(self.timer.get())
         if time <= 0.1:
             self.left.set(0)
@@ -39,6 +50,8 @@ class MyRobot(wpilib.TimedRobot):
             self.right.set((2)/(1+1.5**(time)))
 
     def teleopPeriodic(self):
+        self.leftEncoder.getDistance()
+        self.rightEncoder.getDistance()
         leftInput = float(self.leftStick.getY()) * 0.9
         rightInput = float(self.rightStick.getY()) * 0.9
         if abs(leftInput) >= 0.05:
