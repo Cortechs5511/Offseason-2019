@@ -3,7 +3,8 @@ from wpilib.command import Command
 from subsystems import Drive
 import oi
 
-class joystickDrive(Command):
+
+class JoystickDrive(Command):
 
     def __init__(self):
         super().__init__("Joystick Drive")
