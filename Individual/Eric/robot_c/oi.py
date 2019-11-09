@@ -16,3 +16,7 @@ def halfSpeedButton():
 def flipButton():
     flip = Joystick(1).getButton(1) # right trigger
     return flip
+
+def getTurn():
+    leftTurn = Joystick(0).getX()
+    return leftTurn

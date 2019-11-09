@@ -42,15 +42,9 @@ class Drive(Subsystem):
         right = self.rightEncoder.getDistance()
         return right
 
-    def setSpeed(self, leftSpeed, rightSpeed):
-        leftOutput = 0.04 + (abs(leftSpeed)**1.5)*0.86
-        rightOutput = 0.04 + (abs(rightSpeed)**1.5)*0.86
-        speedMult = 1
+    def setSpeed(self, leftSpeed, rightSpeed, turn, driveType):
+        speedMult = 1.0
 
-        if leftSpeed < 0:
-            leftOutput = -leftOutput
-        if rightSpeed < 0:
-            rightOutput = -rightOutput
         if abs(leftSpeed) <= 0.05:
             leftOutput = 0
         if abs(rightSpeed) <= 0.05:
@@ -62,13 +56,25 @@ class Drive(Subsystem):
         if oi.flipButton() == True:
             speedMult = -speedMult
 
-        if abs(leftSpeed) <= 0.05:
-            leftOutput = 0
-        if abs(rightSpeed) <= 0.05:
-            rightOutput = 0
-
-        self.left1.set(-leftOutput * float(speedMult))
-        self.right1.set(-rightOutput * float(speedMult))
+        if driveType == 'Arcade':
+            power = -leftPower
+            turn = turn
+            if abs(turn) < 0.1: turn = 0.00 * self.sign(turn)
+            if power > 0:
+                if turn > 0:
+                    [left, right] = [max(power, turn), power-turn]
+                else:
+                    [left, right] = [power+turn, max(power, -turn)]
+            else:
+                if turn < 0:
+                    [left, right] = [-max(-power, -turn), power-turn]
+                else:
+                    [left, right] = [power+turn, -max(-power, turn)]
+            self.left1.set(left * speedMult)
+            self.right1.set(right * speedMult)
+        else:
+            self.left1.set(-leftSpeed * speedMult)
+            self.right1.set(-rightSpeed * speedMult)
 
     def initDefaultCommand(self):
         self.setDefaultCommand(JoystickDrive())

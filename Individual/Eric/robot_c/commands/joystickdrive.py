@@ -11,4 +11,4 @@ class JoystickDrive(Command):
         self.requires(self.getRobot().drivetrain)
 
     def execute(self):
-        Drive.Drive.setSpeed(self.pageDrive(), oi.getLeftStick(), oi.getRightStick())
+        Drive.Drive.setSpeed(self.pageDrive(), oi.getLeftStick(), oi.getRightStick(), oi.getTurn(), 'Tank')
