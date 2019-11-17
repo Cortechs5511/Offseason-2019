@@ -3,11 +3,12 @@ from wpilib.command import Command
 from subsystems import Drive
 import oi
 
-class joystickDrive(Command):
+
+class JoystickDrive(Command):
 
     def __init__(self):
         super().__init__("Joystick Drive")
         self.requires(self.getRobot().drivetrain)
 
     def execute(self):
-        Drive.Drive.setSpeed(self.pageDrive(), oi.getLeftStick(), oi.getRightStick())
+        Drive.Drive.setSpeed(self.pageDrive(), oi.getLeftStick(), oi.getRightStick(), oi.getTurn(), 'Tank')

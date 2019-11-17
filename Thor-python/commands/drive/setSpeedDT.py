@@ -38,6 +38,7 @@ class SetSpeedDT(TimedCommand):
         input1 = self.Joystick0.getY()
         input2 = self.Joystick1.getX()
         input3 = self.Joystick1.getY()
+        input4 = self.Joystick0.getX()
 
         if abs(input1)<0.02: input1 = 0
         if abs(input2)<0.02: input2 = 0
@@ -47,10 +48,10 @@ class SetSpeedDT(TimedCommand):
         input2 = (math.exp(self.k*abs(input2))-1)/(math.exp(self.k)-1)*self.sign(input2)
         input3 = (math.exp(self.k*abs(input3))-1)/(math.exp(self.k)-1)*self.sign(input3)
 
-        if self.DT.driveStyle=="Arcade":
+        if self.DT.driveStyle == "Arcade":
             power = -input1
-            turn = input2
-            if abs(turn) < 0.1: turn = 0.05 * self.sign(turn)
+            turn = input4
+            if abs(turn) < 0.1: turn = 0.00 * self.sign(turn)
             if power > 0:
                 if turn > 0:
                     [left, right] = [max(power, turn), power-turn]
@@ -63,7 +64,7 @@ class SetSpeedDT(TimedCommand):
                     [left, right] = [power+turn, -max(-power, turn)]
 
         elif self.DT.driveStyle=="Curvature":
-            overPoewr = 0
+            overPower = 0
             angularPower = 0
 
             power = -input1

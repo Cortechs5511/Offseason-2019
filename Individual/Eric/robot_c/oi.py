@@ -2,13 +2,21 @@ from wpilib.joystick import Joystick
 import map
 
 def getLeftStick():
-    return Joystick(0).getY()
+    leftStick = Joystick(0).getY()
+    return leftStick
 
 def getRightStick():
-    return Joystick(1).getY()
+    rightStick = Joystick(1).getY()
+    return rightStick
 
 def halfSpeedButton():
-    return Joystick(0).getButton(1) # must figure out button placement
+    halfSpeed = Joystick(0).getButton(1) # left trigger
+    return halfSpeed
 
 def flipButton():
-    return Joystick(1).getButton(1) # must figure out button placement
+    flip = Joystick(1).getButton(1) # right trigger
+    return flip
+
+def getTurn():
+    leftTurn = Joystick(0).getX()
+    return leftTurn
