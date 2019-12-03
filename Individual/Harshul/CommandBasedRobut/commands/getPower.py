@@ -1,7 +1,7 @@
 from wpilib.command import Subsystem
 from wpilib.command import Command
-import robot
-import subsystems
+#import robot
+#from subsystems.drive import Drive
 import robotmap
 import oi
 

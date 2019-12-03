@@ -1,4 +1,4 @@
-from wpilib.command import Subsystem
+from wpilib.command.subsystem import Subsystem
 from wpilib import Talon
 import subsystems
 from commands.getPower import GetPower
