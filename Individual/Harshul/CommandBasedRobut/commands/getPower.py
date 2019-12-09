@@ -1,8 +1,9 @@
 from wpilib.command import Subsystem
 from wpilib.command import Command
-import robot
-import subsystems
+#import robot
+#from subsystems.drive import Drive
 import robotmap
+import oi
 
 class GetPower(Command):
     def _init__(self, robot):
@@ -10,17 +11,21 @@ class GetPower(Command):
         self.requires(self.drive)
 
     def initialize(self):
-        self.leftJs = robotmap.leftJs
-        self.rightJs = robotmap.rightJs
+        self.leftJs = oi.leftJs
+        self.rightJs = oi.rightJs
 
     def execute(self):
         maxSpeed = .85
-        if abs(self.leftJs.getY()) >= .04:
-            self.leftPower = self.leftJs*maxSpeed
+        left = oi.getLeftJs()
+        right = oi.getRightJs()
+        if abs(left) >= .04:
+            self.leftPower = left*maxSpeed
         else:
             self.leftPower = 0
-        if abs(self.rightJs.getY()) >= .04:
-            self.rightPower = self.rightJs*maxSpeed
+        if abs(right) >= .04:
+            self.rightPower = right*maxSpeed
         else:
             self.rightPower = 0
         self.drive.setPower(self.leftPower,self.rightPower)
+
+        print(self.rightJs)
