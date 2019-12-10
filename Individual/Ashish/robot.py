@@ -2,6 +2,8 @@
 import wpilib
 import math
 from networktables import NetworkTables
+from wpilib import SmartDashboard
+
 
 class MyRobot(wpilib.TimedRobot):
     def robotInit(self):
@@ -23,6 +25,8 @@ class MyRobot(wpilib.TimedRobot):
         self.leftEncoder.setDistancePerPulse(1/2 * math.pi / 256)
         self.leftEncoder.setSamplesToAverage(10)
 
+        self.table = NetworkTables.getTable('limelight')
+
     def teleopPeriodic(self):
         leftInput = float(self.leftStick.getY()) * 0.9
         rightInput = float(self.rightStick.getY()) * 0.9
@@ -34,9 +38,35 @@ class MyRobot(wpilib.TimedRobot):
             self.right.set(rightInput)
         else:
             self.right.set(0)
+        self.getLimeData()
 
-    def getDistance(self):
+    def getLimeData(self):
+        tx = self.table.getNumber('tx', 900)
+        ta = self.table.getNumber('ta', 900)
+        distance_1 = (6.5) / (math.sqrt(ta/100) * math.tan(math.radians(29.8)))
+        limeMult = (-5.44 * .0001 * distance_1) + 0.864
+        distance_2 = distance_1 * limeMult
+        SmartDashboard.putNumber("Limelight Distance", distance_2)
+        SmartDashboard.putNumber("Limelight Angle", tx)
+        return [distance_2, tx]
 
+    def moveRobot(self):
+        [distance, angle] = self.getLimeData()
+        #phase 1 - angle tuning
+        if abs(angle) > math.radians(1):
+            if angle > 0:
+                self.right.set(-0.2)
+                self.left.set(0.2)
+            elif angle < 0:
+                self.right.set(0.2)
+                self.left.set(-0.2)
+            else:
+                print('error 01')
+        #phase 2 - distance tuning
+        elif abs(angle) <= math.radians(1):
+            if distance > 0:
+                self.right.set(0.3)
+                self.left.set(0.3)
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)
