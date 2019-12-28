@@ -10,14 +10,4 @@ class joystickDrive(Command):
         self.requires(self.getRobot().drivetrain)
 
     def execute(self):
-        leftInput = self.getRobot().leftStick.getY()
-        rightInput = self.getRobot().rightStick.getY()
-        if abs(leftInput) >= 0.05:
-            leftOutput = float(leftInput)
-        else:
-            leftOutput = 0
-        if abs(rightInput) >= 0.05:
-            rightOutput = float(rightInput)
-        else:
-            rightOutput = 0
-        Drive.Drive.setSpeed(self.pageDrive(), leftOutput, rightOutput)
+        Drive.Drive.setSpeed(self.pageDrive(), oi.getLeftStick(), oi.getRightStick(), oi.getTurn())

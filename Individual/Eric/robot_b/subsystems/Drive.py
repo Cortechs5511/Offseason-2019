@@ -5,6 +5,7 @@ from wpilib.command.subsystem import Subsystem
 from commands.joystickdrive import joystickDrive
 from wpilib.command import Command
 import math
+import oi
 
 class Drive(Subsystem):
 
@@ -19,20 +20,51 @@ class Drive(Subsystem):
         self.frontLeft = wpilib.Talon(2)
         self.rearLeft = wpilib.Talon(3)
         self.left = wpilib.SpeedControllerGroup(self.frontLeft, self.rearLeft)
+
         self.leftEncoder = wpilib.Encoder(8, 9)
         self.leftEncoder.setDistancePerPulse(1/3 * math.pi / 256) # 4 inch wheels?
         self.leftEncoder.setSamplesToAverage(10)
-        self.rightEncoder = wpilib.Encoder(8, 9)
-        self.rightEncoder.setDistancePerPulse(1/3 * math.pi / 256) # 4 inch wheels?
-        self.rightEncoder.setSamplesToAverage(10)
-        #left = self.leftEncoder.getDistance()
-        #SmartDashboard.putNumber("distance", left)
+        SmartDashboard.putNumber("distance", 0)
+        SmartDashboard.putString("DriveStyle", "Tank")
 
-    def setSpeed(self, leftSpeed, rightSpeed):
-        self.left.set(leftSpeed * 0.9)
-        self.right.set(rightSpeed * 0.9)
-        left = self.leftEncoder.getDistance()
-        SmartDashboard.putNumber("distance", left)
+    def setSpeed(self, leftSpeed, rightSpeed, turn):
+        speedMult = 0.6
+
+        if abs(leftSpeed) <= 0.1:
+            leftSpeed = 0
+        if abs(rightSpeed) <= 0.1:
+            rightSpeed = 0
+
+        if oi.halfSpeedButton() == True:
+            speedMult = 0.4
+
+        if oi.flipButton() == True:
+            speedMult = -speedMult
+
+        if True:#self.driveType == "Arcade": # smartdashboard implementation has not been tested
+            power = leftSpeed
+            if abs(turn) < 0.1:
+                turn = 0
+            turn = -0.7 * turn
+
+            if power > 0:
+                if turn > 0:
+                    [left, right] = [max(power, turn), power - turn]
+                else:
+                    [left, right] = [power + turn, max(power, -turn)]
+            else:
+                if turn < 0:
+                    [left, right] = [-max(-power, -turn), power - turn]
+                else:
+                    [left, right] = [power + turn, -max(-power, turn)]
+
+            self.left.set(left * speedMult)
+            self.right.set(right * speedMult)
+
+        else:
+            self.left.set(-leftSpeed * speedMult)
+            self.right.set(-rightSpeed * speedMult)
+
 
     def getEncoders(self):
         left = self.leftEncoder.getDistance()
@@ -45,3 +77,4 @@ class Drive(Subsystem):
 
     def periodic(self):
         self.getEncoders()
+        self.driveType = SmartDashboard.getString("DriveStyle", "Tank")
