@@ -5,19 +5,22 @@ import rev
 class MyRobot(wpilib.TimedRobot):
     #code for practice DT neo testing
     def robotInit(self):
-        self.frontLeft: CANSparkMax = rev.CANSparkMax(0, rev.MotorType.kBrushless)
-        self.rearLeft: CANSparkMax = rev.CANSparkMax(1, rev.MotorType.kBrushless)
+        self.frontLeft: CANSparkMax = rev.CANSparkMax(3, rev.MotorType.kBrushless)
+        self.rearLeft: CANSparkMax = rev.CANSparkMax(11, rev.MotorType.kBrushless)
         self.left = wpilib.SpeedControllerGroup(self.frontLeft, self.rearLeft)
 
-        self.frontRight: CANSparkMax = rev.CANSparkMax(2, rev.MotorType.kBrushless)
-        self.rearRight: CANSparkMax = rev.CANSparkMax(3, rev.MotorType.kBrushless)
+        self.frontRight: CANSparkMax = rev.CANSparkMax(22, rev.MotorType.kBrushless)
+        self.rearRight: CANSparkMax = rev.CANSparkMax(10, rev.MotorType.kBrushless)
         self.right = wpilib.SpeedControllerGroup(self.frontRight, self.rearRight)
+
+        self.leftEncoder = self.frontLeft.getEncoder().getPosition()
+        self.rightEncoder = self.frontRight.getEncoder().getPosition()
 
         for motor in [self.frontLeft, self.rearLeft, self.frontRight, self.rearRight]:
             motor.clearFaults()
             motor.setOpenLoopRampRate(0.5)
-            #motor.setSmartCurrentLimit(64, 64, 4100) # with 40A breakers equals >= 3sec. peak endurance at 64A
-            #motor.setSecondaryCurrentLimit(100)
+            motor.setSmartCurrentLimit(60, 60, 6400) # >= 15 sec. stall tested
+            motor.setSecondaryCurrentLimit(100)
             #motor.setIdleMode(coast)
 
         SmartDashboard.putNumber("Left Power", 0)
@@ -28,13 +31,13 @@ class MyRobot(wpilib.TimedRobot):
         self.rightStick = wpilib.Joystick(1)
 
     def teleopInit(self):
-        for motor in [self.frontLeft, self.frontRight]:
-            motor.getEncoder().setPosition(0)
+        for encoder in [self.frontLeft, self.frontRight]:
+            encoder.getEncoder().setPosition(0)
         self.controlMode = SmartDashboard.getString("Control Mode", "Joystick")
 
     def teleopPeriodic(self):
         if self.controlMode == "Joystick":
-            leftInput = self.leftStick.getY()
+            leftInput = -self.leftStick.getY()
             rightInput = self.rightStick.getY()
 
             SmartDashboard.putNumber("Left Power", leftInput)
@@ -57,12 +60,9 @@ class MyRobot(wpilib.TimedRobot):
             SmartDashboard.putNumber("Left Power", 0)
             SmartDashboard.putNumber("Right Power", 0)
 
-    def updateEncoders(self):
-        SmartDashboard.putNumber("Left Encoder", self.frontLeft.getEncoder().getPosition())
-        SmartDashboard.putNumber("Right Encoder", self.frontRight.getEncoder().getPosition())
-
-    def periodic(self):
-        self.updateEncoders()
+    def robotPeriodic(self):
+        SmartDashboard.putNumber("Left Encoder", self.leftEncoder)
+        SmartDashboard.putNumber("Right Encoder", self.rightEncoder)
 
 
 if __name__ == '__main__':
