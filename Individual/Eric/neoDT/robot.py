@@ -18,7 +18,7 @@ class MyRobot(wpilib.TimedRobot):
             motor.setSmartCurrentLimit(60, 60, 6400) # >= 15 sec. stall tested
             motor.setSecondaryCurrentLimit(100)
             motor.getEncoder().setPositionConversionFactor(42)
-            motor.setIdleMode(brake)
+            #motor.setIdleMode(0)
 
         SmartDashboard.putNumber("Left Power", 0)
         SmartDashboard.putNumber("Right Power", 0)
@@ -30,9 +30,9 @@ class MyRobot(wpilib.TimedRobot):
             encoder.getEncoder().setPosition(0)
 
     def teleopPeriodic(self):
-        power = self.leftStick.getY()
-        rightInput = self.leftStick.getX()
-        if abs(turn) < 0.1: turn = 0.00 * self.sign(turn)
+        power = self.leftStick.getY() * 0.4
+        turn = self.leftStick.getX() * 0.5
+        if abs(turn) < 0.1: turn = 0.0
         if power > 0:
             if turn > 0:
                 [left, right] = [max(power, turn), power-turn]
@@ -43,6 +43,8 @@ class MyRobot(wpilib.TimedRobot):
                 [left, right] = [-max(-power, -turn), power-turn]
             else:
                 [left, right] = [power+turn, -max(-power, turn)]
+        self.left.set(left)
+        self.right.set(-right)
 
 
 if __name__ == '__main__':
