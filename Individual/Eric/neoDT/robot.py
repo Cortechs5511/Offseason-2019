@@ -3,7 +3,6 @@ from wpilib import SmartDashboard
 import rev
 
 class MyRobot(wpilib.TimedRobot):
-    #code for practice DT neo testing
     def robotInit(self):
         self.frontLeft: CANSparkMax = rev.CANSparkMax(3, rev.MotorType.kBrushless)
         self.rearLeft: CANSparkMax = rev.CANSparkMax(11, rev.MotorType.kBrushless)
@@ -13,56 +12,37 @@ class MyRobot(wpilib.TimedRobot):
         self.rearRight: CANSparkMax = rev.CANSparkMax(10, rev.MotorType.kBrushless)
         self.right = wpilib.SpeedControllerGroup(self.frontRight, self.rearRight)
 
-        self.leftEncoder = self.frontLeft.getEncoder().getPosition()
-        self.rightEncoder = self.frontRight.getEncoder().getPosition()
-
         for motor in [self.frontLeft, self.rearLeft, self.frontRight, self.rearRight]:
             motor.clearFaults()
             motor.setOpenLoopRampRate(0.5)
             motor.setSmartCurrentLimit(60, 60, 6400) # >= 15 sec. stall tested
             motor.setSecondaryCurrentLimit(100)
-            #motor.setIdleMode(coast)
+            motor.getEncoder().setPositionConversionFactor(42)
+            motor.setIdleMode(brake)
 
         SmartDashboard.putNumber("Left Power", 0)
         SmartDashboard.putNumber("Right Power", 0)
-        SmartDashboard.putString("Control Mode", "Joystick")
 
         self.leftStick = wpilib.Joystick(0)
-        self.rightStick = wpilib.Joystick(1)
 
     def teleopInit(self):
-        for encoder in [self.frontLeft, self.frontRight]:
+        for encoder in [self.frontLeft, self.rearLeft, self.frontRight, self.rearRight]:
             encoder.getEncoder().setPosition(0)
-        self.controlMode = SmartDashboard.getString("Control Mode", "Joystick")
 
     def teleopPeriodic(self):
-        if self.controlMode == "Joystick":
-            leftInput = -self.leftStick.getY()
-            rightInput = self.rightStick.getY()
-
-            SmartDashboard.putNumber("Left Power", leftInput)
-            SmartDashboard.putNumber("Right Power", rightInput)
-
-            if abs(leftInput) >= 0.1:
-                self.left.set(leftInput * 0.9)
+        power = self.leftStick.getY()
+        rightInput = self.leftStick.getX()
+        if abs(turn) < 0.1: turn = 0.00 * self.sign(turn)
+        if power > 0:
+            if turn > 0:
+                [left, right] = [max(power, turn), power-turn]
             else:
-                self.left.set(0)
-            if abs(rightInput) >= 0.1:
-                self.right.set(rightInput * 0.9)
-            else:
-                self.right.set(0)
-        elif self.controlMode == "SmartDashboard":
-            self.left.set(SmartDashboard.getNumber("Left Power", 0))
-            self.right.set(SmartDashboard.getNumber("Right Power", 0))
+                [left, right] = [power+turn, max(power, -turn)]
         else:
-            self.left.stopMotor()
-            self.right.stopMotor()
-            SmartDashboard.putNumber("Left Power", 0)
-            SmartDashboard.putNumber("Right Power", 0)
-
-    def robotPeriodic(self):
-        SmartDashboard.putNumber("Left Encoder", self.leftEncoder)
-        SmartDashboard.putNumber("Right Encoder", self.rightEncoder)
+            if turn < 0:
+                [left, right] = [-max(-power, -turn), power-turn]
+            else:
+                [left, right] = [power+turn, -max(-power, turn)]
 
 
 if __name__ == '__main__':
